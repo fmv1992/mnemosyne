@@ -10,7 +10,7 @@ class Renderer(Component):
     """Assembles a sequence of 'fact_keys' which are keys in a dictionary
     'fact_data' to a certain format, e.g. a html page, or a purely text based
     format.
-    
+
     Typically 'fact_keys' are the question and answer keys of the card's fact
     view.
 
@@ -33,17 +33,15 @@ class Renderer(Component):
         used to signal that the cache should be rebuilt.
 
         """
-        
-        pass
 
     def render(self, fact_data, fact_keys, card_type, **render_args):
 
         """Assembles a sequence of 'fact_keys' which are keys in a dictionary
         'fact_data'.
-        
+
         card_type' is passed as extra argument e.g. to determine card type
         specific formatting.
 
         """
-        
+
         raise NotImplementedError

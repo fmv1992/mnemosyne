@@ -2,12 +2,11 @@
 # review_wdgt.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.UDP_server.UDP_widget import UDP_Widget
 from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
+from mnemosyne.UDP_server.UDP_widget import UDP_Widget
 
 
 class ReviewWdgt(ReviewWidget, UDP_Widget):
-
     def __init__(self, component_manager):
         ReviewWidget.__init__(self, component_manager)
 

@@ -62,12 +62,12 @@ class RenderChain(Component):
     def register_filter_at_front(self, filter_class, after=[]):
 
         """Register a filter at the very front of the render chain, but after
-           a list of other filters already in the chain. The list should
-           contain class names. (Using strings instead of classes means a
-           plugin writer does not need to import the filters he wants to use
-           in this list.)
+        a list of other filters already in the chain. The list should
+        contain class names. (Using strings instead of classes means a
+        plugin writer does not need to import the filters he wants to use
+        in this list.)
 
-           'filter_class' should be a class, not an instance.
+        'filter_class' should be a class, not an instance.
 
         """
 
@@ -81,12 +81,12 @@ class RenderChain(Component):
     def register_filter_at_back(self, filter_class, before=[]):
 
         """Register a filter at the back of the render chain, but before
-           a list of other filters already in the chain. The list should
-           contain class names. (Using strings instead of classes means a
-           plugin writer does not need to import the filters he wants to use
-           in this list.)
+        a list of other filters already in the chain. The list should
+        contain class names. (Using strings instead of classes means a
+        plugin writer does not need to import the filters he wants to use
+        in this list.)
 
-           'filter_class' should be a class, not an instance.
+        'filter_class' should be a class, not an instance.
 
         """
 
@@ -155,8 +155,11 @@ class RenderChain(Component):
     def render_answer(self, card, **render_args):
         fact_keys, decorators = [], {}
         a_on_top_of_q = render_args.get("a_on_top_of_q", False)
-        if self.config()["QA_split"] == "single_window" and \
-           not self.never_join_q_to_a and not a_on_top_of_q:
+        if (
+            self.config()["QA_split"] == "single_window"
+            and not self.never_join_q_to_a
+            and not a_on_top_of_q
+        ):
             render_args["align_top"] = True
             fact_keys += card.fact_view.q_fact_keys
             fact_keys.append("__line__")
@@ -175,12 +178,14 @@ class RenderChain(Component):
             if fact_key not in fact_data:  # Optional key.
                 continue
             for filter in self._filters:
-                fact_data[fact_key] = filter.run(fact_data[fact_key],
-                    card, fact_key, **render_args)
+                fact_data[fact_key] = filter.run(
+                    fact_data[fact_key], card, fact_key, **render_args
+                )
             if fact_key in decorators:
-                fact_data[fact_key] = string.Template(\
-                    decorators[fact_key]).safe_substitute(fact_data)
+                fact_data[fact_key] = string.Template(
+                    decorators[fact_key]
+                ).safe_substitute(fact_data)
         renderer = self.renderer_for_card_type(card.card_type)
-        return renderer.render(\
-            fact_data, fact_keys, card.card_type, **render_args)
-
+        return renderer.render(
+            fact_data, fact_keys, card.card_type, **render_args
+        )

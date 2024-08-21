@@ -2,7 +2,7 @@
 # fact.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.utils import rand_uuid, CompareOnId
+from mnemosyne.libmnemosyne.utils import CompareOnId, rand_uuid
 
 
 class Fact(CompareOnId):
@@ -50,4 +50,3 @@ class Fact(CompareOnId):
 
     def update(self, new_dict):
         return self.data.update(new_dict)
-

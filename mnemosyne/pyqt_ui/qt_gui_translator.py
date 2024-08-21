@@ -5,10 +5,10 @@
 import os
 import sys
 
-from PyQt6.QtCore import QTranslator, QCoreApplication, QLocale
-
-from mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator \
-     import GetTextGuiTranslator
+from mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator import (
+    GetTextGuiTranslator,
+)
+from PyQt6.QtCore import QCoreApplication, QLocale, QTranslator
 
 
 class QtGuiTranslator(GetTextGuiTranslator):
@@ -31,7 +31,9 @@ class QtGuiTranslator(GetTextGuiTranslator):
                 self.qt_dir = os.path.join("/usr", "share", "qt6")
         # Avoid stuff like Thai numerals if the language is not explicitly
         # set to Thai.
-        QLocale.setDefault(QLocale(QLocale.Language.English, QLocale.Country.UnitedStates))
+        QLocale.setDefault(
+            QLocale(QLocale.Language.English, QLocale.Country.UnitedStates)
+        )
 
     def translate_ui(self, language):
         app = QCoreApplication.instance()
@@ -39,9 +41,9 @@ class QtGuiTranslator(GetTextGuiTranslator):
         # LanguageChange event even if their is no Qt translation for that
         # language installed.
         app.removeTranslator(self.qt_translator)
-        self.qt_translator.load(os.path.join(self.qt_dir, "translations",
-            "qt_" + language + ".qm"))
+        self.qt_translator.load(
+            os.path.join(self.qt_dir, "translations", "qt_" + language + ".qm")
+        )
         app.installTranslator(self.qt_translator)
         # The title can also contain the database name.
         self.controller().update_title()
-

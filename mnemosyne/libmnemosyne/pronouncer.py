@@ -2,12 +2,15 @@
 # pronouncer.py <Peter.Bienstman@gmail.com>
 #
 
-import os
 import datetime
+import os
 
 from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.utils import make_filename_unique
-from mnemosyne.libmnemosyne.utils import expand_path, contract_path
+from mnemosyne.libmnemosyne.utils import (
+    contract_path,
+    expand_path,
+    make_filename_unique,
+)
 
 
 class Pronouncer(Component):
@@ -22,16 +25,22 @@ class Pronouncer(Component):
 
     component_type = "pronouncer"
     used_for = None  # Single ISO 639-1 code, or multiple as tuple of strings.
-    popup_menu_text = None # "Insert text-to-speech..."
+    popup_menu_text = None  # "Insert text-to-speech..."
 
     def default_filename(self, card_type, foreign_text):
         if foreign_text.count(" ") <= 1:
-            filename = foreign_text.replace("?", "").replace("/", "")\
-                .replace("\\", "").replace("\n", "") + ".mp3"
+            filename = (
+                foreign_text.replace("?", "")
+                .replace("/", "")
+                .replace("\\", "")
+                .replace("\n", "")
+                + ".mp3"
+            )
         else:
             filename = datetime.datetime.today().strftime("%Y%m%d.mp3")
-        local_dir = self.config()["tts_dir_for_card_type_id"]\
-            .get(card_type.id, "")
+        local_dir = self.config()["tts_dir_for_card_type_id"].get(
+            card_type.id, ""
+        )
         filename = os.path.join(local_dir, filename)
         full_path = expand_path(filename, self.database().media_dir())
         full_path = make_filename_unique(full_path)
@@ -48,10 +57,10 @@ class Pronouncer(Component):
 
         """Returns html audio tag to insert."""
 
-        dialog = self.gui_components[0](\
-            pronouncer=self, component_manager=self.component_manager)
+        dialog = self.gui_components[0](
+            pronouncer=self, component_manager=self.component_manager
+        )
         self.component_manager.register(dialog)
         dialog.activate(card_type, foreign_text)
         self.instantiated_gui_components.append(dialog)
         return dialog.text_to_insert
-

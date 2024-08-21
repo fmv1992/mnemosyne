@@ -4,8 +4,9 @@
 
 PORT = 6666
 
-import time
 import socket
+import time
+
 
 class Client(object):
 
@@ -36,7 +37,7 @@ class Client(object):
         f = self.socket.makefile("rb")
         line = f.readline()
         while line != "__DONE__\n":
-            print(line, end=' ')
+            print(line, end=" ")
             # If it's a callback command, we need to act upon it immediately,
             # either because the other side is waiting for input from us, or
             # for efficiency reasons, e.g. if the controller says it's already
@@ -62,7 +63,7 @@ class Client(object):
                 break
             # Read the next line and act on that.
             line = f.readline()
-            
+
     def send_answer(self, data):
         self.socket.send(str(data) + "\n")
 
@@ -70,21 +71,26 @@ class Client(object):
 # Simple example of loading an existing database and doing a review.
 if __name__ == "__main__":
     import subprocess
-    subprocess.Popen(["./bin/python", "./mnemosyne/UDP_server/server.py",
-        str(PORT)])
+
+    subprocess.Popen(
+        ["./bin/python", "./mnemosyne/UDP_server/server.py", str(PORT)]
+    )
 
     import os
+
     data_dir = os.path.abspath("dot_mnemosyne2")
     filename = "default.db"
 
     c = Client()
-    c.send_command("mnemosyne.initialise(data_dir=\"%s\", filename=\"%s\")" \
-        % (data_dir, filename))
+    c.send_command(
+        'mnemosyne.initialise(data_dir="%s", filename="%s")'
+        % (data_dir, filename)
+    )
     c.send_command("mnemosyne.start_review()")
     c.send_command("mnemosyne.review_controller().show_answer()")
     c.send_command("mnemosyne.review_controller().grade_answer(0)")
     # You can get access to all data using print statements:
-    c.send_command("print mnemosyne.database().card_count()")        
+    c.send_command("print mnemosyne.database().card_count()")
     c.send_command("mnemosyne.finalise()")
     c.send_command("exit()")
     # For syncing, the python code looks something like this:
@@ -92,61 +98,60 @@ if __name__ == "__main__":
 
 # This results in the following exchange:
 
-#>># Waiting for server...
-#Server listening on port 6666
-#>># Waiting for server...
-#>>mnemosyne.initialise(
+# >># Waiting for server...
+# Server listening on port 6666
+# >># Waiting for server...
+# >>mnemosyne.initialise(
 # data_dir="/home/pbienst/source/mnemosyne-proj-pbienst/mnemosyne/dot_mnemosyne2",
 # filename="default.db")
-#@@main_widget.set_window_title("""Mnemosyne""")
-#>>mnemosyne.start_review()
-#@@review_widget.set_question_box_visible("""True""")
-#@@review_widget.set_question_label("""Question: my tag""")
-#@@review_widget.set_question("""
-#...html...
-#""")
-#@@review_widget.clear_answer()
-#@@review_widget.update_show_button("""Show answer""","""True""","""True""")
-#@@review_widget.set_grades_enabled("""False""")
-#@@review_widget.update_status_bar()
-#@@main_widget.enable_edit_current_card("""True""")
-#@@main_widget.enable_delete_current_card("""True""")
-#@@main_widget.enable_browse_cards("""True""")
-#>>mnemosyne.review_controller().show_answer()
-#@@review_widget.set_answer_box_visible("""True""")
-#@@review_widget.set_question_label("""Question: my tag""")
-#@@review_widget.set_answer("""
-#...html...
-#""")
-#@@review_widget.update_show_button("""Show answer""","""True""","""False""")
-#@@review_widget.set_grades_enabled("""True""")
-#@@review_widget.set_default_grade("""4""")
-#@@review_widget.update_status_bar()
-#@@main_widget.enable_edit_current_card("""True""")
-#@@main_widget.enable_delete_current_card("""True""")
-#@@main_widget.enable_browse_cards("""True""")
-#>>mnemosyne.review_controller().grade_answer(0)
-#@@review_widget.set_question_box_visible("""True""")
-#@@review_widget.set_question_label("""Question: my tag""")
-#@@review_widget.set_question("""
-#...html...
-#""")
-#@@review_widget.clear_answer()
-#@@review_widget.update_show_button("""Show answer""","""True""","""True""")
-#@@review_widget.set_grades_enabled("""False""")
-#@@review_widget.set_grades_title("""Grade your answer:""")
-#@@review_widget.set_grade_tooltip("""0""","""You've forgotten this card completely.""")
-#@@review_widget.set_grade_text("""0""","""0""")
+# @@main_widget.set_window_title("""Mnemosyne""")
+# >>mnemosyne.start_review()
+# @@review_widget.set_question_box_visible("""True""")
+# @@review_widget.set_question_label("""Question: my tag""")
+# @@review_widget.set_question("""
+# ...html...
+# """)
+# @@review_widget.clear_answer()
+# @@review_widget.update_show_button("""Show answer""","""True""","""True""")
+# @@review_widget.set_grades_enabled("""False""")
+# @@review_widget.update_status_bar()
+# @@main_widget.enable_edit_current_card("""True""")
+# @@main_widget.enable_delete_current_card("""True""")
+# @@main_widget.enable_browse_cards("""True""")
+# >>mnemosyne.review_controller().show_answer()
+# @@review_widget.set_answer_box_visible("""True""")
+# @@review_widget.set_question_label("""Question: my tag""")
+# @@review_widget.set_answer("""
+# ...html...
+# """)
+# @@review_widget.update_show_button("""Show answer""","""True""","""False""")
+# @@review_widget.set_grades_enabled("""True""")
+# @@review_widget.set_default_grade("""4""")
+# @@review_widget.update_status_bar()
+# @@main_widget.enable_edit_current_card("""True""")
+# @@main_widget.enable_delete_current_card("""True""")
+# @@main_widget.enable_browse_cards("""True""")
+# >>mnemosyne.review_controller().grade_answer(0)
+# @@review_widget.set_question_box_visible("""True""")
+# @@review_widget.set_question_label("""Question: my tag""")
+# @@review_widget.set_question("""
+# ...html...
+# """)
+# @@review_widget.clear_answer()
+# @@review_widget.update_show_button("""Show answer""","""True""","""True""")
+# @@review_widget.set_grades_enabled("""False""")
+# @@review_widget.set_grades_title("""Grade your answer:""")
+# @@review_widget.set_grade_tooltip("""0""","""You've forgotten this card completely.""")
+# @@review_widget.set_grade_text("""0""","""0""")
 # ...
-#@@review_widget.update_status_bar_counters()
-#@@main_widget.enable_edit_current_card("""True""")
-#@@main_widget.enable_delete_current_card("""True""")
-#@@main_widget.enable_browse_cards("""True""")
-#@@review_widget.redraw_now()
-#>>print mnemosyne.database().card_count()
-#8960
-#>>mnemosyne.finalise()
-#Waiting for uploader thread to stop...
-#Done!
-#>>exit()
-
+# @@review_widget.update_status_bar_counters()
+# @@main_widget.enable_edit_current_card("""True""")
+# @@main_widget.enable_delete_current_card("""True""")
+# @@main_widget.enable_browse_cards("""True""")
+# @@review_widget.redraw_now()
+# >>print mnemosyne.database().card_count()
+# 8960
+# >>mnemosyne.finalise()
+# Waiting for uploader thread to stop...
+# Done!
+# >>exit()

@@ -12,7 +12,8 @@ mnemosyne = Mnemosyne(data_dir)
 # libmnemosyne/card_types
 fact_data = {"f": "front", "b": "back"}
 card_type = mnemosyne.card_type_with_id("1")
-mnemosyne.controller().create_new_cards(fact_data,
-    card_type, grade=4, tag_names=["tag_1", "tag_2"])
+mnemosyne.controller().create_new_cards(
+    fact_data, card_type, grade=4, tag_names=["tag_1", "tag_2"]
+)
 
 mnemosyne.finalise()

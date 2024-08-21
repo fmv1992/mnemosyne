@@ -4,22 +4,21 @@
 
 import os
 import sys
-import shutil
-from pytest import raises
 
-from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
-from mnemosyne.libmnemosyne.ui_components.dialogs import *
+from mnemosyne.libmnemosyne.ui_components.dialogs import (
+    ExportDialog,
+    ExportMetadataDialog,
+)
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne.libmnemosyne.ui_components.dialogs import ExportDialog
-from mnemosyne.libmnemosyne.ui_components.dialogs import ExportMetadataDialog
+from mnemosyne_test import MnemosyneTest
 
 save_file = ""
 
 answer = None
 
-class Widget(MainWidget):
 
+class Widget(MainWidget):
     def get_filename_to_save(self, path, filter, caption=""):
         return save_file
 
@@ -29,67 +28,113 @@ class Widget(MainWidget):
     def show_question(self, question, option0, option1, option2):
         return answer
 
-class DataWidget(ExportMetadataDialog):
 
+class DataWidget(ExportMetadataDialog):
     def values(self):
         return {}
+
 
 class ExportWidget(ExportDialog):
 
     pass
 
 
-
 class TestController(MnemosyneTest):
-
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne",
-                            "renderers")
+        path = os.path.join(
+            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
+        )
         if path not in sys.path:
             sys.path.append(path)
-        self.mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True,
-            asynchronous_database=True)
-        self.mnemosyne.components.insert(0,
-            ("mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator", "GetTextGuiTranslator"))
-        self.mnemosyne.components.append(\
-            ("test_controller", "Widget"))
-        self.mnemosyne.components.append(\
-            ("test_controller", "ExportWidget"))
-        self.mnemosyne.components.append(\
-            ("test_controller", "DataWidget"))
-        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = \
-            [("mnemosyne_test", "TestReviewWidget")]
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "AddCardsDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "EditCardDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "BrowseCardsDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "SyncDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ManagePluginsDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ManageCardTypesDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "StatisticsDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ConfigurationDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ActivateCardsDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ImportDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "TipDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "GettingStartedDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "AboutDialog"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "CompactDatabaseDialog"))
+        self.mnemosyne = Mnemosyne(
+            upload_science_logs=False,
+            interested_in_old_reps=True,
+            asynchronous_database=True,
+        )
+        self.mnemosyne.components.insert(
+            0,
+            (
+                "mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator",
+                "GetTextGuiTranslator",
+            ),
+        )
+        self.mnemosyne.components.append(("test_controller", "Widget"))
+        self.mnemosyne.components.append(("test_controller", "ExportWidget"))
+        self.mnemosyne.components.append(("test_controller", "DataWidget"))
+        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
+            ("mnemosyne_test", "TestReviewWidget")
+        ]
+        self.mnemosyne.components.append(
+            ("mnemosyne.libmnemosyne.ui_components.dialogs", "AddCardsDialog")
+        )
+        self.mnemosyne.components.append(
+            ("mnemosyne.libmnemosyne.ui_components.dialogs", "EditCardDialog")
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "BrowseCardsDialog",
+            )
+        )
+        self.mnemosyne.components.append(
+            ("mnemosyne.libmnemosyne.ui_components.dialogs", "SyncDialog")
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ManagePluginsDialog",
+            )
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ManageCardTypesDialog",
+            )
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "StatisticsDialog",
+            )
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ConfigurationDialog",
+            )
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ActivateCardsDialog",
+            )
+        )
+        self.mnemosyne.components.append(
+            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ImportDialog")
+        )
+        self.mnemosyne.components.append(
+            ("mnemosyne.libmnemosyne.ui_components.dialogs", "TipDialog")
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "GettingStartedDialog",
+            )
+        )
+        self.mnemosyne.components.append(
+            ("mnemosyne.libmnemosyne.ui_components.dialogs", "AboutDialog")
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "CompactDatabaseDialog",
+            )
+        )
 
-        self.mnemosyne.initialise(os.path.abspath("dot_test"),  automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def test_coverage(self):
@@ -100,8 +145,9 @@ class TestController(MnemosyneTest):
         self.controller().show_add_cards_dialog()
         card_type = self.card_type_with_id("2")
         fact_data = {"f": "f", "b": "b"}
-        card_1, card_2 = self.controller().create_new_cards(fact_data,
-          card_type, grade=-1, tag_names=["default"])
+        card_1, card_2 = self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=["default"]
+        )
         self.review_controller().show_new_question()
         self.controller().show_edit_card_dialog()
         self.controller().show_new_file_dialog()
@@ -123,8 +169,9 @@ class TestController(MnemosyneTest):
     def test_star(self):
         card_type = self.card_type_with_id("1")
         fact_data = {"f": "f", "b": "b"}
-        card = self.controller().create_new_cards(fact_data,
-          card_type, grade=-1, tag_names=["default"])[0]
+        card = self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=["default"]
+        )[0]
         self.review_controller().show_new_question()
         self.controller().star_current_card()
         card = self.database().card(card._id, is_id_internal=True)
@@ -140,14 +187,16 @@ class TestController(MnemosyneTest):
 
         card_type = self.card_type_with_id("2")
         fact_data = {"f": "f", "b": "b"}
-        card_1, card_2 = self.controller().create_new_cards(fact_data,
-          card_type, grade=-1, tag_names=["default"])
+        card_1, card_2 = self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=["default"]
+        )
         self.controller().save_file()
 
         self.controller().show_new_file_dialog()
 
     def test_coverage_2(self):
         from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
+
         w = MainWidget(self.mnemosyne.component_manager)
         w.show_information("")
         w.show_error("")
@@ -174,9 +223,13 @@ class TestController(MnemosyneTest):
     def test_delete_current(self):
         card_type = self.card_type_with_id("1")
         fact_data = {"f": "1", "b": "1"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         fact_data = {"f": "2", "b": "2"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         self.review_controller().show_new_question()
         self.review_controller().grade_answer(0)
         self.review_controller().grade_answer(0)
@@ -188,9 +241,13 @@ class TestController(MnemosyneTest):
     def test_delete_current_2(self):
         card_type = self.card_type_with_id("1")
         fact_data = {"f": "1", "b": "1"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         fact_data = {"f": "2", "b": "2"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         self.review_controller().show_new_question()
         self.review_controller().grade_answer(0)
         self.review_controller().grade_answer(0)
@@ -203,9 +260,13 @@ class TestController(MnemosyneTest):
     def test_retain_only_child_tags(self):
         c = self.controller()
         assert c._retain_only_child_tags(["a"]) == ["a"]
-        assert sorted(c._retain_only_child_tags(["a", "b"])) == sorted(["a", "b"])
+        assert sorted(c._retain_only_child_tags(["a", "b"])) == sorted(
+            ["a", "b"]
+        )
         assert c._retain_only_child_tags(["a", "a::b"]) == ["a::b"]
-        assert c._retain_only_child_tags(["a", "a::b", "a::b::c"]) == ["a::b::c"]
+        assert c._retain_only_child_tags(["a", "a::b", "a::b::c"]) == [
+            "a::b::c"
+        ]
         assert c._retain_only_child_tags(["a", "a::b::c"]) == ["a::b::c"]
         assert c._retain_only_child_tags(["a::b", "a::b::c"]) == ["a::b::c"]
         assert c._retain_only_child_tags(["a::b::c"]) == ["a::b::c"]

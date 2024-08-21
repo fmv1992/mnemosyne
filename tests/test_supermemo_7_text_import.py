@@ -3,19 +3,15 @@
 #
 
 import os
-import shutil
-from pytest import raises
 
-from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
-from openSM2sync.log_entry import EventTypes
-from mnemosyne.libmnemosyne.ui_components.dialogs import ImportDialog
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
+from mnemosyne_test import MnemosyneTest
 
 last_error = ""
 
-class Widget(MainWidget):
 
+class Widget(MainWidget):
     def show_error(self, message):
         global last_error
         last_error = message
@@ -28,19 +24,31 @@ class Widget(MainWidget):
             return 0
         raise NotImplementedError
 
-class TestSM7Import(MnemosyneTest):
 
+class TestSM7Import(MnemosyneTest):
     def setup_method(self):
         self.initialise_data_dir()
-        self.mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True,
-                    asynchronous_database=True)
-        self.mnemosyne.components.insert(0,
-           ("mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator", "GetTextGuiTranslator"))
-        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = \
-            [("mnemosyne_test", "TestReviewWidget")]
-        self.mnemosyne.components.append(\
-            ("test_supermemo_7_text_import", "Widget"))
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne = Mnemosyne(
+            upload_science_logs=False,
+            interested_in_old_reps=True,
+            asynchronous_database=True,
+        )
+        self.mnemosyne.components.insert(
+            0,
+            (
+                "mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator",
+                "GetTextGuiTranslator",
+            ),
+        )
+        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
+            ("mnemosyne_test", "TestReviewWidget")
+        ]
+        self.mnemosyne.components.append(
+            ("test_supermemo_7_text_import", "Widget")
+        )
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def sm7_importer(self):
@@ -56,12 +64,12 @@ class TestSM7Import(MnemosyneTest):
         assert len([c for c in self.database().cards()]) == 4
 
     def teardown_method(self):
-        filename = \
-            os.path.join(os.getcwd(), "dot_test", "default.db_media", "a.png")
+        filename = os.path.join(
+            os.getcwd(), "dot_test", "default.db_media", "a.png"
+        )
         if os.path.exists(filename):
             os.remove(filename)
-        filename = \
-            os.path.join(os.getcwd(), "dot_test", "test.txt")
+        filename = os.path.join(os.getcwd(), "dot_test", "test.txt")
         if os.path.exists(filename):
             os.remove(filename)
         MnemosyneTest.teardown_method(self)

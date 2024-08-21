@@ -4,8 +4,8 @@
 
 import importlib
 
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.gui_translator import _
 
 
 class Plugin(Component):
@@ -40,17 +40,24 @@ class Plugin(Component):
 
     def __init__(self, component_manager):
         Component.__init__(self, component_manager)
-        assert self.name and self.description, \
-            "A plugin needs a name and a description."
+        assert (
+            self.name and self.description
+        ), "A plugin needs a name and a description."
         self.instantiated_components = []
         self.registered_components = []
         self.review_reset_needed = False
 
     def activate(self):
-        if not hasattr(self, "supported_API_level") or \
-            self.supported_API_level < self.current_API_level:
-            self.main_widget().show_error(self.name +\
-                _(": This plugin needs to be upgraded. Please contact its author."))
+        if (
+            not hasattr(self, "supported_API_level")
+            or self.supported_API_level < self.current_API_level
+        ):
+            self.main_widget().show_error(
+                self.name
+                + _(
+                    ": This plugin needs to be upgraded. Please contact its author."
+                )
+            )
             return
         # Don't activate a plugin twice.
         if self.instantiated_components or self.registered_components:
@@ -58,8 +65,11 @@ class Plugin(Component):
         # See if we need to reset the review process.
         self.review_reset_needed = False
         for component in self.components:
-            if component.component_type in \
-                ["scheduler", "review_controller", "review_widget"]:
+            if component.component_type in [
+                "scheduler",
+                "review_controller",
+                "review_widget",
+            ]:
                 self.review_reset_needed = True
         # Register all our regular components. Instantiate them if needed.
         for component in self.components:
@@ -76,10 +86,12 @@ class Plugin(Component):
             component_name = key
             assert type(component_name) == str
             for gui_module_name, gui_class_name in value:
-                gui_class = getattr(\
-                    importlib.import_module(gui_module_name), gui_class_name)
-                self.component_manager.add_gui_to_component(\
-                    component_name, gui_class)
+                gui_class = getattr(
+                    importlib.import_module(gui_module_name), gui_class_name
+                )
+                self.component_manager.add_gui_to_component(
+                    component_name, gui_class
+                )
         # Make necessary side effects happen.
         for component in self.components:
             if component.used_for == "configuration_defaults":
@@ -111,14 +123,21 @@ class Plugin(Component):
                     if self.database().has_clones(component):
                         can_deactivate = False
                     for card_type in self.database().card_types_in_use():
-                        if issubclass(card_type.__class__,
-                                      component.__class__):
+                        if issubclass(
+                            card_type.__class__, component.__class__
+                        ):
                             can_deactivate = False
                             break
                     if can_deactivate == False:
-                        self.main_widget().show_error(_("Cannot deactivate") \
-                            + " '" + component.name + "'. " + \
-_("There are cards with this card type (or a clone of it) in the database."))
+                        self.main_widget().show_error(
+                            _("Cannot deactivate")
+                            + " '"
+                            + component.name
+                            + "'. "
+                            + _(
+                                "There are cards with this card type (or a clone of it) in the database."
+                            )
+                        )
                         return False
                     for criterion in db.criteria():
                         criterion.card_type_deleted(component)
@@ -156,6 +175,7 @@ def register_user_plugin(plugin_class):
     """
 
     from .component_manager import _component_managers
+
     key = list(_component_managers.keys())[0]
     component_manager = _component_managers[key]
     plugin = plugin_class(component_manager=component_manager)

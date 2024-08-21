@@ -1,12 +1,20 @@
 import re
-from ..utils import stripHTML, stripHTMLMedia
+
 from ..hooks import runFilter
-from .furigana import install as furigana_install; furigana_install()
-from .hint import install as hint_install; hint_install()
+from ..utils import stripHTML
+
+from .furigana import install as furigana_install
+
+furigana_install()
+from .hint import install as hint_install
+
+hint_install()
 
 clozeReg = r"(?s)\{\{c%s::(.*?)(::(.*?))?\}\}"
 
 modifiers = {}
+
+
 def modifier(symbol):
     """Decorator for associating a function with a Mustache tag modifier.
 
@@ -16,9 +24,11 @@ def modifier(symbol):
 
     {{P yo }} => :P yo
     """
+
     def set_modifier(func):
         modifiers[symbol] = func
         return func
+
     return set_modifier
 
 
@@ -42,10 +52,10 @@ class Template:
     tag_re = None
 
     # Opening tag delimiter
-    otag = '{{'
+    otag = "{{"
 
     # Closing tag delimiter
-    ctag = '}}'
+    ctag = "}}"
 
     def __init__(self, template, context=None):
         self.template = template
@@ -65,10 +75,10 @@ class Template:
 
     def compile_regexps(self):
         """Compiles our section and tag regular expressions."""
-        tags = { 'otag': re.escape(self.otag), 'ctag': re.escape(self.ctag) }
+        tags = {"otag": re.escape(self.otag), "ctag": re.escape(self.ctag)}
 
         section = r"%(otag)s[\#|^]([^\}]*)%(ctag)s(.+?)%(otag)s/\1%(ctag)s"
-        self.section_re = re.compile(section % tags, re.M|re.S)
+        self.section_re = re.compile(section % tags, re.M | re.S)
 
         tag = r"%(otag)s(#|=|&|!|>|\{)?(.+?)\1?%(ctag)s+"
         self.tag_re = re.compile(tag % tags)
@@ -89,13 +99,13 @@ class Template:
             if m:
                 # get full field text
                 txt = get_or_attr(context, m.group(2), None)
-                m = re.search(clozeReg%m.group(1), txt)
+                m = re.search(clozeReg % m.group(1), txt)
                 if m:
                     val = m.group(1)
             else:
                 val = get_or_attr(context, section_name, None)
 
-            replacer = ''
+            replacer = ""
             inverted = section[2] == "^"
             if (val and not inverted) or (not val and inverted):
                 replacer = inner
@@ -123,14 +133,14 @@ class Template:
         return template
 
     # {{{ functions just like {{ in anki
-    @modifier('{')
+    @modifier("{")
     def render_tag(self, tag_name, context):
         return self.render_unescaped(tag_name, context)
 
-    @modifier('!')
+    @modifier("!")
     def render_comment(self, tag_name=None, context=None):
         """Rendering a comment always returns nothing."""
-        return ''
+        return ""
 
     @modifier(None)
     def render_unescaped(self, tag_name=None, context=None):
@@ -143,50 +153,59 @@ class Template:
             return txt
 
         # field modifiers
-        parts = tag_name.split(':')
+        parts = tag_name.split(":")
         extra = None
-        if len(parts) == 1 or parts[0] == '':
-            return '{unknown field %s}' % tag_name
+        if len(parts) == 1 or parts[0] == "":
+            return "{unknown field %s}" % tag_name
         else:
-            mods, tag = parts[:-1], parts[-1] #py3k has *mods, tag = parts
+            mods, tag = parts[:-1], parts[-1]  # py3k has *mods, tag = parts
 
         txt = get_or_attr(context, tag)
-        
-        #Since 'text:' and other mods can affect html on which Anki relies to
-        #process clozes, we need to make sure clozes are always
-        #treated after all the other mods, regardless of how they're specified
-        #in the template, so that {{cloze:text: == {{text:cloze:
-        #For type:, we return directly since no other mod than cloze (or other
-        #pre-defined mods) can be present and those are treated separately
+
+        # Since 'text:' and other mods can affect html on which Anki relies to
+        # process clozes, we need to make sure clozes are always
+        # treated after all the other mods, regardless of how they're specified
+        # in the template, so that {{cloze:text: == {{text:cloze:
+        # For type:, we return directly since no other mod than cloze (or other
+        # pre-defined mods) can be present and those are treated separately
         mods.reverse()
-        mods.sort(key=lambda s: not s=="type")
+        mods.sort(key=lambda s: not s == "type")
 
         for mod in mods:
             # built-in modifiers
-            if mod == 'text':
+            if mod == "text":
                 # strip html
                 txt = stripHTML(txt) if txt else ""
-            elif mod == 'type':
+            elif mod == "type":
                 # type answer field; convert it to [[type:...]] for the gui code
                 # to process
                 return "[[%s]]" % tag_name
-            elif mod.startswith('cq-') or mod.startswith('ca-'):
+            elif mod.startswith("cq-") or mod.startswith("ca-"):
                 # cloze deletion
                 mod, extra = mod.split("-")
-                txt = self.clozeText(txt, extra, mod[1]) if txt and extra else ""
+                txt = (
+                    self.clozeText(txt, extra, mod[1]) if txt and extra else ""
+                )
             else:
                 # hook-based field modifier
                 mod, extra = re.search("^(.*?)(?:\((.*)\))?$", mod).groups()
-                txt = runFilter('fmod_' + mod, txt or '', extra or '', context,
-                                tag, tag_name);
+                txt = runFilter(
+                    "fmod_" + mod,
+                    txt or "",
+                    extra or "",
+                    context,
+                    tag,
+                    tag_name,
+                )
                 if txt is None:
-                    return '{unknown field %s}' % tag_name
+                    return "{unknown field %s}" % tag_name
         return txt
 
     def clozeText(self, txt, ord, type):
         reg = clozeReg
-        if not re.search(reg%ord, txt):
+        if not re.search(reg % ord, txt):
             return ""
+
         def repl(m):
             # replace chosen cloze with type
             if type == "q":
@@ -196,17 +215,18 @@ class Template:
                     return "<span class=cloze>[...]</span>"
             else:
                 return "<span class=cloze>%s</span>" % m.group(1)
-        txt = re.sub(reg%ord, repl, txt)
-        # and display other clozes normally
-        return re.sub(reg%"\d+", "\\1", txt)
 
-    @modifier('=')
+        txt = re.sub(reg % ord, repl, txt)
+        # and display other clozes normally
+        return re.sub(reg % "\d+", "\\1", txt)
+
+    @modifier("=")
     def render_delimiter(self, tag_name=None, context=None):
         """Changes the Mustache delimiter."""
         try:
-            self.otag, self.ctag = tag_name.split(' ')
+            self.otag, self.ctag = tag_name.split(" ")
         except ValueError:
             # invalid
             return
         self.compile_regexps()
-        return ''
+        return ""

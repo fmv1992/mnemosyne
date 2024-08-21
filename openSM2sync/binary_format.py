@@ -2,6 +2,7 @@
 # binary_format.py <Peter.Bienstman@gmail.com>
 #
 
+
 class BinaryFormat(object):
 
     """Used when doing the initial sync and downloading the entire database
@@ -15,8 +16,7 @@ class BinaryFormat(object):
     def supports(self, program_name, program_version, database_version):
         raise NotImplementedError
 
-    def binary_filename(self, store_pregenerated_data,
-            interested_in_old_reps):
+    def binary_filename(self, store_pregenerated_data, interested_in_old_reps):
         raise NotImplementedError
 
     def clean_up(self):

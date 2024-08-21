@@ -17,7 +17,7 @@ class FactView(CompareOnId):
 
     The purpose of the decorator dictionaries is to allow for cards that read
     'What is the answer to $question', as opposed to just '$question'.
-    
+
     """
 
     def __init__(self, name, id):

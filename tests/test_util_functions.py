@@ -2,13 +2,18 @@
 # test_util_functions.py - Mike Appleby <mike@peacecorps.org.cv>
 #
 
-import os
-import shutil
 
-from mnemosyne.libmnemosyne.utils import *
+from mnemosyne.libmnemosyne.utils import (
+    contract_path,
+    copy_file_to_dir,
+    is_filesystem_case_insensitive,
+    mangle,
+    numeric_string_cmp_key,
+    strip_tags,
+)
+
 
 class TestUtilFunctions(object):
-
     def test_numeric_string_cmp_1(self):
         s1 = "abc123"
         s2 = "abc1000"
@@ -46,24 +51,29 @@ class TestUtilFunctions(object):
 
     def test_contract_windows(self):
         assert contract_path("C:\\a\\b", "C:\\a") == "b"
-        #assert contract_path("C:\\a\\b", "c:\\a") == "b"
+        # assert contract_path("C:\\a\\b", "c:\\a") == "b"
 
     def test_mangle(self):
-        for name in [mangle("1aa"), mangle("a!@#$% ^&*(){}{a"),
-                     mangle("a\xac\\u1234\\u20ac\\U00008000")]:
-            C = type(name, (self.__class__, ),
-                 {"name": 1})
+        for name in [
+            mangle("1aa"),
+            mangle("a!@#$% ^&*(){}{a"),
+            mangle("a\xac\\u1234\\u20ac\\U00008000"),
+        ]:
+            C = type(name, (self.__class__,), {"name": 1})
 
     def test_copy(self):
         assert copy_file_to_dir("/home/joe/test.py", "/home/joe") == "test.py"
         assert copy_file_to_dir("/home/joe/test.py", "/home/joe/") == "test.py"
-        assert copy_file_to_dir("/home/joe/a/test.py", "/home/joe") == "a/test.py"
-        assert copy_file_to_dir("/home/joe/a/test.py", "/home/joe/") == "a/test.py"
+        assert (
+            copy_file_to_dir("/home/joe/a/test.py", "/home/joe") == "a/test.py"
+        )
+        assert (
+            copy_file_to_dir("/home/joe/a/test.py", "/home/joe/")
+            == "a/test.py"
+        )
 
     def test_strip_tags(self):
         assert strip_tags("""<img = "">""") == ""
 
     def test_filesystem(self):
         is_filesystem_case_insensitive()
-
-

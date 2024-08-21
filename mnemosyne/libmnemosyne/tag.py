@@ -2,7 +2,7 @@
 # tag.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.utils import rand_uuid, CompareOnId
+from mnemosyne.libmnemosyne.utils import CompareOnId, rand_uuid
 
 
 class Tag(CompareOnId):
@@ -26,4 +26,3 @@ class Tag(CompareOnId):
         self._id = None
         self.name = name
         self.extra_data = {}
-

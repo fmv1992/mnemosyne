@@ -2,8 +2,8 @@
 # database.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.gui_translator import _
 
 
 class Database(Component):
@@ -295,8 +295,9 @@ class Database(Component):
     def set_scheduler_data(self, scheduler_data):
         raise NotImplementedError
 
-    def cards_with_scheduler_data(self, scheduler_data, sort_key="", limit=-1,
-                                  max_ret_reps=-1):
+    def cards_with_scheduler_data(
+        self, scheduler_data, sort_key="", limit=-1, max_ret_reps=-1
+    ):
         raise NotImplementedError
 
     def scheduler_data_count(self, scheduler_data, max_ret_reps=-1):
@@ -306,8 +307,9 @@ class Database(Component):
     # Extra queries for language analysis.
     #
 
-    def known_recognition_questions_count_from_card_types_ids(\
-        self, card_type_ids):
+    def known_recognition_questions_count_from_card_types_ids(
+        self, card_type_ids
+    ):
         raise NotImplementedError
 
     def known_recognition_questions_from_card_types_ids(self, card_type_ids):
@@ -326,9 +328,9 @@ class Database(Component):
 
         for card_type in self.card_types():
             if self.is_user_card_type(card_type):
-                user_card_types.append(card_type);
+                user_card_types.append(card_type)
             else:
-                result.append(card_type);
+                result.append(card_type)
 
         result.sort(key=lambda x: x.id)
         user_card_types.sort(key=lambda x: x.name.lower())
@@ -336,7 +338,6 @@ class Database(Component):
         result.extend(user_card_types)
 
         return result
-
 
 
 class DatabaseMaintenance(Component):
@@ -358,4 +359,3 @@ class DatabaseMaintenance(Component):
         self.database().archive_old_logs()
         self.database().defragment()
         self.main_widget().close_progress()
-

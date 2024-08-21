@@ -26,8 +26,6 @@ class Controller(Component):
 
         """For code that needs to run periodically."""
 
-        pass
-
     def update_title(self):
         raise NotImplementedError
 
@@ -37,19 +35,28 @@ class Controller(Component):
     def set_study_mode(self, study_mode):
         raise NotImplementedError
 
-    def create_new_cards(self, fact_data, card_type, grade,
-            tag_names, check_for_duplicates=True, save=True):
+    def create_new_cards(
+        self,
+        fact_data,
+        card_type,
+        grade,
+        tag_names,
+        check_for_duplicates=True,
+        save=True,
+    ):
         raise NotImplementedError
 
     def show_edit_card_dialog(self):
         raise NotImplementedError
 
-    def edit_card_and_sisters(self, card, new_fact_data, new_card_type,
-            new_tag_names, correspondence):
+    def edit_card_and_sisters(
+        self, card, new_fact_data, new_card_type, new_tag_names, correspondence
+    ):
         raise NotImplementedError
 
-    def change_card_type(self, facts, old_card_type, new_card_type,
-                         correspondence):
+    def change_card_type(
+        self, facts, old_card_type, new_card_type, correspondence
+    ):
 
         """Note: all facts should have the same card type."""
 

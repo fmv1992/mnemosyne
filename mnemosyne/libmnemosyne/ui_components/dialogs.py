@@ -120,4 +120,3 @@ class PronouncerDialog(Dialog):
 class TranslatorDialog(Dialog):
 
     component_type = "translator_dialog"
-

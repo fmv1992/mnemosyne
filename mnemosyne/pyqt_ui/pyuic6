@@ -65,7 +65,7 @@ class CompileUi(object):
 
         if cls._wrappeduic:
             return
-        from PyQt6.uic.Compiler import compiler, qtproxies, indenter
+        from PyQt6.uic.Compiler import compiler, indenter, qtproxies
 
         class _UICompiler(compiler.UICompiler):
 

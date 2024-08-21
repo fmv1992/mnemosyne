@@ -3,8 +3,9 @@
 #
 
 import os
+
 if "ANDROID" in os.environ:
-    from mnemosyne.android_python.utf8_filenames import *
+    pass
 from openSM2sync.utils import normalise_path
 
 
@@ -22,7 +23,7 @@ class Partner(object):
         buffer = binary_file.read(self.BUFFER_SIZE)
         if progress_bar:
             self.ui.set_progress_range(file_size)
-            self.ui.set_progress_update_interval(file_size/50)
+            self.ui.set_progress_update_interval(file_size / 50)
             self.ui.increase_progress(len(buffer))
         while buffer:
             yield buffer
@@ -32,8 +33,9 @@ class Partner(object):
         if progress_bar:
             self.ui.set_progress_value(file_size)
 
-    def download_binary_file(self, stream, filename, file_size,
-                             progress_bar=True):
+    def download_binary_file(
+        self, stream, filename, file_size, progress_bar=True
+    ):
         filename = normalise_path(filename)
         directory = os.path.dirname(filename)
         if not os.path.exists(directory):
@@ -41,7 +43,7 @@ class Partner(object):
         downloaded_file = open(filename, "wb")
         if progress_bar:
             self.ui.set_progress_range(file_size)
-            self.ui.set_progress_update_interval(file_size/50)
+            self.ui.set_progress_update_interval(file_size / 50)
         buffer = stream.read(self.BUFFER_SIZE)
         while buffer:
             downloaded_file.write(buffer)
@@ -51,4 +53,3 @@ class Partner(object):
         if progress_bar:
             self.ui.set_progress_value(file_size)
         downloaded_file.close()
-

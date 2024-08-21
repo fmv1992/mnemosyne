@@ -4,8 +4,6 @@
 
 from PyQt6 import QtWebEngineWidgets
 
-from mnemosyne.libmnemosyne.gui_translator import _
-
 
 class QWebEngineView2(QtWebEngineWidgets.QWebEngineView):
 
@@ -16,14 +14,14 @@ class QWebEngineView2(QtWebEngineWidgets.QWebEngineView):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        #QtWebEngineWidgets.QWebEngineProfile.defaultProfile().\
+        # QtWebEngineWidgets.QWebEngineProfile.defaultProfile().\
         # setHttpCacheType(QtWebEngineWidgets.QWebEngineProfile.MemoryHttpCache)
-        #self.page().profile().setPersistentCookiesPolicy(\
+        # self.page().profile().setPersistentCookiesPolicy(\
         #    QtWebEngineWidgets.QWebEngineProfile.NoPersistentCookies)
         # self.linkClicked.connect(self.link_clicked)
         # self.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
 
     def link_clicked(self, url):
         import webbrowser  # Slow import
-        webbrowser.open(url.toString())
 
+        webbrowser.open(url.toString())

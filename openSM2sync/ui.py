@@ -2,6 +2,7 @@
 # ui.py <Peter.Bienstman@gmail.com>
 #
 
+
 class UI(object):
 
     """Interface that needs to be implemented by the Ui object used in the
@@ -28,16 +29,12 @@ class UI(object):
 
         """
 
-        pass
-
     def set_progress_range(self, maximum):
 
         """Progress bar runs from 0 to 'maximum. If 'maximum' is zero, this is
         just a busy dialog. Should be the default for set_progress_text.
 
         """
-
-        pass
 
     def set_progress_update_interval(self, update_interval):
 
@@ -48,22 +45,14 @@ class UI(object):
 
         """
 
-        pass
-
     def increase_progress(self, value):
 
         """Increase the progress by 'value'."""
-
-        pass
 
     def set_progress_value(self, value):
 
         """If 'value' is maximum or beyond, the dialog closes."""
 
-        pass
-
     def close_progress(self):
 
         """Convenience function for closing a busy dialog."""
-
-        pass

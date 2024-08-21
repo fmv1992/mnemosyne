@@ -17,8 +17,8 @@ class Translator(Component):
     """
 
     component_type = "translator"
-    used_for = None # Single ISO 639-1 code, or multiple as tuple of strings.
-    popup_menu_text = None # "Insert translation..."
+    used_for = None  # Single ISO 639-1 code, or multiple as tuple of strings.
+    popup_menu_text = None  # "Insert translation..."
 
     def translate(self, card_type, foreign_text, dest_language_id):
 
@@ -31,8 +31,9 @@ class Translator(Component):
         """Returns translated text to insert. The user can set the target
         language in the dialog."""
 
-        dialog = self.gui_components[0](\
-            translator=self, component_manager=self.component_manager)
+        dialog = self.gui_components[0](
+            translator=self, component_manager=self.component_manager
+        )
         self.component_manager.register(dialog)
         dialog.activate(card_type, foreign_text)
         self.instantiated_gui_components.append(dialog)

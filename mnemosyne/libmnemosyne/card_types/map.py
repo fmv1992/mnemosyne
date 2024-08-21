@@ -4,10 +4,10 @@
 
 import copy
 
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.card_type import CardType
-from mnemosyne.libmnemosyne.plugin import Plugin
 from mnemosyne.libmnemosyne.fact_view import FactView
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.plugin import Plugin
 
 
 class Map(CardType):
@@ -16,9 +16,11 @@ class Map(CardType):
     name = _("Map")
 
     # List and name the keys.
-    fact_keys_and_names = [("loc", _("Location")),
-                           ("blank", _("Blank map")),
-                           ("marked", _("Marked map"))]
+    fact_keys_and_names = [
+        ("loc", _("Location")),
+        ("blank", _("Blank map")),
+        ("marked", _("Marked map")),
+    ]
 
     # Recognition.
     v1 = FactView(_("Recognition"), "4.1")
@@ -42,14 +44,15 @@ class Map(CardType):
         return _fact_data
 
     def fact_key_format_proxies(self):
-        return {"loc": "loc", "blank": "blank",
-                "marked": "marked", "_": "loc"}
+        return {"loc": "loc", "blank": "blank", "marked": "marked", "_": "loc"}
 
 
 class MapPlugin(Plugin):
 
     name = _("Map")
-    description = _("""A card type for learning locations on a map.\n
-Displays the answer map on top of the question map, rather than below it as a second map.""")
+    description = _(
+        """A card type for learning locations on a map.\n
+Displays the answer map on top of the question map, rather than below it as a second map."""
+    )
     components = [Map]
     supported_API_level = 3

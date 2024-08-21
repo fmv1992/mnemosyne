@@ -2,7 +2,6 @@
 # UDP_widget.py <Peter.Bienstman@gmail.com>
 #
 
-import socket
 import inspect
 
 
@@ -27,7 +26,7 @@ class UDP_Widget(object):
         caller_name = inspect.stack()[1][3]
         command = "@@%s.%s(" % (self.component_type, caller_name)
         for arg in args:
-            command += "\"\"\"%s\"\"\"," % str(arg).encode("utf-8")
+            command += '"""%s""",' % str(arg).encode("utf-8")
         if args:
             command = command[:-1]
         self.component_manager.socket.sendall(command + ")\n")

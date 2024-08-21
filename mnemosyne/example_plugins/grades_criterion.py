@@ -6,6 +6,7 @@
 
 from mnemosyne.libmnemosyne.criterion import Criterion
 
+
 class GradesCriterion(Criterion):
 
     """Only review cards with grade lower than or equal to 'threshold'."""
@@ -17,7 +18,7 @@ class GradesCriterion(Criterion):
         self.threshold = 5
 
     def apply_to_card(self, card):
-        card.active = (card.grade <= self.threshold)
+        card.active = card.grade <= self.threshold
 
     def data_to_string(self):
         return repr(self.threshold)
@@ -30,6 +31,7 @@ class GradesCriterion(Criterion):
 
 from mnemosyne.libmnemosyne.criterion import CriterionApplier
 
+
 class GradesCriterionApplier(CriterionApplier):
 
     used_for = GradesCriterion
@@ -37,23 +39,25 @@ class GradesCriterionApplier(CriterionApplier):
     def apply_to_database(self, criterion):
         db = self.database()
         db.con.execute("update cards set active=0")
-        db.con.execute("update cards set active=1 where grade<=?",
-                       (criterion.threshold, ))
+        db.con.execute(
+            "update cards set active=1 where grade<=?", (criterion.threshold,)
+        )
 
 
 # The UI widget to set the threshold.
 
-from mnemosyne.libmnemosyne.ui_components.criterion_widget \
-     import CriterionWidget
+from mnemosyne.libmnemosyne.ui_components.criterion_widget import (
+    CriterionWidget,
+)
+from PyQt6 import QtWidgets
 
-from PyQt6 import QtCore, QtGui, QtWidgets
 
 class GradesCriterionWdgt(QtWidgets.QWidget, CriterionWidget):
 
     used_for = GradesCriterion
 
     def __init__(self, **kwds):
-        super().__init__(**kwds)    
+        super().__init__(**kwds)
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.label = QtWidgets.QLabel("Activate cards with grade <=", self)
@@ -77,9 +81,11 @@ class GradesCriterionWdgt(QtWidgets.QWidget, CriterionWidget):
     def criterion_changed(self):
         self.parent_saved_sets.clearSelection()
 
+
 # Wrap it into a Plugin and then register the Plugin.
 
 from mnemosyne.libmnemosyne.plugin import Plugin
+
 
 class GradesCriterionPlugin(Plugin):
     name = "Activity criterion example"
@@ -87,5 +93,7 @@ class GradesCriterionPlugin(Plugin):
     components = [GradesCriterion, GradesCriterionApplier, GradesCriterionWdgt]
     supported_API_level = 3
 
+
 from mnemosyne.libmnemosyne.plugin import register_user_plugin
+
 register_user_plugin(GradesCriterionPlugin)

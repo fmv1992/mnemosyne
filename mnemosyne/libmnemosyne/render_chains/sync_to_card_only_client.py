@@ -2,10 +2,10 @@
 # sync_to_card_only_client.py <Peter.Bienstman@gmail.com>
 #
 
+from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
 from mnemosyne.libmnemosyne.filters.latex import Latex
 from mnemosyne.libmnemosyne.render_chain import RenderChain
 from mnemosyne.libmnemosyne.renderers.html_css import HtmlCss
-from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
 
 
 class SyncToCardOnlyClient(RenderChain):

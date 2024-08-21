@@ -3,19 +3,17 @@
 #
 
 import os
-import sys
-import shutil
-from pytest import raises
 
-from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
+from mnemosyne_test import MnemosyneTest
+from pytest import raises
 
 filename = None
 last_error = None
 
-class Widget(MainWidget):
 
+class Widget(MainWidget):
     def show_information(self, s1):
         raise NotImplementedError
 
@@ -26,25 +24,36 @@ class Widget(MainWidget):
     def get_filename_to_open(self, a, b, c):
         return filename
 
-class TestPlugin(MnemosyneTest):
 
+class TestPlugin(MnemosyneTest):
     def setup_method(self):
         self.initialise_data_dir()
-        self.mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True,
-            asynchronous_database=True)
-        self.mnemosyne.components.insert(0,
-           ("mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator", "GetTextGuiTranslator"))
-        self.mnemosyne.components.append(\
-            ("test_plugin", "Widget"))
-        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = \
-            [("mnemosyne_test", "TestReviewWidget")]
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne = Mnemosyne(
+            upload_science_logs=False,
+            interested_in_old_reps=True,
+            asynchronous_database=True,
+        )
+        self.mnemosyne.components.insert(
+            0,
+            (
+                "mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator",
+                "GetTextGuiTranslator",
+            ),
+        )
+        self.mnemosyne.components.append(("test_plugin", "Widget"))
+        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
+            ("mnemosyne_test", "TestReviewWidget")
+        ]
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def test_1(self):
         with raises(AssertionError):
             from mnemosyne.libmnemosyne.plugin import Plugin
-            p = Plugin(self.mnemosyne.component_manager)
+
+            Plugin(self.mnemosyne.component_manager)
 
     def test_2(self):
 
@@ -70,12 +79,12 @@ class TestPlugin(MnemosyneTest):
 
         p.activate()
 
-        fact_data = {"f": "question",
-                     "b": "answer"}
+        fact_data = {"f": "question", "b": "answer"}
         card_type = self.card_type_with_id("666")
-        self.controller().create_new_cards(fact_data, card_type,
-                                              grade=-1, tag_names=["default"])
-        p.deactivate() # Pops up an information box that this is not possible.
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=["default"]
+        )
+        p.deactivate()  # Pops up an information box that this is not possible.
         global last_error
         assert last_error.startswith("Cannot deactivate")
         last_error = ""
@@ -108,11 +117,10 @@ class TestPlugin(MnemosyneTest):
 
         self.mnemosyne.controller().clone_card_type(card_type, "new_name")
 
-        p.deactivate() # Pops up an information box that this is not possible.
+        p.deactivate()  # Pops up an information box that this is not possible.
         global last_error
         assert last_error.startswith("Cannot deactivate")
         last_error = ""
-
 
     def test_3(self):
 
@@ -138,29 +146,32 @@ class TestPlugin(MnemosyneTest):
 
         p.activate()
 
-        fact_data = {"f": "question",
-                     "b": "answer"}
+        fact_data = {"f": "question", "b": "answer"}
         card_type = self.card_type_with_id("666")
-        card = self.controller().create_new_cards(fact_data, card_type,
-                                          grade=-1, tag_names=["default"])[0]
+        card = self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=["default"]
+        )[0]
         fact = card.fact
         self.controller().delete_facts_and_their_cards([fact])
 
-        p.deactivate() # Should work without problems.
+        p.deactivate()  # Should work without problems.
 
     def test_4(self):
 
-        from mnemosyne.libmnemosyne.plugin import Plugin
         from mnemosyne.libmnemosyne.card_types.front_to_back import FrontToBack
-        from mnemosyne.pyqt_ui.card_type_wdgt_generic import GenericCardTypeWdgt
+        from mnemosyne.libmnemosyne.plugin import Plugin
+        from mnemosyne.pyqt_ui.card_type_wdgt_generic import (
+            GenericCardTypeWdgt,
+        )
 
         class RedGenericCardTypeWdgt(GenericCardTypeWdgt):
 
             used_for = FrontToBack
 
             def __init__(self, parent, component_manager):
-                GenericCardTypeWdgt.__init__(self, component_manager,
-                                             parent, FrontToBack())
+                GenericCardTypeWdgt.__init__(
+                    self, component_manager, parent, FrontToBack()
+                )
 
         class RedPlugin(Plugin):
             name = "Red"
@@ -170,11 +181,19 @@ class TestPlugin(MnemosyneTest):
 
         p = RedPlugin(self.mnemosyne.component_manager)
         p.activate()
-        assert self.mnemosyne.component_manager.current\
-                    ("generic_card_type_widget", used_for=FrontToBack) != None
+        assert (
+            self.mnemosyne.component_manager.current(
+                "generic_card_type_widget", used_for=FrontToBack
+            )
+            != None
+        )
         p.deactivate()
-        assert self.mnemosyne.component_manager.current\
-                    ("generic_card_type_widget", used_for=FrontToBack) == None
+        assert (
+            self.mnemosyne.component_manager.current(
+                "generic_card_type_widget", used_for=FrontToBack
+            )
+            == None
+        )
 
     def test_5(self):
         for plugin in self.plugins():
@@ -186,13 +205,18 @@ class TestPlugin(MnemosyneTest):
     def test_6(self):
         with raises(NotImplementedError):
             from mnemosyne.libmnemosyne.hook import Hook
+
             Hook(self.mnemosyne.component_manager).run()
 
     def test_install_plugin(self):
         global filename
-        filename = os.path.join(os.getcwd(), "tests", "files", "hide_toolbar.plugin")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "hide_toolbar.plugin"
+        )
         self.controller().install_plugin()
-        assert os.path.exists(os.path.join(os.getcwd(), "dot_test", "plugins", "plugin_data"))
+        assert os.path.exists(
+            os.path.join(os.getcwd(), "dot_test", "plugins", "plugin_data")
+        )
         assert len(self.plugins()) == 4
         # Try to install twice.
         self.controller().install_plugin()
@@ -202,8 +226,17 @@ class TestPlugin(MnemosyneTest):
             if plugin.__class__.__name__ == "HideToolbarPlugin":
                 self.controller().delete_plugin(plugin)
                 break
-        assert not os.path.exists(os.path.join(os.getcwd(), "dot_test", "plugins", "plugin_data"))
-        assert not os.path.exists(os.path.join(os.getcwd(), "dot_test", "plugins", "HideToolbarPlugin.manifest"))
+        assert not os.path.exists(
+            os.path.join(os.getcwd(), "dot_test", "plugins", "plugin_data")
+        )
+        assert not os.path.exists(
+            os.path.join(
+                os.getcwd(),
+                "dot_test",
+                "plugins",
+                "HideToolbarPlugin.manifest",
+            )
+        )
         assert os.path.exists(os.path.join(os.getcwd(), "dot_test", "plugins"))
         assert len(self.plugins()) == 3
         # Try to reinstall immediately.
@@ -218,7 +251,9 @@ class TestPlugin(MnemosyneTest):
     def test_install_plugin_missing(self):
         global filename
         global last_error
-        filename = os.path.join(os.getcwd(), "tests", "files", "hide_toolbar_missing.plugin")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "hide_toolbar_missing.plugin"
+        )
         self.controller().install_plugin()
         assert last_error.startswith("No plugin found")
         last_error = None
@@ -226,7 +261,9 @@ class TestPlugin(MnemosyneTest):
     def test_install_plugin_corrupt(self):
         global filename
         global last_error
-        filename = os.path.join(os.getcwd(), "tests", "files", "hide_toolbar_corrupt.plugin")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "hide_toolbar_corrupt.plugin"
+        )
         self.controller().install_plugin()
         assert last_error.startswith("Error when running")
         last_error = None

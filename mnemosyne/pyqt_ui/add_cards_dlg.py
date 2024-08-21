@@ -4,19 +4,14 @@
 
 import copy
 
-from PyQt6 import QtCore, QtGui, QtWidgets
-
 from mnemosyne.libmnemosyne.fact import Fact
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.pyqt_ui.ui_add_cards_dlg import Ui_AddCardsDlg
-from mnemosyne.pyqt_ui.preview_cards_dlg import PreviewCardsDlg
 from mnemosyne.libmnemosyne.ui_components.dialogs import AddCardsDialog
-from mnemosyne.pyqt_ui.card_type_wdgt_generic import GenericCardTypeWdgt
-from mnemosyne.pyqt_ui.convert_card_type_keys_dlg import \
-     ConvertCardTypeKeysDlg
-from mnemosyne.pyqt_ui.tip_after_starting_n_times import \
-     TipAfterStartingNTimes
+from mnemosyne.pyqt_ui.convert_card_type_keys_dlg import ConvertCardTypeKeysDlg
+from mnemosyne.pyqt_ui.preview_cards_dlg import PreviewCardsDlg
+from mnemosyne.pyqt_ui.tip_after_starting_n_times import TipAfterStartingNTimes
+from mnemosyne.pyqt_ui.ui_add_cards_dlg import Ui_AddCardsDlg
+from PyQt6 import QtCore, QtWidgets
 
 
 class AddEditCards(TipAfterStartingNTimes):
@@ -24,20 +19,35 @@ class AddEditCards(TipAfterStartingNTimes):
     """Code shared between the add and the edit dialogs."""
 
     started_n_times_counter = "started_add_edit_cards_n_times"
-    tip_after_n_times = \
-        {3: _("You can add multiple tags to a card by separating tags with a comma in the 'Tag(s)' input field."),
-         6: _("You can organise tags in a hierarchy by using :: as separator, e.g. My book::Lesson 1."),
-         9: _("You can add images and sounds to your cards. Right-click on an input field when editing a card to bring up a pop-up menu to do so."),
-         12: _("If for a certain card type cloned from Vocabulary you don't need a pronunciation field, you can hide it by right-clicking on it and using the pop-up menu."),
-         15: _("You can use Tab to move between the fields. For 'Add cards', use Ctrl+Enter for 'Yet to learn', and Ctrl+2, etc. for the grades. For 'Edit card', use Ctrl-Enter to close."),
-         18: _("If you use 'Edit cards', changes are made to all the sister cards simultaneously."),
-         21: _("If your card type has a language associated to it, you can right click to insert text-to-speech or translations.")}
+    tip_after_n_times = {
+        3: _(
+            "You can add multiple tags to a card by separating tags with a comma in the 'Tag(s)' input field."
+        ),
+        6: _(
+            "You can organise tags in a hierarchy by using :: as separator, e.g. My book::Lesson 1."
+        ),
+        9: _(
+            "You can add images and sounds to your cards. Right-click on an input field when editing a card to bring up a pop-up menu to do so."
+        ),
+        12: _(
+            "If for a certain card type cloned from Vocabulary you don't need a pronunciation field, you can hide it by right-clicking on it and using the pop-up menu."
+        ),
+        15: _(
+            "You can use Tab to move between the fields. For 'Add cards', use Ctrl+Enter for 'Yet to learn', and Ctrl+2, etc. for the grades. For 'Edit card', use Ctrl-Enter to close."
+        ),
+        18: _(
+            "If you use 'Edit cards', changes are made to all the sister cards simultaneously."
+        ),
+        21: _(
+            "If your card type has a language associated to it, you can right click to insert text-to-speech or translations."
+        ),
+    }
 
     def activate(self):
         AddCardsDialog.activate(self)
         self.show_tip_after_starting_n_times()
         status = self.exec()
-        return (status == QtWidgets.QDialog.DialogCode.Accepted)
+        return status == QtWidgets.QDialog.DialogCode.Accepted
 
     def initialise_card_types_combobox(self, current_card_type_name):
         # We calculate card_type_by_name here because these names can change
@@ -53,8 +63,9 @@ class AddEditCards(TipAfterStartingNTimes):
             if card_type.hidden_from_UI == True:
                 continue
             # Adding M-sided cards or converting to them is not (yet) supported.
-            if _(card_type.name) != current_card_type_name \
-               and card_type.id.startswith("7"):
+            if _(
+                card_type.name
+            ) != current_card_type_name and card_type.id.startswith("7"):
                 continue
             if _(card_type.name) == current_card_type_name:
                 self.card_type = card_type
@@ -66,8 +77,9 @@ class AddEditCards(TipAfterStartingNTimes):
             self.card_type_index = 0
         self.card_types_widget.setCurrentIndex(self.card_type_index)
         # Now that the combobox is filled, we can connect the signal.
-        self.card_types_widget.currentTextChanged[str].\
-            connect(self.card_type_changed)
+        self.card_types_widget.currentTextChanged[str].connect(
+            self.card_type_changed
+        )
         self.correspondence = {}  # Used when changing card types.
         self.update_card_widget()
 
@@ -103,15 +115,22 @@ class AddEditCards(TipAfterStartingNTimes):
         card_type_name = self.card_types_widget.currentText()
         self.card_type = self.card_type_by_name[card_type_name]
         try:
-            self.card_type_widget = self.component_manager.current \
-                ("card_type_widget", used_for=self.card_type.__class__) \
-                (card_type=self.card_type, parent=self,
-                 component_manager=self.component_manager)
-        except Exception as e:
+            self.card_type_widget = self.component_manager.current(
+                "card_type_widget", used_for=self.card_type.__class__
+            )(
+                card_type=self.card_type,
+                parent=self,
+                component_manager=self.component_manager,
+            )
+        except Exception:
             if not self.card_type_widget:
-                self.card_type_widget = self.component_manager.current \
-                    ("generic_card_type_widget")(card_type=self.card_type,
-                    parent=self, component_manager=self.component_manager)
+                self.card_type_widget = self.component_manager.current(
+                    "generic_card_type_widget"
+                )(
+                    card_type=self.card_type,
+                    parent=self,
+                    component_manager=self.component_manager,
+                )
         self.card_type_widget.set_fact_data(prefill_fact_data)
         self.card_type_widget.show()
         self.vbox_layout.insertWidget(1, self.card_type_widget)
@@ -142,12 +161,19 @@ class AddEditCards(TipAfterStartingNTimes):
     def card_type_changed(self, new_card_type_name):
         new_card_type_name = new_card_type_name
         new_card_type = self.card_type_by_name[new_card_type_name]
-        if self.card_type.fact_keys().issubset(new_card_type.fact_keys()) or \
-            self.card_type_widget.is_empty():
+        if (
+            self.card_type.fact_keys().issubset(new_card_type.fact_keys())
+            or self.card_type_widget.is_empty()
+        ):
             self.update_card_widget()
             return
-        dlg = ConvertCardTypeKeysDlg(self.card_type, new_card_type,
-            self.correspondence, check_required_fact_keys=False, parent=self)
+        dlg = ConvertCardTypeKeysDlg(
+            self.card_type,
+            new_card_type,
+            self.correspondence,
+            check_required_fact_keys=False,
+            parent=self,
+        )
         if dlg.exec() != QtWidgets.QDialog.DialogCode.Accepted:
             # Set correspondence so as not to erase previous data.
             self.correspondence = {}
@@ -163,8 +189,12 @@ class AddEditCards(TipAfterStartingNTimes):
         fact = Fact(fact_data)
         cards = self.card_type.create_sister_cards(fact)
         tag_text = self.tags.currentText()
-        dlg = PreviewCardsDlg(cards, tag_text,
-            component_manager=self.component_manager, parent=self)
+        dlg = PreviewCardsDlg(
+            cards,
+            tag_text,
+            component_manager=self.component_manager,
+            parent=self,
+        )
         dlg.exec()
 
     def __del__(self):
@@ -172,36 +202,46 @@ class AddEditCards(TipAfterStartingNTimes):
         self.card_type_widget = None
 
 
-class AddCardsDlg(QtWidgets.QDialog, AddEditCards,
-                  AddCardsDialog, Ui_AddCardsDlg):
-
+class AddCardsDlg(
+    QtWidgets.QDialog, AddEditCards, AddCardsDialog, Ui_AddCardsDlg
+):
     def __init__(self, card_type=None, fact_data=None, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() \
-            | QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
-        self.setWindowFlags(self.windowFlags() \
-            & ~ QtCore.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+        )
+        self.setWindowFlags(
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+        )
         if card_type:
             last_used_card_type = card_type
         else:
             last_used_card_type_id = self.config()["last_used_card_type_id"]
             try:
-                last_used_card_type = self.card_type_with_id(\
-                    last_used_card_type_id)
+                last_used_card_type = self.card_type_with_id(
+                    last_used_card_type_id
+                )
             except:
                 # First time use, or card type was deleted.
                 last_used_card_type = self.card_type_with_id("1")
         self.initialise_card_types_combobox(last_used_card_type.name)
-        if last_used_card_type.id not in \
-            self.config()["last_used_tags_for_card_type_id"]:
-            self.config()["last_used_tags_for_card_type_id"]\
-                [last_used_card_type.id] = ""
+        if (
+            last_used_card_type.id
+            not in self.config()["last_used_tags_for_card_type_id"]
+        ):
+            self.config()["last_used_tags_for_card_type_id"][
+                last_used_card_type.id
+            ] = ""
         if not self.config()["is_last_used_tags_per_card_type"]:
             self.update_tags_combobox(self.config()["last_used_tags"])
         else:
-            self.update_tags_combobox(self.config()\
-                ["last_used_tags_for_card_type_id"][last_used_card_type.id])
+            self.update_tags_combobox(
+                self.config()["last_used_tags_for_card_type_id"][
+                    last_used_card_type.id
+                ]
+            )
         if fact_data:
             self.card_type_widget.set_fact_data(fact_data)
         self.grades = QtWidgets.QButtonGroup()
@@ -224,25 +264,37 @@ class AddCardsDlg(QtWidgets.QDialog, AddEditCards,
         # not when editing.
         new_card_type = self.card_type_by_name[new_card_type_name]
         self.config()["last_used_card_type_id"] = new_card_type.id
-        if new_card_type.id not in \
-            self.config()["last_used_tags_for_card_type_id"]:
-            self.config()["last_used_tags_for_card_type_id"]\
-                [new_card_type.id] = ""
+        if (
+            new_card_type.id
+            not in self.config()["last_used_tags_for_card_type_id"]
+        ):
+            self.config()["last_used_tags_for_card_type_id"][
+                new_card_type.id
+            ] = ""
         if not self.config()["is_last_used_tags_per_card_type"]:
             if not self.tags.currentText():
                 self.update_tags_combobox(self.config()["last_used_tags"])
         else:
-            if not self.tags.currentText() \
-                or self.card_type_widget.is_empty():
-                self.update_tags_combobox(self.config()\
-                    ["last_used_tags_for_card_type_id"][new_card_type.id])
+            if not self.tags.currentText() or self.card_type_widget.is_empty():
+                self.update_tags_combobox(
+                    self.config()["last_used_tags_for_card_type_id"][
+                        new_card_type.id
+                    ]
+                )
         AddEditCards.card_type_changed(self, new_card_type_name)
 
     def keyPressEvent(self, event):
-        if self.yet_to_learn_button.isEnabled() and event.modifiers() in \
-            [QtCore.Qt.KeyboardModifier.ControlModifier, QtCore.Qt.KeyboardModifier.AltModifier]:
-            if event.key() in [QtCore.Qt.Key.Key_Enter, QtCore.Qt.Key.Key_Return,
-                QtCore.Qt.Key.Key_Y, QtCore.Qt.Key.Key_0, QtCore.Qt.Key.Key_1]:
+        if self.yet_to_learn_button.isEnabled() and event.modifiers() in [
+            QtCore.Qt.KeyboardModifier.ControlModifier,
+            QtCore.Qt.KeyboardModifier.AltModifier,
+        ]:
+            if event.key() in [
+                QtCore.Qt.Key.Key_Enter,
+                QtCore.Qt.Key.Key_Return,
+                QtCore.Qt.Key.Key_Y,
+                QtCore.Qt.Key.Key_0,
+                QtCore.Qt.Key.Key_1,
+            ]:
                 # Qt bug: works for Enter, Return, but not 0 or 1.
                 self.create_new_cards(-1)
             elif event.key() == QtCore.Qt.Key.Key_2:
@@ -268,8 +320,7 @@ class AddCardsDlg(QtWidgets.QDialog, AddEditCards,
         if grade == 0:
             grade = -1
         fact_data = self.card_type_widget.fact_data()
-        tag_names = [c.strip() for c in \
-                     self.tags.currentText().split(',')]
+        tag_names = [c.strip() for c in self.tags.currentText().split(",")]
         card_type_name = self.card_types_widget.currentText()
         card_type = self.card_type_by_name[card_type_name]
         c = self.controller()
@@ -277,17 +328,21 @@ class AddCardsDlg(QtWidgets.QDialog, AddEditCards,
         tag_text = ", ".join(tag_names)
         self.update_tags_combobox(tag_text)
         self.config()["last_used_tags"] = tag_text
-        self.config()["last_used_tags_for_card_type_id"][card_type.id] \
-            = tag_text
+        self.config()["last_used_tags_for_card_type_id"][
+            card_type.id
+        ] = tag_text
         self.card_type_widget.clear()
 
     def reject(self):
         # Generated when pressing escape or clicking the exit button.
         self._store_state()
-        if not self.card_type_widget.is_empty() and \
-            self.card_type_widget.is_changed():
-            status = self.main_widget().show_question(\
-                _("Abandon current card?"), _("&Yes"), _("&No"), "")
+        if (
+            not self.card_type_widget.is_empty()
+            and self.card_type_widget.is_changed()
+        ):
+            status = self.main_widget().show_question(
+                _("Abandon current card?"), _("&Yes"), _("&No"), ""
+            )
             if status == 0:
                 QtWidgets.QDialog.reject(self)
                 return

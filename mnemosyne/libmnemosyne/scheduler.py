@@ -9,7 +9,6 @@ import time
 from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.gui_translator import _
 
-
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
 
@@ -120,17 +119,13 @@ class Scheduler(Component):
 
     def next_rep_to_interval_string(self, next_rep, now=None):
 
-        """Converts next_rep to a string like 'tomorrow', 'in 2 weeks', ...
-
-        """
+        """Converts next_rep to a string like 'tomorrow', 'in 2 weeks', ..."""
 
         raise NotImplementedError
 
     def last_rep_to_interval_string(self, last_rep, now=None):
 
-        """Converts last_rep to a string like 'yesterday', '2 weeks ago', ...
-
-        """
+        """Converts last_rep to a string like 'yesterday', '2 weeks ago', ..."""
 
         raise NotImplementedError
 
@@ -156,7 +151,7 @@ class Scheduler(Component):
         try:
             date_only = datetime.date.fromtimestamp(timestamp).timetuple()
         except OverflowError:
-            date_only = datetime.date.fromtimestamp(2**31-2).timetuple()
+            date_only = datetime.date.fromtimestamp(2**31 - 2).timetuple()
         # Now we reinterpret this same time tuple as being UTC and convert it
         # to a POSIX timestamp. (Note that timetuples are 'naive', i.e. they
         # themselves do not contain timezone information.)
@@ -172,7 +167,7 @@ class Scheduler(Component):
         'day_starts_at').
 
         """
-        
+
         if now == None:
             now = time.time()
         # The larger 'day_starts_at', the later the card should become due,
@@ -189,31 +184,28 @@ class Scheduler(Component):
         if time.localtime(now).tm_isdst and time.daylight:
             now -= time.altzone
         else:
-            now -= time.timezone 
+            now -= time.timezone
         return int(now)
 
     def next_rep_to_interval_string(self, next_rep, now=None):
 
-        """Converts next_rep to a string like 'tomorrow', 'in 2 weeks', ...
-
-        """
+        """Converts next_rep to a string like 'tomorrow', 'in 2 weeks', ..."""
 
         if now is None:
             now = self.adjusted_now()
         interval_days = (next_rep - now) / DAY
         if interval_days >= 365:
-            interval_years = interval_days/365.
-            return _("in") + " " + "%.1f" % interval_years + " " + \
-                   _("years")
+            interval_years = interval_days / 365.0
+            return _("in") + " " + "%.1f" % interval_years + " " + _("years")
         elif interval_days >= 62:
-            interval_months = int(interval_days/31)
-            return _("in") + " " + str(interval_months) + " " + \
-                   _("months")
+            interval_months = int(interval_days / 31)
+            return _("in") + " " + str(interval_months) + " " + _("months")
         elif interval_days >= 31:
             return _("in 1 month")
         elif interval_days >= 1:
-            return _("in") + " " + str(int(interval_days) + 1) + " " + \
-                   _("days")
+            return (
+                _("in") + " " + str(int(interval_days) + 1) + " " + _("days")
+            )
         elif interval_days >= 0:
             return _("tomorrow")
         elif interval_days >= -1:
@@ -225,26 +217,24 @@ class Scheduler(Component):
         elif interval_days >= -62:
             return _("1 month overdue")
         elif interval_days >= -365:
-            interval_months = int(-interval_days/31)
+            interval_months = int(-interval_days / 31)
             return str(interval_months) + " " + _("months overdue")
         else:
-            interval_years = -interval_days/365.
-            return "%.1f " % interval_years +  _("years overdue")
+            interval_years = -interval_days / 365.0
+            return "%.1f " % interval_years + _("years overdue")
 
     def last_rep_to_interval_string(self, last_rep, now=None):
 
-        """Converts next_rep to a string like 'yesterday', '2 weeks ago', ...
-
-        """
+        """Converts next_rep to a string like 'yesterday', '2 weeks ago', ..."""
 
         if now is None:
             now = time.time()
         # To perform the calculation, we need to 'snap' the two timestamps
         # to midnight UTC before calculating the interval.
-        now = self.midnight_UTC(\
-            now - self.config()["day_starts_at"] * HOUR)
-        last_rep = self.midnight_UTC(\
-            last_rep - self.config()["day_starts_at"] * HOUR)
+        now = self.midnight_UTC(now - self.config()["day_starts_at"] * HOUR)
+        last_rep = self.midnight_UTC(
+            last_rep - self.config()["day_starts_at"] * HOUR
+        )
         interval_days = (last_rep - now) / DAY
         if interval_days > -1:
             return _("today")
@@ -255,8 +245,8 @@ class Scheduler(Component):
         elif interval_days > -62:
             return _("1 month ago")
         elif interval_days > -365:
-            interval_months = int(-interval_days/31.)
+            interval_months = int(-interval_days / 31.0)
             return str(interval_months) + " " + _("months ago")
         else:
-            interval_years = -interval_days/365.
-            return "%.1f " % interval_years +  _("years ago")
+            interval_years = -interval_days / 365.0
+            return "%.1f " % interval_years + _("years ago")

@@ -16,15 +16,15 @@ class Grade5DetectionHook(Hook):
 
 
 class AfterRepetitionPlugin(Plugin):
-    
+
     name = "Grade 5 detection"
-    description = "Notice when a card is given grade 5."   
+    description = "Notice when a card is given grade 5."
     components = [Grade5DetectionHook]
     supported_API_level = 3
-    
+
 
 # Register plugin.
 
 from mnemosyne.libmnemosyne.plugin import register_user_plugin
-register_user_plugin(AfterRepetitionPlugin)
 
+register_user_plugin(AfterRepetitionPlugin)

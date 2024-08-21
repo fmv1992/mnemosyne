@@ -4,16 +4,15 @@
 
 import re
 
-from PyQt6 import QtCore, QtGui, QtWidgets
-
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.ui_components.card_type_widget import (
+    GenericCardTypeWidget,
+)
 from mnemosyne.pyqt_ui.qtextedit2 import QTextEdit2
-from mnemosyne.libmnemosyne.ui_components.card_type_widget \
-     import GenericCardTypeWidget
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
-
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.hboxlayout = QtWidgets.QHBoxLayout(self)
@@ -28,10 +27,11 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
         if "p_1" not in self.card_type.fact_keys():
             pronunciation_hiding = None
         else:
-            pronunciation_hiding = self.config().card_type_property(\
-                "hide_pronunciation_field", self.card_type, default=False)
+            pronunciation_hiding = self.config().card_type_property(
+                "hide_pronunciation_field", self.card_type, default=False
+            )
         # Construct the rest of the dialog.
-        parent = kwds["parent"] # Also used by other parent classes inits.
+        parent = kwds["parent"]  # Also used by other parent classes inits.
         parent.setTabOrder(parent.card_types_widget, parent.tags)
         for fact_key, fact_key_name in self.card_type.fact_keys_and_names:
             l = QtWidgets.QLabel(_(fact_key_name) + ":", self)
@@ -55,7 +55,6 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
                 parent.setTabOrder(parent.tags, t)
             else:
                 parent.setTabOrder(previous_box, t)
-            previous_box = t
             # Bug: update_formatting needs to happen before setting
             # visible.
             self.update_formatting(t)
@@ -65,12 +64,16 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
             t.textChanged.connect(self.text_changed)
             t.currentCharFormatChanged.connect(self.reset_formatting)
         self.hboxlayout.addLayout(self.vboxlayout)
-        self.resize(QtCore.QSize(QtCore.QRect(0,0,325,264).size()).\
-                    expandedTo(self.minimumSizeHint()))
+        self.resize(
+            QtCore.QSize(QtCore.QRect(0, 0, 325, 264).size()).expandedTo(
+                self.minimumSizeHint()
+            )
+        )
         if parent.component_type == "add_cards_dialog":
             parent.setTabOrder(t, parent.yet_to_learn_button)
-            parent.setTabOrder(parent.yet_to_learn_button,
-                               parent.grade_2_button)
+            parent.setTabOrder(
+                parent.yet_to_learn_button, parent.grade_2_button
+            )
             parent.setTabOrder(parent.grade_2_button, parent.grade_3_button)
             parent.setTabOrder(parent.grade_3_button, parent.grade_4_button)
             parent.setTabOrder(parent.grade_4_button, parent.grade_5_button)
@@ -83,8 +86,9 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
         self.top_edit_box.setFocus()
 
     def pronunciation_hiding_toggled(self, checked):
-        self.config().set_card_type_property("hide_pronunciation_field",
-            checked, self.card_type)
+        self.config().set_card_type_property(
+            "hide_pronunciation_field", checked, self.card_type
+        )
         self.pronunciation_label.setVisible(not checked)
         self.pronunciation_box.setVisible(not checked)
         for edit_box in self.edit_boxes:
@@ -93,22 +97,27 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
     def update_formatting(self, edit_box):
         # Font colour.
         fact_key = self.fact_key_for_edit_box[edit_box]
-        colour = self.config().card_type_property(\
-            "font_colour", self.card_type, fact_key)
+        colour = self.config().card_type_property(
+            "font_colour", self.card_type, fact_key
+        )
         if colour:
             edit_box.setTextColor(QtGui.QColor(colour))
         # Background colour.
-        colour = self.config().card_type_property(\
-            "background_colour", self.card_type)
+        colour = self.config().card_type_property(
+            "background_colour", self.card_type
+        )
         if colour:
             p = QtGui.QPalette()
-            p.setColor(QtGui.QPalette.ColorGroup.Active, 
-                        QtGui.QPalette.ColorRole.Base,
-                        QtGui.QColor(colour))
+            p.setColor(
+                QtGui.QPalette.ColorGroup.Active,
+                QtGui.QPalette.ColorRole.Base,
+                QtGui.QColor(colour),
+            )
             edit_box.setPalette(p)
         # Font.
-        font_string = self.config().card_type_property(\
-            "font", self.card_type, fact_key)
+        font_string = self.config().card_type_property(
+            "font", self.card_type, fact_key
+        )
         if font_string:
             font = QtGui.QFont()
             font.fromString(font_string)
@@ -140,8 +149,9 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
         return _fact_data
 
     def foreign_text(self):
-        foreign_fact_key = self.config().card_type_property(\
-            "foreign_fact_key", self.card_type, default=None)
+        foreign_fact_key = self.config().card_type_property(
+            "foreign_fact_key", self.card_type, default=None
+        )
         if not foreign_fact_key:
             return
         foreign_text = self.fact_data()[foreign_fact_key]
@@ -166,5 +176,6 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
         self.top_edit_box.setFocus()
 
     def text_changed(self):
-        self.parent().set_valid(\
-            self.card_type.is_fact_data_valid(self.fact_data()))
+        self.parent().set_valid(
+            self.card_type.is_fact_data_valid(self.fact_data())
+        )

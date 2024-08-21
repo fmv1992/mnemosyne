@@ -2,8 +2,8 @@
 # criterion.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.utils import rand_uuid
 from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.utils import rand_uuid
 
 
 class Criterion(Component):
@@ -66,7 +66,7 @@ class Criterion(Component):
 
     def is_tag_active(self, tag):
         pass
-    
+
     def tag_deleted(self, tag):
         pass
 
@@ -120,4 +120,3 @@ class CriterionApplier(Component):
 
     def apply_to_database(self, criterion):
         raise NotImplementedError
-

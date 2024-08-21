@@ -18,19 +18,19 @@ class StudyMode(Component):
 
     id = ""
     name = ""
-    menu_weight = 0 # To determine sorting order in menu
+    menu_weight = 0  # To determine sorting order in menu
     component_type = "study_mode"
     Scheduler = None  # Class
     ReviewController = None  # Class
 
     def activate_components(self):
         # Register dependent classes first.
-        self.component_manager.register(\
-            self.Scheduler(self.component_manager))
+        self.component_manager.register(self.Scheduler(self.component_manager))
         self.scheduler().activate()
         self.log().started_scheduler()
-        self.component_manager.register(\
-            self.ReviewController(self.component_manager))
+        self.component_manager.register(
+            self.ReviewController(self.component_manager)
+        )
         self.review_controller().activate()
         Component.activate_gui_components(self)
 

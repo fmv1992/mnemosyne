@@ -69,8 +69,6 @@ class Component(object):
 
         """
 
-        pass
-
     def activate_gui_components(self):
 
         """GUI classes are only instantiated when activated, since that can take

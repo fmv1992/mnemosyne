@@ -2,6 +2,7 @@
 # log_entry.py <Peter.Bienstman@gmail.com>
 #
 
+
 class EventTypes(object):
 
     """Codes to identify event types."""
@@ -49,6 +50,7 @@ class EventTypes(object):
 
     EDITED_SETTING = 28
     WARNED_TOO_MANY_CARDS = 29
+
 
 class LogEntry(dict):
 
@@ -164,5 +166,3 @@ class LogEntry(dict):
     encoded/escaped as appropriate.
 
     """
-
-    pass

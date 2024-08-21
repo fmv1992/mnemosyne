@@ -16,11 +16,13 @@ class CardsLearned(PlotStatisticsPage):
     LAST_6_MONTHS = 4
     LAST_YEAR = 5
 
-    variants = [(LAST_WEEK, _("Last week")),
-                (LAST_MONTH, _("Last month")),
-                (LAST_3_MONTHS, _("Last 3 months")),
-                (LAST_6_MONTHS, _("Last 6 months")),
-                (LAST_YEAR, _("Last year"))]
+    variants = [
+        (LAST_WEEK, _("Last week")),
+        (LAST_MONTH, _("Last month")),
+        (LAST_3_MONTHS, _("Last 3 months")),
+        (LAST_6_MONTHS, _("Last 6 months")),
+        (LAST_YEAR, _("Last year")),
+    ]
 
     def prepare_statistics(self, variant):
         if variant == self.LAST_WEEK:
@@ -40,9 +42,8 @@ class CardsLearned(PlotStatisticsPage):
         self.main_widget().set_progress_update_interval(3)
         self.y = []
         for day in self.x:
-            self.y.append(self.database().card_count_learned_n_days_ago(n=-day))
+            self.y.append(
+                self.database().card_count_learned_n_days_ago(n=-day)
+            )
             self.main_widget().increase_progress(1)
         self.main_widget().close_progress()
-
-
-

@@ -9,4 +9,4 @@
 # is stored in the member variable players.
 class AudioPlayerContainer:
     def __init__(self):
-        self.players = [] 
+        self.players = []

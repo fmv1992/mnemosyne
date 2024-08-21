@@ -3,10 +3,33 @@
 #
 
 import json
+
 try:
-    from mnemosyne.android_python.mnemosyne_android import *
-except Exception as e:
+    from mnemosyne.android_python.mnemosyne_android import (
+        config_get,
+        config_save,
+        config_set,
+        controller_do_db_maintenance,
+        controller_heartbeat,
+        controller_reset_study_mode,
+        controller_set_study_mode_with_id,
+        controller_show_activate_cards_dialog_post,
+        controller_show_activate_cards_dialog_pre,
+        controller_show_sync_dialog_post,
+        controller_show_sync_dialog_pre,
+        controller_star_current_card,
+        controller_sync,
+        database_release_connection,
+        database_set_criterion_with_name,
+        pause_mnemosyne,
+        review_controller_grade_answer,
+        review_controller_show_answer,
+        start_mnemosyne,
+        stop_mnemosyne,
+    )
+except Exception:
     import traceback
+
     traceback.print_exc()
 
 
@@ -18,22 +41,26 @@ def router(args):
     try:
         values = json.loads(args)
         print("router called with", values)
-        function = routes[values.get('function')]
+        function = routes[values.get("function")]
         res = function(values)
         status = "ok"
-    except Exception as e:
+    except Exception:
         import io
         import traceback
+
         a = io.StringIO()
         traceback.print_exc(file=a)
         stack_trace = a.getvalue()
         print(stack_trace)
         res = stack_trace
         status = "fail"
-    return json.dumps({
-        'status': status,
-        'result': res,
-    })
+    return json.dumps(
+        {
+            "status": status,
+            "result": res,
+        }
+    )
+
 
 routes = {
     "start_mnemosyne": start_mnemosyne,
@@ -55,5 +82,5 @@ routes = {
     "controller_reset_study_mode": controller_reset_study_mode,
     "controller_do_db_maintenance": controller_do_db_maintenance,
     "database_set_criterion_with_name": database_set_criterion_with_name,
-    "database_release_connection": database_release_connection
+    "database_release_connection": database_release_connection,
 }

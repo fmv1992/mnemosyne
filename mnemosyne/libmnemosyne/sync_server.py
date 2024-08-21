@@ -2,17 +2,17 @@
 # sync_server.py <Peter.Bienstman@gmail.com>
 #
 
-import os
 import http.client
+import os
 import threading
+
 import mnemosyne.version
 from argon2 import PasswordHasher
 from argon2.exceptions import HashingError, VerificationError
-
-from openSM2sync.ui import UI
-from openSM2sync.server import Server
 from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.utils import expand_path, localhost_IP
+from openSM2sync.server import Server
+from openSM2sync.ui import UI
 
 
 class SyncServer(Component, Server):
@@ -29,10 +29,14 @@ class SyncServer(Component, Server):
             del kwds["server_only"]
         else:
             self.server_only = False
-        super().__init__(machine_id=config.machine_id(),
-            port=config["sync_server_port"], **kwds)
-        self.check_for_edited_local_media_files = \
-            self.config()["check_for_edited_local_media_files"]
+        super().__init__(
+            machine_id=config.machine_id(),
+            port=config["sync_server_port"],
+            **kwds
+        )
+        self.check_for_edited_local_media_files = self.config()[
+            "check_for_edited_local_media_files"
+        ]
 
     def authorization_set_up(self) -> bool:
         auth_username = self.config()["remote_access_username"]
@@ -42,8 +46,10 @@ class SyncServer(Component, Server):
     def authorise(self, username, password):
         # We should not be running if authorization is not set up,
         # but check just in case.
-        if not self.authorization_set_up() or \
-                username != self.config()["remote_access_username"]:
+        if (
+            not self.authorization_set_up()
+            or username != self.config()["remote_access_username"]
+        ):
             return False
 
         ph = PasswordHasher()
@@ -82,22 +88,25 @@ class SyncServer(Component, Server):
         if self.server_only:
             # First see if web server needs to release database.
             try:
-                con = http.client.HTTPConnection("127.0.0.1",
-                    self.config()["web_server_port"])
+                con = http.client.HTTPConnection(
+                    "127.0.0.1", self.config()["web_server_port"]
+                )
                 con.request("GET", "/release_database")
-                response = con.getresponse()
+                con.getresponse()
             except:
                 pass
-            if not os.path.exists(expand_path(database_name,
-                self.config().data_dir)):
+            if not os.path.exists(
+                expand_path(database_name, self.config().data_dir)
+            ):
                 self.database().new(database_name)
             else:
                 self.database().load(database_name)
         else:
             self.previous_database = self.config()["last_database"]
             if self.previous_database != database_name:
-                if not os.path.exists(expand_path(database_name,
-                    self.config().data_dir)):
+                if not os.path.exists(
+                    expand_path(database_name, self.config().data_dir)
+                ):
                     self.database().new(database_name)
                 else:
                     self.database().load(database_name)
@@ -137,23 +146,35 @@ class SyncServerThread(threading.Thread, SyncServer):
 
     def __init__(self, component_manager):
         threading.Thread.__init__(self)
-        SyncServer.__init__(self, component_manager=component_manager,
-                            ui=UI(), server_only=True)
+        SyncServer.__init__(
+            self,
+            component_manager=component_manager,
+            ui=UI(),
+            server_only=True,
+        )
 
     def run(self):
         if not self.authorization_set_up():
-            print("""Error: Authorization not set up.
+            print(
+                """Error: Authorization not set up.
 If on a headless server, you may use the following commands in the sqlite3 console on config.db to configure authorization:
    update config set value="" where key = "remote_access_password_algo"
    update config set value="'<username>'" where key = "remote_access_username";
-   update config set value="'<password>'" where key = "remote_access_password";""")
+   update config set value="'<password>'" where key = "remote_access_password";"""
+            )
             return
 
         # Start server.
-        print(("Sync server listening on " + localhost_IP() + ":" + \
-            str(self.config()["sync_server_port"])))
+        print(
+            (
+                "Sync server listening on "
+                + localhost_IP()
+                + ":"
+                + str(self.config()["sync_server_port"])
+            )
+        )
         self.serve_until_stopped()
-        server_hanging = (len(self.sessions) != 0)
+        server_hanging = len(self.sessions) != 0
         if server_hanging:
             self.terminate_all_sessions()
             self.database().release_connection()

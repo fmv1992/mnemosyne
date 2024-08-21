@@ -42,4 +42,3 @@ class Stopwatch(Component):
 
     def time(self):
         return self.running_time
-

@@ -4,33 +4,36 @@
 
 import _main_widget
 import _review_widget
-
 from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
 
 
 class ReviewWdgt(ReviewWidget):
-
     def redraw_now(self):
         pass
 
     def empty(self):
         background = "white"
         if self.review_controller().card:
-            colour = self.config().card_type_property(\
-            "background_colour", self.review_controller().card.card_type)
+            colour = self.config().card_type_property(
+                "background_colour", self.review_controller().card.card_type
+            )
             if colour:
-                background = ("%X" % colour)[2:] # Strip alpha.
-        return """
+                background = ("%X" % colour)[2:]  # Strip alpha.
+        return (
+            """
         <html><head>
         <style type="text/css">
         table { height: 100%; }
-        body  { background-color: """ + background + """;
+        body  { background-color: """
+            + background
+            + """;
                 margin: 0;
                 padding: 0;
                 border: thin solid #8F8F8F; }
         </style></head>
         <body><table><tr><td>
         </td></tr></table></body></html>"""
+        )
 
     def show_answer(self):
         self.review_controller().show_answer()
@@ -79,9 +82,14 @@ class ReviewWdgt(ReviewWidget):
         pass
 
     def update_status_bar_counters(self):
-        scheduled_count, non_memorised_count, active_count = \
-            self.review_controller().counters()
-        counters = "Sch.: %d Not mem.: %d Act.: %d" % \
-                    (scheduled_count, non_memorised_count, active_count)
+        (
+            scheduled_count,
+            non_memorised_count,
+            active_count,
+        ) = self.review_controller().counters()
+        counters = "Sch.: %d Not mem.: %d Act.: %d" % (
+            scheduled_count,
+            non_memorised_count,
+            active_count,
+        )
         _main_widget.set_status_bar_message(counters)
-

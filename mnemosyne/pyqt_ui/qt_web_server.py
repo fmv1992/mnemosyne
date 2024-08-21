@@ -2,17 +2,13 @@
 # qt_web_server.py <Peter.Bienstman@gmail.com>
 #
 
-import os
-import sys
 import socket
 
-from PyQt6 import QtCore
-
-from mnemosyne.libmnemosyne import Mnemosyne
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.web_server.web_server import WebServer
 from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.utils import traceback_string
+from mnemosyne.web_server.web_server import WebServer
+from PyQt6 import QtCore
 
 # The following is some thread synchronisation machinery to ensure that
 # either the web server thread or the main thread is doing database
@@ -22,7 +18,6 @@ answer = None
 mutex = QtCore.QMutex()
 dialog_closed = QtCore.QWaitCondition()
 database_released = QtCore.QWaitCondition()
-
 
 
 class ServerThread(QtCore.QThread, WebServer):
@@ -179,46 +174,59 @@ class QtWebServer(Component, QtCore.QObject):
                     data_dir=self.config().data_dir,
                     config_dir=self.config().config_dir,
                     filename=self.config()["last_database"],
-                    component_manager=self.component_manager)
+                    component_manager=self.component_manager,
+                )
             except socket.error as exception:
                 (errno, e) = exception.args
                 if errno == 98:
-                    self.main_widget().show_error(\
-                        _("Unable to start web server.") + " " + \
-    _("There still seems to be an old server running on the requested port.")\
-                        + " " + _("Terminate that process and try again."))
+                    self.main_widget().show_error(
+                        _("Unable to start web server.")
+                        + " "
+                        + _(
+                            "There still seems to be an old server running on the requested port."
+                        )
+                        + " "
+                        + _("Terminate that process and try again.")
+                    )
                     self.thread = None
                     return
                 elif errno == 13:
-                    self.main_widget().show_error(\
-                        _("Unable to start web server.") + " " + \
-    _("You don't have the permission to use the requested port."))
+                    self.main_widget().show_error(
+                        _("Unable to start web server.")
+                        + " "
+                        + _(
+                            "You don't have the permission to use the requested port."
+                        )
+                    )
                     self.thread = None
                     return
                 else:
                     raise e
-            self.thread.review_started_signal.connect(\
-                self.unload_database)
-            self.thread.review_ended_signal.connect(\
-                self.load_database)
-            self.thread.information_signal.connect(\
-                self.threaded_show_information)
-            self.thread.error_signal.connect(\
-                self.threaded_show_error)
-            self.thread.question_signal.connect(\
-                self.threaded_show_question)
-            self.thread.set_progress_text_signal.connect(\
-                self.true_main_widget.set_progress_text)
-            self.thread.set_progress_range_signal.connect(\
-                self.true_main_widget.set_progress_range)
-            self.thread.set_progress_update_interval_signal.connect(\
-                self.true_main_widget.set_progress_update_interval)
-            self.thread.increase_progress_signal.connect(\
-                self.true_main_widget.increase_progress)
-            self.thread.set_progress_value_signal.connect(\
-                self.true_main_widget.set_progress_value)
-            self.thread.close_progress_signal.connect(\
-                self.true_main_widget.close_progress)
+            self.thread.review_started_signal.connect(self.unload_database)
+            self.thread.review_ended_signal.connect(self.load_database)
+            self.thread.information_signal.connect(
+                self.threaded_show_information
+            )
+            self.thread.error_signal.connect(self.threaded_show_error)
+            self.thread.question_signal.connect(self.threaded_show_question)
+            self.thread.set_progress_text_signal.connect(
+                self.true_main_widget.set_progress_text
+            )
+            self.thread.set_progress_range_signal.connect(
+                self.true_main_widget.set_progress_range
+            )
+            self.thread.set_progress_update_interval_signal.connect(
+                self.true_main_widget.set_progress_update_interval
+            )
+            self.thread.increase_progress_signal.connect(
+                self.true_main_widget.increase_progress
+            )
+            self.thread.set_progress_value_signal.connect(
+                self.true_main_widget.set_progress_value
+            )
+            self.thread.close_progress_signal.connect(
+                self.true_main_widget.close_progress
+            )
             self.thread.start()
 
     def unload_database(self):
@@ -232,7 +240,7 @@ class QtWebServer(Component, QtCore.QObject):
         # already has access, we just ignore this.
         try:
             self.database().release_connection()
-        except: # Database locked in server thread.
+        except:  # Database locked in server thread.
             pass
         self.thread.server_has_connection = True
         database_released.wakeAll()
@@ -244,7 +252,7 @@ class QtWebServer(Component, QtCore.QObject):
         mutex.lock()
         try:
             self.database().load(self.config()["last_database"])
-        except Exception as e: # Database locked in server thread.
+        except Exception as e:  # Database locked in server thread.
             database_released.wait(mutex)
             self.database().load(self.config()["last_database"])
         self.log().loaded_database()
@@ -262,7 +270,7 @@ class QtWebServer(Component, QtCore.QObject):
         mutex.lock()
         is_idle = self.thread.is_idle()
         mutex.unlock()
-        if is_idle: # No need to unload the database if server is not active.
+        if is_idle:  # No need to unload the database if server is not active.
             return
         self.unload_database()
         self.thread.flush()
@@ -296,7 +304,8 @@ class QtWebServer(Component, QtCore.QObject):
     def threaded_show_question(self, question, option0, option1, option2):
         global answer
         mutex.lock()
-        answer = self.true_main_widget.show_question(question, option0,
-            option1, option2)
+        answer = self.true_main_widget.show_question(
+            question, option0, option1, option2
+        )
         dialog_closed.wakeAll()
         mutex.unlock()

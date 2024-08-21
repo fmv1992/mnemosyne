@@ -2,11 +2,10 @@
 # utils.py - Peter Bienstman <Peter.Bienstman@gmail.com>
 
 import os
-import sys
-import math
 import random
-import locale
+import sys
 import traceback
+
 
 class SyncError(Exception):
     pass
@@ -15,7 +14,6 @@ class SyncError(Exception):
 class SeriousSyncError(Exception):
 
     """Requires backup from database afterwards."""
-    pass
 
 
 def traceback_string():
@@ -24,8 +22,9 @@ def traceback_string():
 
     type, value, tb = sys.exc_info()
     body = "\nTraceback (innermost last):\n"
-    list = traceback.format_tb(tb, limit=None) + \
-           traceback.format_exception_only(type, value)
+    list = traceback.format_tb(
+        tb, limit=None
+    ) + traceback.format_exception_only(type, value)
     body = body + "%-20s %s" % ("".join(list[:-1]), list[-1])
     del tb  # Prevent circular references.
     return body

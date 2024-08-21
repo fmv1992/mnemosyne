@@ -1,7 +1,8 @@
-from PyQt6 import QtCore, QtWidgets, QtGui
+from PyQt6 import QtCore, QtGui, QtWidgets
+
 
 class TagCompleter(QtWidgets.QCompleter):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(TagCompleter, self).__init__(parent)
         self.setCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
 

@@ -2,12 +2,11 @@
 # statistics_dlg.py <Peter.Bienstman@gmail.com>
 #
 
-from PyQt6 import QtCore, QtGui, QtWidgets
-
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.pyqt_ui.ui_statistics_dlg import Ui_StatisticsDlg
+from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.ui_components.dialogs import StatisticsDialog
+from mnemosyne.pyqt_ui.ui_statistics_dlg import Ui_StatisticsDlg
+from PyQt6 import QtCore, QtWidgets
 
 
 class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
@@ -23,17 +22,26 @@ class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
     def activate(self):
         StatisticsDialog.activate(self)
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() \
-            | QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
-        self.setWindowFlags(self.windowFlags() \
-            & ~ QtCore.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+        )
+        self.setWindowFlags(
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+        )
         previous_page_index = self.config()["previous_statistics_page"]
         page_index = 0
         for page in self.component_manager.all("statistics_page"):
             page = page(component_manager=self.component_manager)
-            self.tab_widget.addTab(StatisticsPageWdgt(page, page_index,
-                parent=self, component_manager=self.component_manager),
-                                   _(page.name))
+            self.tab_widget.addTab(
+                StatisticsPageWdgt(
+                    page,
+                    page_index,
+                    parent=self,
+                    component_manager=self.component_manager,
+                ),
+                _(page.name),
+            )
             page_index += 1
         self.tab_widget.tabBar().setVisible(self.tab_widget.count() > 1)
         if previous_page_index >= self.tab_widget.count():
@@ -67,10 +75,12 @@ class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
     def display_page(self, page_index):
         page = self.tab_widget.widget(page_index)
         self.config()["previous_statistics_page"] = page_index
-        self.config()["previous_variant_for_statistics_page"]\
-            .setdefault(page_index, 0)
-        variant_index = self.config()\
-            ["previous_variant_for_statistics_page"][page_index]
+        self.config()["previous_variant_for_statistics_page"].setdefault(
+            page_index, 0
+        )
+        variant_index = self.config()["previous_variant_for_statistics_page"][
+            page_index
+        ]
         if variant_index >= page.combobox.count():
             variant_index = 0
         page.combobox.setCurrentIndex(variant_index)
@@ -102,8 +112,10 @@ class StatisticsPageWdgt(QtWidgets.QWidget, Component):
             self.variant_ids.append(variant_id)
             self.variant_widgets.append(None)
             self.combobox.addItem(_(variant_name))
-        if len(self.variant_ids) <= 1 or \
-           self.statistics_page.show_variants_in_combobox == False:
+        if (
+            len(self.variant_ids) <= 1
+            or self.statistics_page.show_variants_in_combobox == False
+        ):
             self.combobox.hide()
         self.vbox_layout.addWidget(self.combobox)
         self.combobox.currentIndexChanged.connect(self.display_variant)
@@ -118,17 +130,23 @@ class StatisticsPageWdgt(QtWidgets.QWidget, Component):
             self.current_variant_widget.hide()
         # Create widget if it has not been shown before.
         if not self.variant_widgets[variant_index]:
-            self.statistics_page.prepare_statistics\
-                (self.variant_ids[variant_index])
-            widget_class = self.component_manager.current(\
-                "statistics_widget", used_for=self.statistics_page.__class__)
-            widget = widget_class(component_manager=self.component_manager,
-                parent=self, page=self.statistics_page)
+            self.statistics_page.prepare_statistics(
+                self.variant_ids[variant_index]
+            )
+            widget_class = self.component_manager.current(
+                "statistics_widget", used_for=self.statistics_page.__class__
+            )
+            widget = widget_class(
+                component_manager=self.component_manager,
+                parent=self,
+                page=self.statistics_page,
+            )
             widget.show_statistics(self.variant_ids[variant_index])
             self.variant_widgets[variant_index] = widget
         # Show the widget created earlier.
         self.current_variant_widget = self.variant_widgets[variant_index]
         self.vbox_layout.addWidget(self.current_variant_widget)
         self.current_variant_widget.show()
-        self.config()["previous_variant_for_statistics_page"]\
-           [self.page_index] = variant_index
+        self.config()["previous_variant_for_statistics_page"][
+            self.page_index
+        ] = variant_index

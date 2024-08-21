@@ -3,8 +3,8 @@
 #
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.tag_tree import TagTree
 from mnemosyne.libmnemosyne.statistics_page import PlotStatisticsPage
+from mnemosyne.libmnemosyne.tag_tree import TagTree
 
 
 class Easiness(PlotStatisticsPage):
@@ -18,8 +18,10 @@ class Easiness(PlotStatisticsPage):
         super().__init__(**kwds)
         self.tag_tree = TagTree(self.component_manager, count_cards=False)
         self.nodes = self.tag_tree.nodes()
-        self.variants = [(self.ALL_CARDS, _("All cards")),
-                         (self.ACTIVE_CARDS, _("Active cards only"))]
+        self.variants = [
+            (self.ALL_CARDS, _("All cards")),
+            (self.ACTIVE_CARDS, _("Active cards only")),
+        ]
         for index, node in enumerate(self.nodes):
             if node == "__UNTAGGED__":
                 node = _("Untagged")
@@ -33,6 +35,6 @@ class Easiness(PlotStatisticsPage):
         else:
             self.data = []
             for tag in self.tag_tree.tags_in_subtree(self.nodes[variant]):
-                self.data.extend(self.database().easinesses_for_tag\
-                                 (tag, active_only=False))
-
+                self.data.extend(
+                    self.database().easinesses_for_tag(tag, active_only=False)
+                )

@@ -68,8 +68,6 @@ class MainWidget(UiComponent):
 
         """
 
-        pass
-
     def set_progress_update_interval(self, update_interval):
 
         """Sometimes updating the progress bar for a single step takes longer
@@ -79,25 +77,17 @@ class MainWidget(UiComponent):
 
         """
 
-        pass
-
     def increase_progress(self, value):
 
         """Increase the progress by 'value'."""
-
-        pass
 
     def set_progress_value(self, value):
 
         """If 'value' is maximum or beyond, the dialog closes."""
 
-        pass
-
     def close_progress(self):
 
         """Convenience function for closing a busy dialog."""
-
-        pass
 
     def enable_edit_current_card(self, is_enabled):
         pass
@@ -116,8 +106,9 @@ class MainWidget(UiComponent):
     def show_export_metadata_dialog(self, metadata=None, read_only=False):
         self.stopwatch().pause()
         self.flush_sync_server()
-        dialog = self.component_manager.current("export_metadata_dialog")\
-            (component_manager=self.component_manager)
+        dialog = self.component_manager.current("export_metadata_dialog")(
+            component_manager=self.component_manager
+        )
         if metadata:
             dialog.set_values(metadata)
         if read_only:
@@ -125,4 +116,3 @@ class MainWidget(UiComponent):
         dialog.activate()
         self.stopwatch().unpause()
         return dialog.values()
-

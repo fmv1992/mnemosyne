@@ -20,10 +20,12 @@ class DefaultCriterion(Criterion):
     def __eq__(self, other):
         if type(self) != type(other):
             return False
-        return self.deactivated_card_type_fact_view_ids == \
-                other.deactivated_card_type_fact_view_ids \
-            and self._tag_ids_active == other._tag_ids_active \
+        return (
+            self.deactivated_card_type_fact_view_ids
+            == other.deactivated_card_type_fact_view_ids
+            and self._tag_ids_active == other._tag_ids_active
             and self._tag_ids_forbidden == other._tag_ids_forbidden
+        )
 
     def is_empty(self):
         # Check card types.
@@ -47,8 +49,10 @@ class DefaultCriterion(Criterion):
             if tag._id in self._tag_ids_active:
                 card.active = True
                 break
-        if (card.card_type.id, card.fact_view.id) in \
-           self.deactivated_card_type_fact_view_ids:
+        if (
+            card.card_type.id,
+            card.fact_view.id,
+        ) in self.deactivated_card_type_fact_view_ids:
             card.active = False
         for tag in card.tags:
             if tag._id in self._tag_ids_forbidden:
@@ -68,8 +72,8 @@ class DefaultCriterion(Criterion):
             pass
 
     def is_tag_active(self, tag):
-        return (tag._id in self._tag_ids_active)
-    
+        return tag._id in self._tag_ids_active
+
     def tag_deleted(self, tag):
         self._tag_ids_active.discard(tag._id)
         self._tag_ids_forbidden.discard(tag._id)
@@ -79,18 +83,24 @@ class DefaultCriterion(Criterion):
 
     def deactivated_card_type_added(self, card_type):
         for fact_view in card_type.fact_views:
-            self.deactivated_card_type_fact_view_ids.add(\
-                (card_type.id, fact_view.id))
+            self.deactivated_card_type_fact_view_ids.add(
+                (card_type.id, fact_view.id)
+            )
 
     def card_type_deleted(self, card_type):
         for fact_view in card_type.fact_views:
-            self.deactivated_card_type_fact_view_ids.discard(\
-                (card_type.id, fact_view.id))
+            self.deactivated_card_type_fact_view_ids.discard(
+                (card_type.id, fact_view.id)
+            )
 
     def data_to_string(self):
-        return repr((self.deactivated_card_type_fact_view_ids,
-                     self._tag_ids_active,
-                     self._tag_ids_forbidden))
+        return repr(
+            (
+                self.deactivated_card_type_fact_view_ids,
+                self._tag_ids_active,
+                self._tag_ids_forbidden,
+            )
+        )
 
     def set_data_from_string(self, data_string):
         data = eval(data_string)
@@ -109,8 +119,13 @@ class DefaultCriterion(Criterion):
         for _tag_id in self._tag_ids_forbidden:
             tag = self.database().tag(_tag_id, is_id_internal=True)
             forbidden_tag_ids.add(tag.id)
-        return repr((self.deactivated_card_type_fact_view_ids,
-                     active_tag_ids, forbidden_tag_ids))
+        return repr(
+            (
+                self.deactivated_card_type_fact_view_ids,
+                active_tag_ids,
+                forbidden_tag_ids,
+            )
+        )
 
     def set_data_from_sync_string(self, data_string):
         data = eval(data_string)

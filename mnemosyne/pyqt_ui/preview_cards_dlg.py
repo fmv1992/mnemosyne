@@ -2,16 +2,16 @@
 # Widget to preview set of sister cards <Peter.Bienstman@gmail.com>
 #
 
-from PyQt6 import QtCore, QtGui, QtWidgets
-
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.pyqt_ui.review_wdgt import QAOptimalSplit
 from mnemosyne.pyqt_ui.ui_preview_cards_dlg import Ui_PreviewCardsDlg
+from PyQt6 import QtCore, QtWidgets
 
 
-class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit,
-                      Ui_PreviewCardsDlg):
+class PreviewCardsDlg(
+    QtWidgets.QDialog, Component, QAOptimalSplit, Ui_PreviewCardsDlg
+):
 
     page_up_down_signal = QtCore.pyqtSignal(int)
     UP = 0
@@ -31,10 +31,13 @@ class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit,
         self.answer.setFocusProxy(self)
         QAOptimalSplit.setup(self)
         self.used_for_reviewing = False
-        self.setWindowFlags(self.windowFlags() \
-            | QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
-        self.setWindowFlags(self.windowFlags() \
-            & ~ QtCore.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+        )
+        self.setWindowFlags(
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+        )
         self.tag_text = tag_text
         self.cards = cards
         self.index = 0
@@ -77,8 +80,14 @@ class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit,
         self.reveal_question()
         self.reveal_answer()
         self.config()["QA_split"] = stored
-        self.fact_view_name.setText(_(card.fact_view.name) + " (" + \
-            str(self.index + 1) + "/" + str(len(self.cards)) + ")")
+        self.fact_view_name.setText(
+            _(card.fact_view.name)
+            + " ("
+            + str(self.index + 1)
+            + "/"
+            + str(len(self.cards))
+            + ")"
+        )
         self.previous_button.setEnabled(self.index != 0)
         self.next_button.setEnabled(self.index != len(self.cards) - 1)
 

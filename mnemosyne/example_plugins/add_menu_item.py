@@ -2,13 +2,12 @@
 # add_menu_item.py <Peter.Bienstman@gmail.com>
 #
 
-from PyQt6 import QtCore, QtGui, QtWidgets
-
 from mnemosyne.libmnemosyne.plugin import Plugin
+from PyQt6 import QtGui
 
 
 class HelloWorldPlugin(Plugin):
-    
+
     name = "Hello world"
     description = "Add a menu item to the help menu"
     supported_API_level = 3
@@ -31,10 +30,11 @@ class HelloWorldPlugin(Plugin):
             self.actionHello = None
 
     def hello_world(self):
-        self.main_widget().show_information("Hi there!")        
+        self.main_widget().show_information("Hi there!")
+
 
 # Register plugin.
 
 from mnemosyne.libmnemosyne.plugin import register_user_plugin
-register_user_plugin(HelloWorldPlugin)
 
+register_user_plugin(HelloWorldPlugin)

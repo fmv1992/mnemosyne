@@ -28,7 +28,6 @@ class CardTypeConverter(Component):
 
     component_type = "card_type_converter"
 
-
     def card_type_converter_key(old_card_type, new_card_type):
 
         """Creates a single key to store a card type converter in the
@@ -38,11 +37,13 @@ class CardTypeConverter(Component):
 
         # Convenience to allow to work with both classes and instances.
         if type(old_card_type) == type:
-            return old_card_type.__name__ + "__TO__" + \
-                new_card_type.__name__
+            return old_card_type.__name__ + "__TO__" + new_card_type.__name__
         else:
-            return old_card_type.__class__.__name__ + "__TO__" + \
-                new_card_type.__class__.__name__
+            return (
+                old_card_type.__class__.__name__
+                + "__TO__"
+                + new_card_type.__class__.__name__
+            )
 
     def convert(self, cards, old_card_type, new_card_type, correspondence):
         new_cards, edited_cards, deleted_cards = [], [], []

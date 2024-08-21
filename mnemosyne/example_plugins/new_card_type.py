@@ -2,10 +2,11 @@
 # new_card_type.py <Peter.Bienstman@gmail.com>
 #
 
+from mnemosyne.libmnemosyne.card_types.vocabulary import Vocabulary
+from mnemosyne.libmnemosyne.fact_view import FactView
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.plugin import Plugin
-from mnemosyne.libmnemosyne.fact_view import FactView
-from mnemosyne.libmnemosyne.card_types.vocabulary import Vocabulary
+
 
 class DecoratedVocabulary(Vocabulary):
 
@@ -31,6 +32,7 @@ class DecoratedVocabulary(Vocabulary):
 
 # Wrap it into a Plugin and then register the Plugin.
 
+
 class DecoratedVocabularyPlugin(Plugin):
 
     name = "Decorated vocabulary"
@@ -38,9 +40,7 @@ class DecoratedVocabularyPlugin(Plugin):
     components = [DecoratedVocabulary]
     supported_API_level = 3
 
+
 from mnemosyne.libmnemosyne.plugin import register_user_plugin
+
 register_user_plugin(DecoratedVocabularyPlugin)
-
-
-
-

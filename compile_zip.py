@@ -2,13 +2,14 @@
 # compile_zip.py
 #
 
-import os
-import sys
-import shutil
-import zipfile
 import compileall
+import os
+import shutil
+import sys
+import zipfile
 
 # Replaces *.py files in a zip archive with compiled versions.
+
 
 def compile_zip(zip_file):
     # Extract to tmp dir.
@@ -25,7 +26,7 @@ def compile_zip(zip_file):
                 os.remove(os.path.join(dirname, f))
     # Recompress.
     os.remove(zip_file)
-    shutil.make_archive(zip_file.replace(".zip", ""), 'zip', tmp_dirname)
+    shutil.make_archive(zip_file.replace(".zip", ""), "zip", tmp_dirname)
     shutil.rmtree(tmp_dirname)
 
 

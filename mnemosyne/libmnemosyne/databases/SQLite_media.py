@@ -4,19 +4,24 @@
 
 import os
 import re
+
 try:
     from hashlib import md5
 except ImportError:
     from md5 import md5
 
 if "ANDROID" in os.environ:
-    from mnemosyne.android_python.utf8_filenames import *
+    pass
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import normalise_path
-from mnemosyne.libmnemosyne.utils import expand_path, contract_path
-from mnemosyne.libmnemosyne.utils import is_filesystem_case_insensitive
-from mnemosyne.libmnemosyne.utils import copy_file_to_dir, remove_empty_dirs_in
+from mnemosyne.libmnemosyne.utils import (
+    contract_path,
+    copy_file_to_dir,
+    expand_path,
+    is_filesystem_case_insensitive,
+    normalise_path,
+    remove_empty_dirs_in,
+)
 
 re_src = re.compile(r"""(src|data)=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 
@@ -30,10 +35,13 @@ class SQLiteMedia(object):
     """
 
     def media_dir(self):
-        if self.config()["last_database"] == \
-            os.path.basename(self.config()["last_database"]):
-            return os.path.join(self.config().data_dir,
-                os.path.basename(self.config()["last_database"]) + "_media")
+        if self.config()["last_database"] == os.path.basename(
+            self.config()["last_database"]
+        ):
+            return os.path.join(
+                self.config().data_dir,
+                os.path.basename(self.config()["last_database"]) + "_media",
+            )
         else:
             return self.config()["last_database"] + "_media"
 
@@ -43,8 +51,15 @@ class SQLiteMedia(object):
             try:
                 os.makedirs(media_dir)
             except OSError:
-                self.main_widget().show_error(_("Could not create" ) + " " + \
-media_dir + ".\n" + _("Check your file permissions and make sure the directory is not open in a file browser."))
+                self.main_widget().show_error(
+                    _("Could not create")
+                    + " "
+                    + media_dir
+                    + ".\n"
+                    + _(
+                        "Check your file permissions and make sure the directory is not open in a file browser."
+                    )
+                )
 
     def fact_contains_static_media_files(self, fact):
         # Could be part of fact.py, but is put here to have all media related
@@ -79,7 +94,7 @@ media_dir + ".\n" + _("Check your file permissions and make sure the directory i
         # The following implementation uses the modification date. Less
         # robust, but could be useful on a mobile device.
 
-        #return os.path.getmtime(media_file)
+        # return os.path.getmtime(media_file)
 
     def check_for_edited_media_files(self):
         # Regular media files.
@@ -92,16 +107,23 @@ media_dir + ".\n" + _("Check your file permissions and make sure the directory i
             if hash != new_hash:
                 new_hashes[filename] = new_hash
         for filename, new_hash in new_hashes.items():
-            self.con.execute("update media set _hash=? where filename=?",
-                (new_hash, filename))
+            self.con.execute(
+                "update media set _hash=? where filename=?",
+                (new_hash, filename),
+            )
             self.log().edited_media_file(filename)
 
     def dynamically_create_media_files(self):
         # First check which components are actually working. E.g., on a
         # headless server, it's possible that latex is not installed, so
         # we don't need to go through all the effort.
-        creators = [f for f in self.component_manager.all("hook",
-            "dynamically_create_media_files") if f.is_working() == True]
+        creators = [
+            f
+            for f in self.component_manager.all(
+                "hook", "dynamically_create_media_files"
+            )
+            if f.is_working() == True
+        ]
         if len(creators) == 0:
             return
         for cursor in self.con.execute("select value from data_for_fact"):
@@ -111,8 +133,9 @@ media_dir + ".\n" + _("Check your file permissions and make sure the directory i
     def active_dynamic_media_files(self):
         # Other media files, e.g. latex.
         filenames = set()
-        for hook in self.component_manager.all\
-            ("hook", "active_dynamic_media_files"):
+        for hook in self.component_manager.all(
+            "hook", "active_dynamic_media_files"
+        ):
             # Prefilter data we need to screen.
             sql_command = """select value from data_for_fact where _fact_id in
                 (select _fact_id from cards where active=1) and ("""
@@ -142,19 +165,27 @@ media_dir + ".\n" + _("Check your file permissions and make sure the directory i
             if filename.startswith("http:"):
                 continue
             if len(filename) > 200:
-                self.main_widget().show_information(\
-_("Media filename rather long. This could cause problems using this file on a different OS."))
+                self.main_widget().show_information(
+                    _(
+                        "Media filename rather long. This could cause problems using this file on a different OS."
+                    )
+                )
             if "#" in filename:
-                self.main_widget().show_information(\
-_("Filename contains '#', which could cause problems on some operating systems."))
-            if not os.path.exists(filename) and \
-                not os.path.exists(expand_path(filename, self.media_dir())):
-                self.main_widget().show_error(\
-                    _("Missing media file!") + "\n\n" + filename)
+                self.main_widget().show_information(
+                    _(
+                        "Filename contains '#', which could cause problems on some operating systems."
+                    )
+                )
+            if not os.path.exists(filename) and not os.path.exists(
+                expand_path(filename, self.media_dir())
+            ):
+                self.main_widget().show_error(
+                    _("Missing media file!") + "\n\n" + filename
+                )
                 for fact_key, value in fact.data.items():
-                    fact.data[fact_key] = \
-                        fact.data[fact_key].replace(match.group(),
-                        "src_missing=\"%s\"" % match.group(2))
+                    fact.data[fact_key] = fact.data[fact_key].replace(
+                        match.group(), 'src_missing="%s"' % match.group(2)
+                    )
                 continue
             # If needed, copy file to the media dir. Normally this happens when
             # the user clicks 'Add image' e.g., but he could have typed in the
@@ -165,13 +196,22 @@ _("Filename contains '#', which could cause problems on some operating systems."
                 filename = filename.replace("\\", "/")
             for fact_key, value in fact.data.items():
                 fact.data[fact_key] = value.replace(match.group(2), filename)
-                self.con.execute("""update data_for_fact set value=? where
+                self.con.execute(
+                    """update data_for_fact set value=? where
                     _fact_id=? and key=?""",
-                    (fact.data[fact_key], fact._id, fact_key))
-            if self.con.execute("select 1 from media where filename=? limit 1",
-                                (filename, )).fetchone() is None:
-                self.con.execute("""insert into media(filename, _hash)
-                    values(?,?)""", (filename, self._media_hash(filename)))
+                    (fact.data[fact_key], fact._id, fact_key),
+                )
+            if (
+                self.con.execute(
+                    "select 1 from media where filename=? limit 1", (filename,)
+                ).fetchone()
+                is None
+            ):
+                self.con.execute(
+                    """insert into media(filename, _hash)
+                    values(?,?)""",
+                    (filename, self._media_hash(filename)),
+                )
                 # When we are applying log entries during sync or import, the
                 # side effects of e.g. ADDED_FACT events should not generate
                 # additional ADDED_MEDIA_FILE events at the remote partner, so
@@ -189,8 +229,9 @@ _("Filename contains '#', which could cause problems on some operating systems."
         case_insensitive = is_filesystem_case_insensitive()
         # Files referenced in the database.
         files_in_db = set()
-        for result in self.con.execute(\
-            "select value from data_for_fact where value like '%src=%'"):
+        for result in self.con.execute(
+            "select value from data_for_fact where value like '%src=%'"
+        ):
             for match in re_src.finditer(result[0]):
                 filename = match.group(2)
                 if case_insensitive:
@@ -222,16 +263,17 @@ _("Filename contains '#', which could cause problems on some operating systems."
             os.remove(expand_path(filename, self.media_dir()))
             self.log().deleted_media_file(filename)
         # Purge empty dirs.
-        for root, dirnames, filenames in \
-            os.walk(self.media_dir(), topdown=False):
+        for root, dirnames, filenames in os.walk(
+            self.media_dir(), topdown=False
+        ):
             contracted_root = contract_path(root, self.media_dir())
             if not contracted_root or contracted_root.startswith("_"):
                 continue
             if len(filenames) == 0 and len(dirnames) == 0:
                 os.rmdir(root)
         # Other media files, e.g. latex.
-        for f in self.component_manager.all("hook",
-            "delete_unused_media_files"):
+        for f in self.component_manager.all(
+            "hook", "delete_unused_media_files"
+        ):
             f.run()
         remove_empty_dirs_in(self.media_dir())
-

@@ -2,7 +2,6 @@
 # statistics_page.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.component import Component
 
 
@@ -26,7 +25,7 @@ class StatisticsPage(Component):
     instantiate = Component.LATER
 
     name = ""
-    variants = [] # [(variant_id, variant_name)]
+    variants = []  # [(variant_id, variant_name)]
     show_variants_in_combobox = True
 
     def __init__(self, component_manager):
@@ -44,9 +43,7 @@ class StatisticsPage(Component):
 
 class PlotStatisticsPage(StatisticsPage):
 
-    """A statistics page where the data is represented on a graphical plot.
-
-    """
+    """A statistics page where the data is represented on a graphical plot."""
 
     def __init__(self, component_manager):
         StatisticsPage.__init__(self, component_manager)
@@ -64,4 +61,3 @@ class HtmlStatisticsPage(StatisticsPage):
     def __init__(self, component_manager):
         StatisticsPage.__init__(self, component_manager)
         self.html = None
-

@@ -3,13 +3,13 @@
 #
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.review_controllers.SM2_controller \
-     import SM2Controller
+from mnemosyne.libmnemosyne.review_controllers.SM2_controller import (
+    SM2Controller,
+)
 from mnemosyne.libmnemosyne.schedulers.cramming import Cramming
 
 
 class SM2ControllerCramming(SM2Controller):
-
     def grade_answer(self, grade):
         self.flush_sync_server()
         card_to_grade = self.card
@@ -30,15 +30,18 @@ class SM2ControllerCramming(SM2Controller):
             self.show_new_question()
         self.review_widget().update_status_bar_counters()
         if self.config()["show_intervals"] == "status_bar":
-            self.main_widget().update_status_bar_message(_("Returns in") + \
-                " " + str(interval) + _(" day(s)."))
+            self.main_widget().update_status_bar_message(
+                _("Returns in") + " " + str(interval) + _(" day(s).")
+            )
 
     def counters(self):
         db = self.database()
         max_ret_reps = 1 if self.new_only else -1
-        return db.scheduler_data_count(Cramming.WRONG, max_ret_reps), \
-            db.scheduler_data_count(Cramming.UNSEEN, max_ret_reps),  \
-            db.active_count()
+        return (
+            db.scheduler_data_count(Cramming.WRONG, max_ret_reps),
+            db.scheduler_data_count(Cramming.UNSEEN, max_ret_reps),
+            db.active_count(),
+        )
 
     def reload_counters(self):
         pass

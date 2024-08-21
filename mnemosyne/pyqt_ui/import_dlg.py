@@ -3,14 +3,12 @@
 #
 
 import os
-from PyQt6 import QtGui, QtCore, QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.pyqt_ui.qt_worker_thread import \
-    QtWorkerThread, QtGuiThread
-from mnemosyne.pyqt_ui.ui_import_dlg import Ui_ImportDlg
 from mnemosyne.libmnemosyne.ui_components.dialogs import ImportDialog
-
+from mnemosyne.pyqt_ui.qt_worker_thread import QtGuiThread, QtWorkerThread
+from mnemosyne.pyqt_ui.ui_import_dlg import Ui_ImportDlg
+from PyQt6 import QtCore, QtWidgets
 
 answer = None
 mutex = QtCore.QMutex()
@@ -42,7 +40,6 @@ class ImportThread(QtWorkerThread):
 
 
 class ImportDlg(QtWidgets.QDialog, QtGuiThread, ImportDialog, Ui_ImportDlg):
-
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
@@ -90,8 +87,9 @@ class ImportDlg(QtWidgets.QDialog, QtGuiThread, ImportDialog, Ui_ImportDlg):
 
     def browse(self):
         import_dir = self.config()["import_dir"]
-        filename = self.main_widget().get_filename_to_open(import_dir,
-            _(self.format().filename_filter))
+        filename = self.main_widget().get_filename_to_open(
+            import_dir, _(self.format().filename_filter)
+        )
         self.filename_box.setText(filename)
         if filename:
             self.config()["import_dir"] = os.path.dirname(filename)
@@ -103,10 +101,12 @@ class ImportDlg(QtWidgets.QDialog, QtGuiThread, ImportDialog, Ui_ImportDlg):
             self.config()["import_extra_tag_names"] = extra_tag_names
             if not extra_tag_names:
                 extra_tag_names = ""
-            self.worker_thread = ImportThread(filename,
-                self.format(), extra_tag_names, mnemosyne=self)
-            self.worker_thread.show_export_metadata_signal.connect(\
-                self.threaded_show_export_metadata)
+            self.worker_thread = ImportThread(
+                filename, self.format(), extra_tag_names, mnemosyne=self
+            )
+            self.worker_thread.show_export_metadata_signal.connect(
+                self.threaded_show_export_metadata
+            )
             self.run_worker_thread()
         else:
             self.main_widget().show_error(_("File does not exist."))
