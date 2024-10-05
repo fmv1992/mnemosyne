@@ -112,9 +112,9 @@ public class MnemosyneActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) myToolbar.getLayoutParams();
-        params.setMargins(0, getStatusBarHeight(), 0, 0);
-        myToolbar.setLayoutParams(params);
+        //LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) myToolbar.getLayoutParams();
+        //params.setMargins(0, getStatusBarHeight(), 0, 0);
+        //myToolbar.setLayoutParams(params);
 
         questionLabel = (TextView) this.findViewById(R.id.questionLabel);
         question = (WebView) this.findViewById(R.id.question);
@@ -248,7 +248,7 @@ public class MnemosyneActivity extends AppCompatActivity {
         SharedPreferences settings = getSharedPreferences("UserInfo", 0);
         if (!settings.contains("shown_first_run_wizard")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(Html.fromHtml("This application is meant to be used in conjunction with the <a href='http://www.mnemosyne-proj.org'>Mnemosyne desktop app</a>. Input your cards there, start the desktop sync server in 'Configure Mnemosyne' and then you can sync and review the cards in this Android app.<br><br>IMPORTANT: note that only the database 'default.db' is synced. <br><br>IMPORTANT: If you used Mnemosyne before on this device, <a href='https://mnemosyne-proj.org/help/android-and-storage'>click here</a>."));
+            builder.setMessage(Html.fromHtml("This application is meant to be used in conjunction with the <a href='http://www.mnemosyne-proj.org'>Mnemosyne desktop app</a>. Input your cards there, start the desktop sync server in 'Configure Mnemosyne' and then you can sync and review the cards in this Android app.<br><br>IMPORTANT: note that only the database 'default.db' is synced. <br><br>IMPORTANT: If you used Mnemosyne before on this device, <a href='https://mnemosyne-proj.org/help/android-and-storage'>click here</a>.<br><br><a href='http://www.mnemosyne-proj.org/privacy-policy'>Privacy policy</a>"));
             builder.setCancelable(false);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
@@ -269,7 +269,7 @@ public class MnemosyneActivity extends AppCompatActivity {
         editor.putBoolean("shown_first_run_wizard", true);
         editor.commit();
 
-        if (true) { //(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (false) { // (was true) (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             setFullscreen();
             // Capture all touch down events on top of the screen.
             getWindow().getDecorView().setOnTouchListener(new View.OnTouchListener() {
@@ -329,7 +329,7 @@ public class MnemosyneActivity extends AppCompatActivity {
     }
 
     public void setFullscreen() {
-        if (true) { // (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (false) { // was true (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             getSupportActionBar().hide();
             // https://developer.android.com/develop/ui/views/layout/immersive#java
             WindowInsetsControllerCompat windowInsetsController =
@@ -339,7 +339,7 @@ public class MnemosyneActivity extends AppCompatActivity {
             );
             windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
         }
-        else if (true) { // (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        else if (false) { // was true (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getSupportActionBar().hide();
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -441,6 +441,12 @@ public class MnemosyneActivity extends AppCompatActivity {
 
             case R.id.menu_import_data:
                 import_data();
+                return true;
+
+            case R.id.menu_privacy_policy:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://mnemosyne-proj.org/privacy-policy"));
+                startActivity(browserIntent);
                 return true;
 
             default:

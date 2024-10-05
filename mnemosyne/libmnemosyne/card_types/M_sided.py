@@ -6,6 +6,7 @@ import copy
 import os
 import sys
 
+from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.card_type import CardType
 from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
 from mnemosyne.libmnemosyne.gui_translator import _

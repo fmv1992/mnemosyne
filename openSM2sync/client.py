@@ -235,7 +235,7 @@ class Client(Partner):
                 + "which copy to discard.\n"
             )
         else:
-            message = "Conflicts detected during sync! This typically happens if you review the same card on both machines. Choose which version of the database (cards + history) to keep and which version to discard."
+            message = "Conflicts detected during sync! This typically happens if you review the same card on both machines. Choose which version of the entire database (cards + history) to keep and which version to discard."
         # Ask for conflict resolution direction.
         if self.supports_binary_upload():
             result = self.ui.show_question(
