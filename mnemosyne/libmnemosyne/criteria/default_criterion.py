@@ -2,13 +2,19 @@
 # default_criterion.py <Peter.Bienstman@gmail.com>
 #
 
+import enum
+
 from mnemosyne.libmnemosyne.criterion import Criterion
 
+class TagMode(enum.Enum):
+    # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8
+    pass
 
 class DefaultCriterion(Criterion):
 
     criterion_type = "default"
 
+    # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8: Use the `TagMode` enum.
     # Tag modes
     TAG_MODE_ANY = 0  # Having any of these tags
     TAG_MODE_NONE = 1  # Not having any of these tags
@@ -49,7 +55,8 @@ class DefaultCriterion(Criterion):
 
     def apply_to_card(self, card):
         card.active = False
-        
+        print('apply_to_card')
+
         # Handle different tag modes
         if self.tag_mode == self.TAG_MODE_ANY:
             # Having any of these tags
@@ -65,6 +72,7 @@ class DefaultCriterion(Criterion):
                     card.active = False
                     break
         elif self.tag_mode == self.TAG_MODE_ALL:
+            print('self.TAG_MODE_ALL')
             # Having all of these tags
             if self._tag_ids_active:
                 card.active = True
@@ -93,7 +101,7 @@ class DefaultCriterion(Criterion):
 
     def is_tag_active(self, tag):
         return (tag._id in self._tag_ids_active)
-    
+
     def tag_deleted(self, tag):
         self._tag_ids_active.discard(tag._id)
         self._tag_ids_forbidden.discard(tag._id)

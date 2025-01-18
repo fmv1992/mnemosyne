@@ -53,6 +53,7 @@ class DefaultCriterionWdgt(QtWidgets.QWidget, CriterionWidget,
     def display_criterion(self, criterion):
         self.card_type_tree_wdgt.display(criterion)
         self.tag_tree_wdgt.display(criterion)
+        # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8
         if criterion.tag_mode == criterion.TAG_MODE_NONE:
             self.active_or_forbidden.setCurrentIndex(1)
         elif criterion.tag_mode == criterion.TAG_MODE_ALL:
@@ -69,7 +70,7 @@ class DefaultCriterionWdgt(QtWidgets.QWidget, CriterionWidget,
 
         criterion = DefaultCriterion(component_manager=self.component_manager)
         criterion = self.card_type_tree_wdgt.checked_to_criterion(criterion)
-        
+
         current_mode = self.active_or_forbidden.currentIndex()
         if current_mode == 0:  # Having any of these tags
             criterion.tag_mode = criterion.TAG_MODE_ANY
@@ -80,9 +81,10 @@ class DefaultCriterionWdgt(QtWidgets.QWidget, CriterionWidget,
             for tag in self.database().tags():
                 criterion._tag_ids_active.add(tag._id)
         else:  # Having all of these tags
+            print('criterion.TAG_MODE_ALL')
             criterion.tag_mode = criterion.TAG_MODE_ALL
             self.tag_tree_wdgt.checked_to_active_tags_in_criterion(criterion)
-        
+
         return criterion
 
     def criterion_clicked(self):

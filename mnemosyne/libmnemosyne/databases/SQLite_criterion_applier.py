@@ -33,7 +33,9 @@ class DefaultCriterionApplier(CriterionApplier):
         db = self.database()
         # If every tag is active, take a shortcut.
         tag_count = db.con.execute("select count() from tags").fetchone()[0]
-        if len(criterion._tag_ids_active) == tag_count:
+        # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8: Be more smart about how the
+        # tags get applied.
+        if len(criterion._tag_ids_active) == tag_count and criterion.tag_mode == DefaultCriterion.TAG_MODE_ANY:
             db.con.execute("update cards set active=1")
         else:
             # Turn off everything.
