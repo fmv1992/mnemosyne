@@ -9,6 +9,11 @@ class DefaultCriterion(Criterion):
 
     criterion_type = "default"
 
+    # Tag modes
+    TAG_MODE_ANY = 0  # Having any of these tags
+    TAG_MODE_NONE = 1  # Not having any of these tags
+    TAG_MODE_ALL = 2  # Having all of these tags
+
     def __init__(self, component_manager, id=None):
         Criterion.__init__(self, component_manager, id)
         # (card_type.id, fact_view.id):
@@ -16,6 +21,7 @@ class DefaultCriterion(Criterion):
         # We work with _ids instead of ids for speed.
         self._tag_ids_active = set()
         self._tag_ids_forbidden = set()
+        self.tag_mode = self.TAG_MODE_ANY
 
     def __eq__(self, other):
         if type(self) != type(other):
@@ -43,17 +49,35 @@ class DefaultCriterion(Criterion):
 
     def apply_to_card(self, card):
         card.active = False
-        for tag in card.tags:
-            if tag._id in self._tag_ids_active:
+        
+        # Handle different tag modes
+        if self.tag_mode == self.TAG_MODE_ANY:
+            # Having any of these tags
+            for tag in card.tags:
+                if tag._id in self._tag_ids_active:
+                    card.active = True
+                    break
+        elif self.tag_mode == self.TAG_MODE_NONE:
+            # Not having any of these tags
+            card.active = True
+            for tag in card.tags:
+                if tag._id in self._tag_ids_forbidden:
+                    card.active = False
+                    break
+        elif self.tag_mode == self.TAG_MODE_ALL:
+            # Having all of these tags
+            if self._tag_ids_active:
                 card.active = True
-                break
+                card_tag_ids = {tag._id for tag in card.tags}
+                if not self._tag_ids_active.issubset(card_tag_ids):
+                    card.active = False
+            else:
+                card.active = True
+
+        # Apply card type filter
         if (card.card_type.id, card.fact_view.id) in \
            self.deactivated_card_type_fact_view_ids:
             card.active = False
-        for tag in card.tags:
-            if tag._id in self._tag_ids_forbidden:
-                card.active = False
-                break
 
     def active_tag_added(self, tag):
         self._tag_ids_active.add(tag._id)
@@ -90,13 +114,15 @@ class DefaultCriterion(Criterion):
     def data_to_string(self):
         return repr((self.deactivated_card_type_fact_view_ids,
                      self._tag_ids_active,
-                     self._tag_ids_forbidden))
+                     self._tag_ids_forbidden,
+                     self.tag_mode))
 
     def set_data_from_string(self, data_string):
         data = eval(data_string)
         self.deactivated_card_type_fact_view_ids = data[0]
         self._tag_ids_active = data[1]
         self._tag_ids_forbidden = data[2]
+        self.tag_mode = data[3] if len(data) > 3 else self.TAG_MODE_ANY  # For backward compatibility
 
     # To send the criteria across, we need to convert from _ids ids first.
 
@@ -110,13 +136,14 @@ class DefaultCriterion(Criterion):
             tag = self.database().tag(_tag_id, is_id_internal=True)
             forbidden_tag_ids.add(tag.id)
         return repr((self.deactivated_card_type_fact_view_ids,
-                     active_tag_ids, forbidden_tag_ids))
+                     active_tag_ids, forbidden_tag_ids, self.tag_mode))
 
     def set_data_from_sync_string(self, data_string):
         data = eval(data_string)
         self.deactivated_card_type_fact_view_ids = data[0]
         active_tag_ids = data[1]
         forbidden_tag_ids = data[2]
+        self.tag_mode = data[3] if len(data) > 3 else self.TAG_MODE_ANY  # For backward compatibility
         self._tag_ids_active = set()
         for tag_id in active_tag_ids:
             tag = self.database().tag(tag_id, is_id_internal=False)

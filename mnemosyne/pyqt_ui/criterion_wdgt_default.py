@@ -53,9 +53,11 @@ class DefaultCriterionWdgt(QtWidgets.QWidget, CriterionWidget,
     def display_criterion(self, criterion):
         self.card_type_tree_wdgt.display(criterion)
         self.tag_tree_wdgt.display(criterion)
-        if len(criterion._tag_ids_forbidden):
+        if criterion.tag_mode == criterion.TAG_MODE_NONE:
             self.active_or_forbidden.setCurrentIndex(1)
-        else:
+        elif criterion.tag_mode == criterion.TAG_MODE_ALL:
+            self.active_or_forbidden.setCurrentIndex(2)
+        else:  # TAG_MODE_ANY
             self.active_or_forbidden.setCurrentIndex(0)
 
     def criterion(self):
@@ -67,15 +69,20 @@ class DefaultCriterionWdgt(QtWidgets.QWidget, CriterionWidget,
 
         criterion = DefaultCriterion(component_manager=self.component_manager)
         criterion = self.card_type_tree_wdgt.checked_to_criterion(criterion)
-        # Tag tree contains active tags.
-        if self.active_or_forbidden.currentIndex() == 0:
+        
+        current_mode = self.active_or_forbidden.currentIndex()
+        if current_mode == 0:  # Having any of these tags
+            criterion.tag_mode = criterion.TAG_MODE_ANY
             self.tag_tree_wdgt.checked_to_active_tags_in_criterion(criterion)
-        # Tag tree contains forbidden tags.
-        else:
-            self.tag_tree_wdgt.\
-                checked_to_forbidden_tags_in_criterion(criterion)
+        elif current_mode == 1:  # Not having any of these tags
+            criterion.tag_mode = criterion.TAG_MODE_NONE
+            self.tag_tree_wdgt.checked_to_forbidden_tags_in_criterion(criterion)
             for tag in self.database().tags():
                 criterion._tag_ids_active.add(tag._id)
+        else:  # Having all of these tags
+            criterion.tag_mode = criterion.TAG_MODE_ALL
+            self.tag_tree_wdgt.checked_to_active_tags_in_criterion(criterion)
+        
         return criterion
 
     def criterion_clicked(self):
