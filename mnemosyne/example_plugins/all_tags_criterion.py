@@ -3,7 +3,9 @@ from PyQt6 import QtWidgets
 from mnemosyne.libmnemosyne.plugin import Plugin
 from mnemosyne.libmnemosyne.criterion import Criterion
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.criterion_widget import CriterionWidget
+from mnemosyne.libmnemosyne.ui_components.criterion_widget import (
+    CriterionWidget,
+)
 from mnemosyne.pyqt_ui.tag_tree_wdgt import TagsTreeWdgt
 from mnemosyne.pyqt_ui.card_type_tree_wdgt import CardTypesTreeWdgt
 
@@ -112,36 +114,48 @@ class AllTagsCriterionWdgt(QtWidgets.QWidget, CriterionWidget):
         self.parent = kwds["parent"]
         self.component_manager = kwds["component_manager"]
         self.layout = QtWidgets.QGridLayout(self)
-        
+
         # Card types section
         self.card_type_label = QtWidgets.QLabel(self)
-        self.card_type_label.setText(_("Activate cards from these card types:"))
+        self.card_type_label.setText(
+            _("Activate cards from these card types:")
+        )
         self.layout.addWidget(self.card_type_label, 0, 0)
-        
+
         self.card_type_tree_wdgt = CardTypesTreeWdgt(
-            component_manager=self.component_manager, parent=self)
+            component_manager=self.component_manager, parent=self
+        )
         self.layout.addWidget(self.card_type_tree_wdgt, 1, 0)
-        
+
         # Tags section
         self.tag_label = QtWidgets.QLabel(self)
         self.tag_label.setText(_("Having all of these tags:"))
         self.layout.addWidget(self.tag_label, 0, 1)
-        
+
         self.tag_tree_wdgt = TagsTreeWdgt(
-            component_manager=self.component_manager, parent=self)
+            component_manager=self.component_manager, parent=self
+        )
         self.layout.addWidget(self.tag_tree_wdgt, 1, 1)
-        
+
         # Initialize with all tags active
         criterion = AllTagsCriterion(component_manager=self.component_manager)
         for tag in self.database().tags():
             criterion._tag_ids_required.add(tag._id)
         self.display_criterion(criterion)
-        
+
         # Connect signals
-        self.card_type_tree_wdgt.tree_wdgt.itemChanged.connect(self.criterion_changed)
-        self.tag_tree_wdgt.tree_wdgt.itemChanged.connect(self.criterion_changed)
-        self.card_type_tree_wdgt.tree_wdgt.itemClicked.connect(self.criterion_clicked)
-        self.tag_tree_wdgt.tree_wdgt.itemClicked.connect(self.criterion_clicked)
+        self.card_type_tree_wdgt.tree_wdgt.itemChanged.connect(
+            self.criterion_changed
+        )
+        self.tag_tree_wdgt.tree_wdgt.itemChanged.connect(
+            self.criterion_changed
+        )
+        self.card_type_tree_wdgt.tree_wdgt.itemClicked.connect(
+            self.criterion_clicked
+        )
+        self.tag_tree_wdgt.tree_wdgt.itemClicked.connect(
+            self.criterion_clicked
+        )
 
     def display_criterion(self, criterion):
         self.card_type_tree_wdgt.display(criterion)
@@ -154,9 +168,15 @@ class AllTagsCriterionWdgt(QtWidgets.QWidget, CriterionWidget):
         return criterion
 
     def criterion_clicked(self):
-        if self.parent.was_showing_a_saved_set and not self.parent.is_shutting_down:
+        if (
+            self.parent.was_showing_a_saved_set
+            and not self.parent.is_shutting_down
+        ):
             self.main_widget().show_information(
-                _("Cards you (de)activate now will not be stored in the previously selected set unless you click 'Save this set for later use' again. This allows you to make some quick-and-dirty modifications."))
+                _(
+                    "Cards you (de)activate now will not be stored in the previously selected set unless you click 'Save this set for later use' again. This allows you to make some quick-and-dirty modifications."
+                )
+            )
             self.parent.was_showing_a_saved_set = False
 
     def criterion_changed(self):
@@ -168,5 +188,7 @@ class AllTagsCriterionWdgt(QtWidgets.QWidget, CriterionWidget):
 
 class AllTagsCriterionPlugin(Plugin):
     name = "All Tags Criterion"
-    description = "Adds a criterion that requires cards to have all specified tags"
+    description = (
+        "Adds a criterion that requires cards to have all specified tags"
+    )
     components = [AllTagsCriterion, AllTagsCriterionWdgt]
