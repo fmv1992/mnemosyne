@@ -149,11 +149,6 @@ class AllTagsCriterionPlugin(Plugin, PrintMethodCalls, HiGiver):
     <https://github.com/fmv1992/mnemosyne/blob/ecff09cdee28b6378b381cd2e54fe21903e98963/mnemosyne/libmnemosyne/card_types/cloze.py#L165>.
     """
 
-    name = "All Tags Criterion"
-    description = (
-        "Adds a criterion that requires cards to have all specified tags"
-    )
-
     name = _("All Tags Criterion")
     description = _(
         "Adds a criterion that requires cards to have all specified tags"

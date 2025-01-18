@@ -88,9 +88,10 @@ class ManagePluginsDlg(QtWidgets.QDialog, ManagePluginsDialog,
         return QtWidgets.QDialog.accept(self)
 
     def install_plugin(self):
-        self.last_selected_row = self.plugin_list.currentRow()
-        self.controller().install_plugin()
-        self.build_plugin_list()
+        print(f"{self.last_selected_row = self.plugin_list.currentRow()=}")
+        print(f"{self.controller().install_plugin()=}")
+        print(f"{self.build_plugin_list()=}")
+        print("`install_plugin` done")
 
     def delete_plugin(self):
         plugin_name = self.plugin_list.selectedItems()[0].text()
