@@ -39,9 +39,12 @@ class ActivateCardsDlg(QtWidgets.QDialog, ActivateCardsDialog,
         current_criterion = self.database().current_criterion()
         self.widget_for_criterion_type = {}
         for criterion_class in self.criterion_classes:
-            widget = self.component_manager.current\
-                ("criterion_widget", used_for=criterion_class)\
-                (component_manager=self.component_manager, parent=self)
+            try:
+                widget = self.component_manager.current\
+                    ("criterion_widget", used_for=criterion_class)\
+                    (component_manager=self.component_manager, parent=self)
+            except:
+                return
             self.tab_widget.addTab(widget, criterion_class.criterion_type)
             self.widget_for_criterion_type[criterion_class.criterion_type] \
                 = widget
