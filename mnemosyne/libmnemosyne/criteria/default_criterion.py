@@ -8,17 +8,18 @@ from mnemosyne.libmnemosyne.criterion import Criterion
 
 class TagMode(enum.Enum):
     # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8
-    pass
+    ANY = 0  # Having any of these tags
+    NONE = 1  # Not having any of these tags
+    ALL = 2  # Having all of these tags
 
 class DefaultCriterion(Criterion):
 
     criterion_type = "default"
 
     # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8: Use the `TagMode` enum.
-    # Tag modes
-    TAG_MODE_ANY = 0  # Having any of these tags
-    TAG_MODE_NONE = 1  # Not having any of these tags
-    TAG_MODE_ALL = 2  # Having all of these tags
+    TAG_MODE_ANY = TagMode.ANY
+    TAG_MODE_NONE = TagMode.NONE
+    TAG_MODE_ALL = TagMode.ALL
 
     def __init__(self, component_manager, id=None):
         Criterion.__init__(self, component_manager, id)
@@ -123,14 +124,21 @@ class DefaultCriterion(Criterion):
         return repr((self.deactivated_card_type_fact_view_ids,
                      self._tag_ids_active,
                      self._tag_ids_forbidden,
-                     self.tag_mode))
+                     self.tag_mode.value))
 
     def set_data_from_string(self, data_string):
         data = eval(data_string)
         self.deactivated_card_type_fact_view_ids = data[0]
         self._tag_ids_active = data[1]
         self._tag_ids_forbidden = data[2]
-        self.tag_mode = data[3] if len(data) > 3 else self.TAG_MODE_ANY  # For backward compatibility
+        # For backward compatibility
+        if len(data) > 3:
+            if isinstance(data[3], int):
+                self.tag_mode = TagMode(data[3])
+            else:
+                self.tag_mode = data[3]
+        else:
+            self.tag_mode = self.TAG_MODE_ANY
 
     # To send the criteria across, we need to convert from _ids ids first.
 
@@ -144,14 +152,21 @@ class DefaultCriterion(Criterion):
             tag = self.database().tag(_tag_id, is_id_internal=True)
             forbidden_tag_ids.add(tag.id)
         return repr((self.deactivated_card_type_fact_view_ids,
-                     active_tag_ids, forbidden_tag_ids, self.tag_mode))
+                     active_tag_ids, forbidden_tag_ids, self.tag_mode.value))
 
     def set_data_from_sync_string(self, data_string):
         data = eval(data_string)
         self.deactivated_card_type_fact_view_ids = data[0]
         active_tag_ids = data[1]
         forbidden_tag_ids = data[2]
-        self.tag_mode = data[3] if len(data) > 3 else self.TAG_MODE_ANY  # For backward compatibility
+        # For backward compatibility
+        if len(data) > 3:
+            if isinstance(data[3], int):
+                self.tag_mode = TagMode(data[3])
+            else:
+                self.tag_mode = data[3]
+        else:
+            self.tag_mode = self.TAG_MODE_ANY
         self._tag_ids_active = set()
         for tag_id in active_tag_ids:
             tag = self.database().tag(tag_id, is_id_internal=False)
