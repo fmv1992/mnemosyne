@@ -7,7 +7,14 @@ import logging
 
 print("B" * 790)
 print("B" * 790, file=sys.stderr)
-# raise Exception
+import os
+
+# print(f"""{os.environ["PYTHONUNBUFFERED"]}""")
+
+
+class HiGiver:
+    def say_hi(self):
+        print("hi")
 
 
 class PrintMethodCalls:
@@ -23,7 +30,7 @@ class PrintMethodCalls:
         return attr
 
 
-class AllTagsCriterion(Criterion, PrintMethodCalls):
+class AllTagsCriterion(Criterion, PrintMethodCalls, HiGiver):
     criterion_type = "all_tags"
 
     def __init__(self, component_manager, id=None):
@@ -119,9 +126,16 @@ class AllTagsCriterion(Criterion, PrintMethodCalls):
             self._tag_ids_forbidden.add(tag._id)
 
 
-class AllTagsCriterionPlugin(Plugin):
+class AllTagsCriterionPlugin(Plugin, HiGiver):
     name = "All Tags Criterion"
     description = (
         "Adds a criterion that requires cards to have all specified tags"
     )
     components = [AllTagsCriterion]
+
+
+from mnemosyne.libmnemosyne import Mnemosyne
+
+mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True)
+AllTagsCriterion(mnemosyne).say_hi()
+AllTagsCriterionPlugin(mnemosyne).say_hi()

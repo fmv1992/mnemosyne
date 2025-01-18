@@ -19,8 +19,7 @@ def startup():
 
     # Note that this also includes building the queue and getting the first card.
 
-    mnemosyne = Mnemosyne(upload_science_logs=False,
-        interested_in_old_reps=True)
+    mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True)
     mnemosyne.components.insert(0,
         ("mnemosyne.libmnemosyne.gui_translators.no_gui_translator",
          "NoGuiTranslator"))
