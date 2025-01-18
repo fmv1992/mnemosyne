@@ -938,6 +938,7 @@ _("This will tag all the cards in a given card type which have the same question
         filename = self.main_widget().get_filename_to_open(\
             self.config()["import_plugin_dir"],
             _("Plugins") + " " + "(*.plugin)", _("Install plugin"))
+        print(f"{filename=}")
         if not filename:
             return ""
         self.config()["import_plugin_dir"] = os.path.dirname(filename)

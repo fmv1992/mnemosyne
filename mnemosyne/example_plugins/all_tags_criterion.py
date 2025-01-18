@@ -165,3 +165,9 @@ class AllTagsCriterionPlugin(Plugin, PrintMethodCalls, HiGiver):
 
 # As per `mnemosyne:e71e24e:mnemosyne/libmnemosyne/card_types/sentence.py:45`,
 # these have to be instantiated (and they are not being).
+
+
+# Register plugin.
+
+from mnemosyne.libmnemosyne.plugin import register_user_plugin
+register_user_plugin(AllTagsCriterionPlugin)
