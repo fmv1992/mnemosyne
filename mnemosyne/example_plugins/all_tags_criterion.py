@@ -156,6 +156,11 @@ class AllTagsCriterionPlugin(Plugin, PrintMethodCalls, HiGiver):
     components = [AllTagsCriterion]
     supported_API_level = 3
 
+    def activate(self):
+        Plugin.activate(self)
+        from .criterion_wdgt_all_tags import AllTagsCriterionWdgt
+        self.component_manager.register(AllTagsCriterionWdgt(self.component_manager))
+
 
 # from mnemosyne.libmnemosyne import Mnemosyne
 #
