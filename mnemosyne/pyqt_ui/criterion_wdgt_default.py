@@ -21,6 +21,7 @@ class DefaultCriterionWdgt(QtWidgets.QWidget, CriterionWidget,
 
     """
 
+    component_type = "criterion_widget"
     used_for = DefaultCriterion
 
     def __init__(self, **kwds):
