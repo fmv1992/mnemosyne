@@ -142,11 +142,15 @@ class AllTagsCriterion(Criterion, PrintMethodCalls, HiGiver):
 
 
 class AllTagsCriterionPlugin(Plugin, PrintMethodCalls, HiGiver):
+    """
+    <https://github.com/fmv1992/mnemosyne/blob/b0bb42b3a7781c6e79327f295c1a90c604f12252/tests/test_plugin.py#L57>.
+    """
     name = "All Tags Criterion"
     description = (
         "Adds a criterion that requires cards to have all specified tags"
     )
     components = [AllTagsCriterion]
+    supported_API_level = 3
 
 
 # from mnemosyne.libmnemosyne import Mnemosyne
