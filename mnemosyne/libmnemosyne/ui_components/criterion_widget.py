@@ -7,7 +7,8 @@ from mnemosyne.libmnemosyne.ui_component import UiComponent
 
 class CriterionWidget(UiComponent):
 
-    instantiate = UiComponent.LATER
+    component_type = "criterion_widget"
+    instantiate = UiComponent.LATER      
 
     def display_criterion(self, criterion):
         raise NotImplementedError
