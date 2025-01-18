@@ -28,37 +28,62 @@ class DefaultCriterionApplier(CriterionApplier):
         self.database().con.execute(command, args)
 
     def apply_to_database(self, criterion):
-        if len(criterion._tag_ids_forbidden) != 0:
-            assert len(criterion._tag_ids_active) != 0
         db = self.database()
-        # If every tag is active, take a shortcut.
         tag_count = db.con.execute("select count() from tags").fetchone()[0]
-        # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8: Be more smart about how the
-        # tags get applied.
-        if len(criterion._tag_ids_active) == tag_count and criterion.tag_mode == TagMode.ANY:
+
+        # fa804a3e-09aa-4dd8-9d98-e16d4d8dffe8: Handle different tag modes
+        if criterion.tag_mode == TagMode.ANY:
+            # Having any of these tags
+            if len(criterion._tag_ids_active) == tag_count:
+                # If every tag is active, take a shortcut
+                db.con.execute("update cards set active=1")
+            else:
+                # Turn off everything first
+                db.con.execute("update cards set active=0")
+                # Turn on cards with any of the active tags
+                for chunked__tag_ids in self.split_set(criterion._tag_ids_active, 500):
+                    self.set_activity_for_tags_with__id(chunked__tag_ids, active=1)
+
+        elif criterion.tag_mode == TagMode.NONE:
+            # Not having any of these tags
+            # Start with everything active
             db.con.execute("update cards set active=1")
-        else:
-            # Turn off everything.
-            db.con.execute("update cards set active=0")
-            # Turn on active tags. Limit to 500 at a time to deal with
-            # SQLite limitations.
-            for chunked__tag_ids in self.split_set(\
-                    criterion._tag_ids_active, 500):
-                self.set_activity_for_tags_with__id(chunked__tag_ids, active=1)
-        # Turn off inactive card types and views.
-        command = "update cards set active=0 where "
-        args = []
-        for card_type_id, fact_view_id in \
-                criterion.deactivated_card_type_fact_view_ids:
-            command += "(cards.fact_view_id=? and cards.card_type_id=?)"
-            command += " or "
-            args.append(fact_view_id)
-            args.append(card_type_id)
-        command = command.rsplit("or ", 1)[0]
+            # Turn off cards with any forbidden tag
+            for chunked__tag_ids in self.split_set(criterion._tag_ids_forbidden, 500):
+                self.set_activity_for_tags_with__id(chunked__tag_ids, active=0)
+
+        elif criterion.tag_mode == TagMode.ALL:
+            # Having all of these tags
+            if not criterion._tag_ids_active:
+                # If no tags are required, all cards are active
+                db.con.execute("update cards set active=1")
+            else:
+                # Turn off everything first
+                db.con.execute("update cards set active=0")
+                # Get all cards that have tags
+                card_ids = set()
+                for _card_id, in db.con.execute("select distinct _card_id from tags_for_card"):
+                    card_ids.add(_card_id)
+                
+                # For each card, check if it has all required tags
+                for _card_id in card_ids:
+                    card_tag_ids = set()
+                    for _tag_id, in db.con.execute("""select _tag_id from
+                        tags_for_card where _card_id=?""", (_card_id,)):
+                        card_tag_ids.add(_tag_id)
+                    
+                    if criterion._tag_ids_active.issubset(card_tag_ids):
+                        db.con.execute("update cards set active=1 where _id=?",
+                            (_card_id,))
+
+        # Turn off inactive card types and views
         if criterion.deactivated_card_type_fact_view_ids:
+            command = "update cards set active=0 where "
+            args = []
+            for card_type_id, fact_view_id in criterion.deactivated_card_type_fact_view_ids:
+                command += "(cards.fact_view_id=? and cards.card_type_id=?)"
+                command += " or "
+                args.append(fact_view_id)
+                args.append(card_type_id)
+            command = command.rsplit("or ", 1)[0]
             db.con.execute(command, args)
-        # Turn off forbidden tags. Limit to 500 at a time to deal with
-        # SQLite limitations.
-        for chunked__tag_ids in self.split_set(\
-                criterion._tag_ids_forbidden, 500):
-            self.set_activity_for_tags_with__id(chunked__tag_ids, active=0)
