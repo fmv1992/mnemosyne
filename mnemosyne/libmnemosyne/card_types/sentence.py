@@ -15,7 +15,34 @@ from mnemosyne.libmnemosyne.card_types.cloze import Cloze
 cloze_re = re.compile(r"\[(.+?)\]", re.DOTALL)
 
 
-class Sentence(Cloze):
+class PrintMethodCalls:
+    def __new__(cls, *args, **kwargs):
+        # Wrap __init__ to log its calls
+        original_init = cls.__init__
+
+        def wrapped_init(self, *init_args, **init_kwargs):
+            print(
+                f"Method called: __init__ with args={init_args}, kwargs={init_kwargs}"
+            )
+            return original_init(self, *init_args, **init_kwargs)
+
+        cls.__init__ = wrapped_init
+        return super().__new__(cls)
+
+    def __getattribute__(self, name):
+        attr = super().__getattribute__(name)
+        if (
+            callable(attr) and name != "__init__"
+        ):  # Check if the attribute is a method
+
+            def wrapper(*args, **kwargs):
+                print(f"Method called: {name}")
+                return attr(*args, **kwargs)
+
+            return wrapper
+        return attr
+
+class Sentence(Cloze, PrintMethodCalls):
 
     """A card type using sentences to study foreign languages.
 
