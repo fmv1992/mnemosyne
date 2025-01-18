@@ -342,7 +342,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
         21 : _("In the search box, you can use SQL wildcards like _ (matching a single character) and % (matching one or more characters)."),
         24 : _("Cards with strike-through text are inactive in the current set.")}
 
-    def __init__(self, **kwds):        
+    def __init__(self, **kwds):
         super().__init__(**kwds)
         self.show_tip_after_starting_n_times()
         self.setupUi(self)
@@ -370,6 +370,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
         # Set up tag tree plus search box.
         self.container_2 = QtWidgets.QWidget(self.splitter_1)
         self.layout_2 = QtWidgets.QVBoxLayout(self.container_2)
+        # ???
         self.any_all_tags = QtWidgets.QComboBox(self.container_2)
         self.any_all_tags.addItem(_("having any of these tags:"))
         self.any_all_tags.addItem(_("having all of these tags:"))
@@ -522,7 +523,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
             _card_ids.add(_card_id)
         return _card_ids
 
-    def menu_edit(self, index=None):            
+    def menu_edit(self, index=None):
         # 'index' gets passed if this function gets called through the
         # table.doubleClicked event.
         _card_ids = self._card_ids_from_selection()
@@ -569,7 +570,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
         # Reload card to make sure the changes are picked up.
         card = self.database().card(next__card_id, is_id_internal=True)
         self.edit_dlg.set_new_card(card)
-            
+
     def menu_preview(self):
         from mnemosyne.pyqt_ui.preview_cards_dlg import PreviewCardsDlg
         cards = self.sister_cards_from_single_selection()
@@ -594,7 +595,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
         elif up_down == PreviewCardsDlg.DOWN:
             shift = 1
         if current_row + shift < 0 or current_row + shift >= model.rowCount():
-            return        
+            return
         self.table.selectRow(current_row + shift)
         self.preview_dlg.index = 0
         self.preview_dlg.cards = self.sister_cards_from_single_selection()
@@ -623,7 +624,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
         self.tag_tree_wdgt.rebuild()
         self.load_qt_database()
         self.display_card_table()
-        
+
     def menu_change_card_type(self):
         # Test if all selected cards have the same card type.
         current_card_type_ids = set()
@@ -738,7 +739,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
         self.load_qt_database()
         self.display_card_table()
 
-    def load_qt_database(self):        
+    def load_qt_database(self):
         self.database().release_connection()
         qt_db = QtSql.QSqlDatabase.addDatabase("QSQLITE")
         qt_db.setDatabaseName(self.database().path())
