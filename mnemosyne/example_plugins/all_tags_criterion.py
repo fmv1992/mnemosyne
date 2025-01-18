@@ -18,9 +18,24 @@ class HiGiver:
 
 
 class PrintMethodCalls:
+    def __new__(cls, *args, **kwargs):
+        # Wrap __init__ to log its calls
+        original_init = cls.__init__
+
+        def wrapped_init(self, *init_args, **init_kwargs):
+            print(
+                f"Method called: __init__ with args={init_args}, kwargs={init_kwargs}"
+            )
+            return original_init(self, *init_args, **init_kwargs)
+
+        cls.__init__ = wrapped_init
+        return super().__new__(cls)
+
     def __getattribute__(self, name):
         attr = super().__getattribute__(name)
-        if callable(attr):  # Check if the attribute is a method
+        if (
+            callable(attr) and name != "__init__"
+        ):  # Check if the attribute is a method
 
             def wrapper(*args, **kwargs):
                 print(f"Method called: {name}")
@@ -126,7 +141,7 @@ class AllTagsCriterion(Criterion, PrintMethodCalls, HiGiver):
             self._tag_ids_forbidden.add(tag._id)
 
 
-class AllTagsCriterionPlugin(Plugin, HiGiver):
+class AllTagsCriterionPlugin(Plugin, PrintMethodCalls, HiGiver):
     name = "All Tags Criterion"
     description = (
         "Adds a criterion that requires cards to have all specified tags"
@@ -134,8 +149,8 @@ class AllTagsCriterionPlugin(Plugin, HiGiver):
     components = [AllTagsCriterion]
 
 
-from mnemosyne.libmnemosyne import Mnemosyne
-
-mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True)
-AllTagsCriterion(mnemosyne).say_hi()
-AllTagsCriterionPlugin(mnemosyne).say_hi()
+# from mnemosyne.libmnemosyne import Mnemosyne
+#
+# mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True)
+# AllTagsCriterion(mnemosyne).say_hi()
+# AllTagsCriterionPlugin(mnemosyne).say_hi()
