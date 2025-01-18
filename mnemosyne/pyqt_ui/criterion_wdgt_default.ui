@@ -32,6 +32,11 @@
          <string>not having any of these tags:</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>having all of these tags:</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>

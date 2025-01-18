@@ -372,7 +372,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
         self.layout_2 = QtWidgets.QVBoxLayout(self.container_2)
         # ???
         self.any_all_tags = QtWidgets.QComboBox(self.container_2)
-        self.any_all_tags.addItem(_("having any of these tags:"))
+        # self.any_all_tags.addItem(_("having any of these tags:"))
         self.any_all_tags.addItem(_("having all of these tags:"))
         self.layout_2.addWidget(self.any_all_tags)
         self.tag_tree_wdgt = \
@@ -861,6 +861,7 @@ class BrowseCardsDlg(QtWidgets.QDialog, BrowseCardsDialog,
             while query.next():
                 all__card_ids.add(str(query.value(0)))
             # Determine _card_ids of card with an active tag.
+            # ???
             if self.any_all_tags.currentIndex() == 0:
                 query = "select _card_id from tags_for_card where _tag_id in ("
                 for _tag_id in criterion._tag_ids_active:
