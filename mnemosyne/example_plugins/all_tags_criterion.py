@@ -167,3 +167,6 @@ class AllTagsCriterionPlugin(Plugin, PrintMethodCalls, HiGiver):
 # mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True)
 # AllTagsCriterion(mnemosyne).say_hi()
 # AllTagsCriterionPlugin(mnemosyne).say_hi()
+
+# As per `mnemosyne:e71e24e:mnemosyne/libmnemosyne/card_types/sentence.py:45`,
+# these have to be instantiated (and they are not being).
