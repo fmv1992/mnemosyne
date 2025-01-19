@@ -6,17 +6,15 @@
 # "ascii", although the Android filesystem supports UTF-8. Therefore, we wrap
 # all builtin functions to encode the filenames.
 
-import builtins
 import os
+import builtins
 
 
 def open(filename, *a, **kw):
     try:
         return builtins.open(filename, *a, **kw)
     except:
-        filename = (
-            filename.encode("utf-8") if type(filename) == str else filename
-        )
+        filename = filename.encode("utf-8") if type(filename) == str else filename
         return builtins.open(filename, *a, **kw)
 
 
@@ -27,9 +25,7 @@ def os_path_exists_utf8(filename, *a, **kw):
     try:
         return _os_path_exists_orig(filename, *a, **kw)
     except:
-        filename = (
-            filename.encode("utf-8") if type(filename) == str else filename
-        )
+        filename = filename.encode("utf-8") if type(filename) == str else filename
         return _os_path_exists_orig(filename, *a, **kw)
 
 
@@ -42,9 +38,7 @@ def os_path_getsize_utf8(filename, *a, **kw):
     try:
         return _os_path_getsize_orig(filename, *a, **kw)
     except:
-        filename = (
-            filename.encode("utf-8") if type(filename) == str else filename
-        )
+        filename = filename.encode("utf-8") if type(filename) == str else filename
         return _os_path_getsize_orig(filename, *a, **kw)
 
 
@@ -57,9 +51,7 @@ def os_makedirs_utf8(filename, *a, **kw):
     try:
         return _os_makedirs_orig(filename, *a, **kw)
     except:
-        filename = (
-            filename.encode("utf-8") if type(filename) == str else filename
-        )
+        filename = filename.encode("utf-8") if type(filename) == str else filename
         return _os_makedirs_orig(filename, *a, **kw)
 
 

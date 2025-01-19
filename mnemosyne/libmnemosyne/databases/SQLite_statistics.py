@@ -2,8 +2,8 @@
 # SQLite_statistics.py <Peter.Bienstman@gmail.com>
 #
 
-import datetime
 import time
+import datetime
 
 from openSM2sync.log_entry import EventTypes
 
@@ -12,7 +12,6 @@ DAY = 24 * HOUR  # Seconds in a day.
 
 
 class SQLiteStatistics(object):
-
     """Code to be injected into the SQLite database class through inheritance,
     so that SQLite.py does not becomes too large.
 
@@ -75,7 +74,6 @@ class SQLiteStatistics(object):
         return self.con.execute(query, (grade,)).fetchone()[0]
 
     def card_count_for_tags(self, tags, active_only):
-
         """Determine the number of cards in a set of tags. Note that a card
         could have one or more of these tags.
 
@@ -104,7 +102,6 @@ class SQLiteStatistics(object):
         return self.con.execute(query, (tag._id, grade)).fetchone()[0]
 
     def sister_card_count_scheduled_between(self, card, start, stop):
-
         """Return how many sister cards with grade >= 2 are scheduled at
         between 'start' (included) and 'stop' (excluded).
 
@@ -146,11 +143,7 @@ class SQLiteStatistics(object):
         query = query[:-1] + """)"""
         count = 0
         for cursor in self.con.execute(query):
-            if (
-                cursor[0] == True
-                and cursor[1] >= 2
-                and start <= cursor[2] < stop
-            ):
+            if cursor[0] == True and cursor[1] >= 2 and start <= cursor[2] < stop:
                 count += 1
         return count
 
@@ -162,9 +155,7 @@ class SQLiteStatistics(object):
         ).fetchone()[0]
 
     def start_of_day_n_days_ago(self, n):
-        timestamp = (
-            time.time() - n * DAY - self.config()["day_starts_at"] * HOUR
-        )
+        timestamp = time.time() - n * DAY - self.config()["day_starts_at"] * HOUR
         # Roll this back to the midnight before.
         date_only = datetime.date.fromtimestamp(timestamp)  # Local date.
         start_of_day = int(time.mktime(date_only.timetuple()))
@@ -197,13 +188,13 @@ class SQLiteStatistics(object):
             # Future projected schedule. Check if machine exists to deal with
             # Mnemosyne versions before 201203.
             if machine and machine.endswith(".fut"):
-                if not machine in projected_counts_for_machine or (
+                if machine not in projected_counts_for_machine or (
                     projected_counts_for_machine[machine] < count
                 ):
                     projected_counts_for_machine[machine] = count
             # Actual schedule.
             else:
-                if not machine in actual_counts_for_machine or (
+                if machine not in actual_counts_for_machine or (
                     actual_counts_for_machine[machine] < count
                 ):
                     actual_counts_for_machine[machine] = count

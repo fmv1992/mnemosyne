@@ -8,7 +8,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Stopwatch(Component):
-
     """The main use of the stop watch is to measure the time it takes the user
     to answer a question. 'start_time' is used to keep track of when the card
     was first shown.

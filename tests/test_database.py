@@ -4,16 +4,17 @@
 
 import datetime
 import os
-import shutil
 import sys
+import shutil
 import time
 
-from mnemosyne.libmnemosyne import Mnemosyne
-from mnemosyne.libmnemosyne.tag import Tag
-from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne.libmnemosyne.utils import expand_path
-from mnemosyne_test import MnemosyneTest
 from openSM2sync.log_entry import EventTypes
+
+from mnemosyne_test import MnemosyneTest
+from mnemosyne.libmnemosyne.tag import Tag
+from mnemosyne.libmnemosyne import Mnemosyne
+from mnemosyne.libmnemosyne.utils import expand_path
+from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
@@ -22,6 +23,7 @@ answer = None
 
 
 class Widget(MainWidget):
+
     def show_question(self, question, option0, option1, option2):
         # sys.stderr.write(question+'\n')
         if question.startswith("Identical card is already in database"):
@@ -32,11 +34,10 @@ class Widget(MainWidget):
 
 
 class TestDatabase(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(
-            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
-        )
+        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -55,9 +56,7 @@ class TestDatabase(MnemosyneTest):
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
     def test_release(self):
@@ -107,9 +106,7 @@ class TestDatabase(MnemosyneTest):
         assert fact.data["f"] == "question"
         assert fact.data["b"] == "answer"
         assert fact.id == old_fact.id
-        assert [tag.name for tag in card.tags] == [
-            tag.name for tag in old_card.tags
-        ]
+        assert [tag.name for tag in card.tags] == [tag.name for tag in old_card.tags]
 
         assert card.fact == old_card.fact
         assert card.fact_view == old_card.fact_view
@@ -143,7 +140,7 @@ class TestDatabase(MnemosyneTest):
         card.in_view = False
 
         self.database().update_card(card)
-        list(self.database().cards_from_fact(fact))[0]
+        new_card = list(self.database().cards_from_fact(fact))[0]
 
         assert card.grade == -1
         assert card.easiness == -2
@@ -162,13 +159,9 @@ class TestDatabase(MnemosyneTest):
         card = self.controller().create_new_cards(
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
-        card.fact
+        fact = card.fact
         self.controller().edit_card_and_sisters(
-            card,
-            fact_data,
-            card_type,
-            new_tag_names=["default1"],
-            correspondence=[],
+            card, fact_data, card_type, new_tag_names=["default1"], correspondence=[]
         )
         new_card = self.database().card(card._id, is_id_internal=True)
         tag_names = [tag.name for tag in new_card.tags]
@@ -177,8 +170,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 1
@@ -278,7 +270,7 @@ class TestDatabase(MnemosyneTest):
         card = self.controller().create_new_cards(
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
-        card.fact
+        fact = card.fact
         self.controller().clone_card_type(card_type, "my_4")
 
         new_card_type = self.card_type_with_id("4::my_4")
@@ -336,7 +328,7 @@ class TestDatabase(MnemosyneTest):
         card = self.controller().create_new_cards(
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
-        card.fact
+        fact = card.fact
         self.controller().clone_card_type(card_type, "my_4")
 
         new_card_type = self.card_type_with_id("4::my_4")
@@ -372,9 +364,7 @@ class TestDatabase(MnemosyneTest):
             fact_data, card_type, grade=-1, tag_names=["default"]
         )
         new_name = self.config()["last_database"] + ".bak"
-        assert (
-            self.database().save(self.config()["last_database"] + ".bak") != -1
-        )
+        assert self.database().save(self.config()["last_database"] + ".bak") != -1
         assert self.config()["last_database"] == new_name
         assert new_name != expand_path(new_name, self.config().data_dir)
 
@@ -471,10 +461,7 @@ class TestDatabase(MnemosyneTest):
         )
         self.review_controller().show_new_question()
         assert card_1 == self.review_controller().card
-        assert (
-            self.database().sister_card_count_scheduled_between(card_1, 0, DAY)
-            == 0
-        )
+        assert self.database().sister_card_count_scheduled_between(card_1, 0, DAY) == 0
         self.review_controller().grade_answer(2)
         card_1 = self.database().card(card_1._id, is_id_internal=True)
         card_3.next_rep = card_1.next_rep
@@ -502,7 +489,7 @@ class TestDatabase(MnemosyneTest):
     def test_purge_backups(self):
         backup_dir = os.path.join(self.config().data_dir, "backups")
         for count in range(15):
-            open(os.path.join(backup_dir, "default-%d.db" % count), "w")
+            f = open(os.path.join(backup_dir, "default-%d.db" % count), "w")
         self.mnemosyne.finalise()
         backups = [f for f in os.listdir(backup_dir)]
         assert len(backups) == 10
@@ -539,7 +526,7 @@ class TestDatabase(MnemosyneTest):
     def test_link_inverse_cards_2(self):
         fact_data = {"f": "question", "b": "answer"}
         card_type_1 = self.card_type_with_id("1")
-        self.card_type_with_id("2")
+        card_type_2 = self.card_type_with_id("2")
         card_1 = self.controller().create_new_cards(
             fact_data, card_type_1, grade=-1, tag_names=["tag_1"]
         )[0]
@@ -565,7 +552,7 @@ class TestDatabase(MnemosyneTest):
 
     def test_link_inverse_cards_3(self):
         fact_data = {"b": "question", "f": "answer"}
-        self.card_type_with_id("1")
+        card_type_1 = self.card_type_with_id("1")
         card_type_2 = self.card_type_with_id("2")
         card_1 = self.controller().create_new_cards(
             fact_data, card_type_2, grade=-1, tag_names=["tag_1"]
@@ -619,7 +606,7 @@ class TestDatabase(MnemosyneTest):
     def test_link_inverse_cards_5(self):
         fact_data = {"f": "a", "b": "a"}
         card_type_1 = self.card_type_with_id("1")
-        self.card_type_with_id("2")
+        card_type_2 = self.card_type_with_id("2")
         card_1 = self.controller().create_new_cards(
             fact_data, card_type_1, grade=-1, tag_names=["tag_1"]
         )[0]
@@ -639,8 +626,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 0
@@ -654,8 +640,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 1
@@ -680,8 +665,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 2
@@ -696,8 +680,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 0
@@ -711,8 +694,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 1
@@ -729,8 +711,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 2
@@ -745,25 +726,21 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 0
         )
 
         tag = self.database().get_or_create_tag_with_name("a")
-        self.database().remove_tag_from_cards_with_internal_ids(
-            tag, [card._id]
-        )
+        self.database().remove_tag_from_cards_with_internal_ids(tag, [card._id])
 
         new_card = self.database().card(card._id, is_id_internal=True)
         assert len(new_card.tags) == 1
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 1
@@ -786,8 +763,7 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 0
@@ -795,19 +771,11 @@ class TestDatabase(MnemosyneTest):
 
         tag = self.database().get_or_create_tag_with_name("a")
         assert (
-            self.database()
-            .con.execute("select count() from tags")
-            .fetchone()[0]
-            == 2
+            self.database().con.execute("select count() from tags").fetchone()[0] == 2
         )
-        self.database().remove_tag_from_cards_with_internal_ids(
-            tag, [card._id]
-        )
+        self.database().remove_tag_from_cards_with_internal_ids(tag, [card._id])
         assert (
-            self.database()
-            .con.execute("select count() from tags")
-            .fetchone()[0]
-            == 1
+            self.database().con.execute("select count() from tags").fetchone()[0] == 1
         )
 
         new_card = self.database().card(card._id, is_id_internal=True)
@@ -825,16 +793,13 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 1
         )
 
-        sql_contents = (
-            self.database().con.execute("select * from log").fetchall()
-        )
+        sql_contents = self.database().con.execute("select * from log").fetchall()
 
         sql_res = (
             self.database()
@@ -853,17 +818,14 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 0
         )
 
         tag = self.database().get_or_create_tag_with_name("a")
-        self.database().remove_tag_from_cards_with_internal_ids(
-            tag, [card._id]
-        )
+        self.database().remove_tag_from_cards_with_internal_ids(tag, [card._id])
 
         new_card = self.database().card(card._id, is_id_internal=True)
         assert len(new_card.tags) == 1
@@ -880,16 +842,13 @@ class TestDatabase(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?",
-                (EventTypes.EDITED_CARD,),
+                "select count() from log where event_type=?", (EventTypes.EDITED_CARD,)
             )
             .fetchone()[0]
             == 1
         )
 
-        sql_contents = (
-            self.database().con.execute("select * from log").fetchall()
-        )
+        sql_contents = self.database().con.execute("select * from log").fetchall()
 
         sql_res = (
             self.database()
@@ -922,9 +881,7 @@ class TestDatabase(MnemosyneTest):
         ):
             assert tag.name in ["a", "b"]
 
-        for tag in self.database().tags_from_cards_with_internal_ids(
-            [card__id_2]
-        ):
+        for tag in self.database().tags_from_cards_with_internal_ids([card__id_2]):
             assert tag.name in ["a"]
 
         for tag in self.database().tags_from_cards_with_internal_ids(
@@ -999,11 +956,7 @@ class TestDatabase(MnemosyneTest):
         card_type = self.card_type_with_id("3")
         self.controller().clone_card_type(card_type, "my_3")
         card_type = self.card_type_with_id("3::my_3")
-        fact_data = {
-            "f": "yes_1",
-            "p_1": "pronunciation",
-            "m_1": "translation",
-        }
+        fact_data = {"f": "yes_1", "p_1": "pronunciation", "m_1": "translation"}
         self.controller().create_new_cards(
             fact_data, card_type, grade=5, tag_names=["default"]
         )
@@ -1027,11 +980,7 @@ class TestDatabase(MnemosyneTest):
                 plugin.activate()
 
         card_type = self.card_type_with_id("6")
-        fact_data = {
-            "f": "yes_2",
-            "p_1": "pronunciation",
-            "m_1": "translation",
-        }
+        fact_data = {"f": "yes_2", "p_1": "pronunciation", "m_1": "translation"}
         self.controller().create_new_cards(
             fact_data, card_type, grade=5, tag_names=["default"]
         )
@@ -1054,9 +1003,7 @@ class TestDatabase(MnemosyneTest):
             == 0
         )
         assert (
-            self.database().known_recognition_questions_count_from_card_types_ids(
-                ["6"]
-            )
+            self.database().known_recognition_questions_count_from_card_types_ids(["6"])
             == 1
         )
         assert (
@@ -1088,16 +1035,12 @@ class TestDatabase(MnemosyneTest):
         start_of_day, end_of_day = self._start_and_end_timestamp()
 
         assert (
-            self.database().has_already_warned_today(
-                start_of_day, start_of_day + DAY
-            )
+            self.database().has_already_warned_today(start_of_day, start_of_day + DAY)
             == False
         )
         self.database().log_warn_about_too_many_cards(now)
         assert (
-            self.database().has_already_warned_today(
-                start_of_day, start_of_day + DAY
-            )
+            self.database().has_already_warned_today(start_of_day, start_of_day + DAY)
             == True
         )
 
@@ -1122,10 +1065,8 @@ class TestDatabase(MnemosyneTest):
         # learn 3 forgotten cards (only log)
         self._learn_n_forgotten_cards_logs(3, last_timestamp, cards)
 
-        forgotten_and_learned = (
-            self.database().fact_ids_forgotten_and_learned_today(
-                start_of_day, end_of_day
-            )
+        forgotten_and_learned = self.database().fact_ids_forgotten_and_learned_today(
+            start_of_day, end_of_day
         )
 
         assert len([x for x in forgotten_and_learned]) == 3
@@ -1179,14 +1120,7 @@ class TestDatabase(MnemosyneTest):
                 """insert into log(event_type, timestamp, object_id,
                 grade, ret_reps, lapses)
                 values(?,?,?,?,?,?)""",
-                (
-                    EventTypes.REPETITION,
-                    int(fake_timestamp),
-                    cards[x].id,
-                    1,
-                    1,
-                    1,
-                ),
+                (EventTypes.REPETITION, int(fake_timestamp), cards[x].id, 1, 1, 1),
             )
             fake_timestamp += 300
 
@@ -1201,14 +1135,7 @@ class TestDatabase(MnemosyneTest):
                 """insert into log(event_type, timestamp, object_id,
                 grade, ret_reps, lapses)
                 values(?,?,?,?,?,?)""",
-                (
-                    EventTypes.REPETITION,
-                    int(fake_timestamp),
-                    cards[x].id,
-                    2,
-                    1,
-                    1,
-                ),
+                (EventTypes.REPETITION, int(fake_timestamp), cards[x].id, 2, 1, 1),
             )
             fake_timestamp += 300
 
@@ -1221,13 +1148,6 @@ class TestDatabase(MnemosyneTest):
                 """insert into log(event_type, timestamp, object_id,
                 grade, ret_reps, lapses)
                 values(?,?,?,?,?,?)""",
-                (
-                    EventTypes.REPETITION,
-                    int(fake_timestamp),
-                    cards[x].id,
-                    2,
-                    0,
-                    0,
-                ),
+                (EventTypes.REPETITION, int(fake_timestamp), cards[x].id, 2, 0, 0),
             )
             fake_timestamp += 300

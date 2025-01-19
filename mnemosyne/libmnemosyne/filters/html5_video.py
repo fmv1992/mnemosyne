@@ -10,7 +10,6 @@ re_video = re.compile(r"""<video( src=\".+?\")>""", re.DOTALL | re.IGNORECASE)
 
 
 class Html5Video(Filter):
-
     """Add autoplay and control tags to html5 video tags."""
 
     def run(self, text, card, fact_key, **render_args):

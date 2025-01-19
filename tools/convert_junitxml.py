@@ -95,4 +95,4 @@ if __name__ == "__main__":
 
     test_results = parse_junitxml(junitxml_file)
     save_to_todo_file(todo_file, test_results)
-    print(f"Conversion complete. Results saved to test-results.todo.txt")
+    print("Conversion complete. Results saved to test-results.todo.txt")

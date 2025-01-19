@@ -2,19 +2,15 @@
 # pronouncer.py <Peter.Bienstman@gmail.com>
 #
 
-import datetime
 import os
+import datetime
 
 from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.utils import (
-    contract_path,
-    expand_path,
-    make_filename_unique,
-)
+from mnemosyne.libmnemosyne.utils import make_filename_unique
+from mnemosyne.libmnemosyne.utils import expand_path, contract_path
 
 
 class Pronouncer(Component):
-
     """Generic text-to-speech service for words and sentences.
 
     Note that a single component can handle multiple languages (e.g. Google TTS)
@@ -38,9 +34,7 @@ class Pronouncer(Component):
             )
         else:
             filename = datetime.datetime.today().strftime("%Y%m%d.mp3")
-        local_dir = self.config()["tts_dir_for_card_type_id"].get(
-            card_type.id, ""
-        )
+        local_dir = self.config()["tts_dir_for_card_type_id"].get(card_type.id, "")
         filename = os.path.join(local_dir, filename)
         full_path = expand_path(filename, self.database().media_dir())
         full_path = make_filename_unique(full_path)
@@ -48,13 +42,11 @@ class Pronouncer(Component):
         return filename
 
     def download_tmp_audio_file(self, card_type, foreign_text):
-
         """Returns a temporary filename with the audio."""
 
         raise NotImplementedError
 
     def show_dialog(self, card_type, foreign_text):
-
         """Returns html audio tag to insert."""
 
         dialog = self.gui_components[0](

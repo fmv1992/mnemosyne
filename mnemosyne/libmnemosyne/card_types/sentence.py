@@ -2,21 +2,20 @@
 # sentence.py <Peter.Bienstman@gmail.com>
 #
 
-import copy
 import re
+import copy
 
-from mnemosyne.libmnemosyne.card import Card
-from mnemosyne.libmnemosyne.card_type import CardType
-from mnemosyne.libmnemosyne.card_types.cloze import Cloze
-from mnemosyne.libmnemosyne.fact_view import FactView
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.card import Card
 from mnemosyne.libmnemosyne.plugin import Plugin
+from mnemosyne.libmnemosyne.card_type import CardType
+from mnemosyne.libmnemosyne.fact_view import FactView
+from mnemosyne.libmnemosyne.card_types.cloze import Cloze
 
 cloze_re = re.compile(r"\[(.+?)\]", re.DOTALL)
 
 
 class Sentence(Cloze):
-
     """A card type using sentences to study foreign languages.
 
     Apart from simple recognition of the sentence, you can also add production

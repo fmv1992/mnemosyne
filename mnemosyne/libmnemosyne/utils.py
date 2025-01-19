@@ -3,12 +3,12 @@
 #          <Johannes.Baiter@gmail.com>
 #
 
-import html
 import os
-import random
 import re
-import stat
 import sys
+import stat
+import html
+import random
 import traceback
 
 # The following functions are modified from shutil:
@@ -100,20 +100,16 @@ class MnemosyneError(Exception):
 
 
 def _abs_path(path):
-
     """Our own version of os.path.abspath, which does not check for platform.
     In this way, we can test Windows paths even when running the testsuite
     under Linux.
 
     """
 
-    return ((len(path) > 1) and path[0] == "/") or (
-        (len(path) > 2) and path[1] == ":"
-    )
+    return ((len(path) > 1) and path[0] == "/") or ((len(path) > 2) and path[1] == ":")
 
 
 def contract_path(path, start):
-
     """Return relative path to 'path' from the directory 'start'.
 
     All paths in Mnemosyne are internally stored with Unix separators /.
@@ -135,7 +131,6 @@ def contract_path(path, start):
 
 
 def expand_path(path, start):
-
     """Make 'path' absolute starting from 'start'.
 
     Also convert Unix separators to Windows separators on that platform.
@@ -149,7 +144,6 @@ def expand_path(path, start):
 
 
 def normalise_path(path):
-
     """Make sure the correct types of slashes are used.
     'pathlib' itself turns out to be not sufficient for that.
 
@@ -174,7 +168,6 @@ def make_filename_unique(filename):
 
 
 def copy_file_to_dir(filename, dirname):
-
     """If the file is not in the directory, copy it there. Return the relative
     path to that file inside the directory.
 
@@ -184,9 +177,7 @@ def copy_file_to_dir(filename, dirname):
     dirname = os.path.abspath(dirname)
     if filename.startswith(dirname):
         return contract_path(filename, dirname)
-    dest_path = os.path.join(
-        dirname, os.path.basename(filename.replace(":", "-"))
-    )
+    dest_path = os.path.join(dirname, os.path.basename(filename.replace(":", "-")))
     dest_path = make_filename_unique(dest_path)
     copy(filename, dest_path)
     return contract_path(dest_path, dirname)
@@ -220,7 +211,6 @@ def is_filesystem_case_insensitive():
 
 
 def numeric_string_cmp_key(s):
-
     """Key for comparing two strings using numeric ordering. so that, e.g.,
     "abc2" < "abc10".
 
@@ -236,14 +226,13 @@ def numeric_string_cmp_key(s):
 
 
 def traceback_string():
-
     """Like traceback.print_exc(), but returns a string."""
 
     type, value, tb = sys.exc_info()
     body = "\nTraceback (innermost last):\n"
-    list = traceback.format_tb(
-        tb, limit=None
-    ) + traceback.format_exception_only(type, value)
+    list = traceback.format_tb(tb, limit=None) + traceback.format_exception_only(
+        type, value
+    )
     body = body + "%-20s %s" % ("".join(list[:-1]), list[-1])
     del tb  # Prevent circular references.
     return body
@@ -257,7 +246,6 @@ def strip_tags(string):
 
 
 def mangle(string):
-
     """Massage string such that it can be used as an identifier."""
 
     string = html.escape(string)
@@ -271,7 +259,6 @@ def mangle(string):
 
 
 def rand_uuid():
-
     """Importing Python's uuid module brings a huge overhead, so we use
     our own variant: a length 22 random string from a 62 letter alphabet,
     which in terms of randomness is about the same as the traditional hex
@@ -288,7 +275,6 @@ def rand_uuid():
 
 
 class CompareOnId(object):
-
     """When pulling the same object twice from an SQL database, the resulting
     Python objects will be separate entities. That's why we need to compare
     them on id.
@@ -304,7 +290,6 @@ class CompareOnId(object):
         return NotImplemented  # So Python can try other.__eq__(self)
 
     def __ne__(self, other):
-
         """Not automatically overridden by overriding __eq__!"""
 
         result = self.__eq__(other)

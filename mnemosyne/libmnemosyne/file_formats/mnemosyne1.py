@@ -4,20 +4,18 @@
 #
 
 
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.utils import MnemosyneError
 from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
     MediaPreprocessor,
     re_src,
 )
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import MnemosyneError
 
 
 class Mnemosyne1(MediaPreprocessor):
-
     """Common code for the 1.x XML and mem importers."""
 
     class MnemosyneCore(object):
-
         """Dummy 1.x module structure."""
 
         class StartTime:
@@ -58,11 +56,7 @@ class Mnemosyne1(MediaPreprocessor):
 
     def create_card_from_item(self, item, extra_tag_names):
         # Create tag names.
-        if (
-            item.cat.name == "<default>"
-            or item.cat.name == ""
-            or item.cat.name is None
-        ):
+        if item.cat.name == "<default>" or item.cat.name == "" or item.cat.name is None:
             item.cat.name = "__UNTAGGED__"
         tag_names = [item.cat.name]
         tag_names += [
@@ -78,7 +72,7 @@ class Mnemosyne1(MediaPreprocessor):
                 parent_id = item.id[:-4]
             if item.id.endswith(".tr.1"):
                 parent_id = item.id[:-5]
-            if not parent_id in self.items_by_id:
+            if parent_id not in self.items_by_id:
                 card_type = self.card_type_with_id("1")
                 fact_data = {"f": item.q, "b": item.a}
                 if not fact_data["f"]:
@@ -166,9 +160,7 @@ class Mnemosyne1(MediaPreprocessor):
                 save=False,
             )
             self.set_card_attributes(card_1, item)
-            self.set_card_attributes(
-                card_2, self.items_by_id[item.id + ".inv"]
-            )
+            self.set_card_attributes(card_2, self.items_by_id[item.id + ".inv"])
         # Vocabulary.
         elif item.id + ".tr.1" in self.items_by_id:
             card_type = self.card_type_with_id("3")
@@ -191,9 +183,7 @@ class Mnemosyne1(MediaPreprocessor):
                 save=False,
             )
             self.set_card_attributes(card_1, item)
-            self.set_card_attributes(
-                card_2, self.items_by_id[item.id + ".tr.1"]
-            )
+            self.set_card_attributes(card_2, self.items_by_id[item.id + ".tr.1"])
 
     def set_card_attributes(self, card, item):
         # Note that we cannot give cards a new id, otherwise the log server
@@ -231,8 +221,5 @@ class Mnemosyne1(MediaPreprocessor):
         for plugin in self.plugins():
             if plugin.components != []:  # Safeguard for badly written plugins.
                 component = plugin.components[0]
-                if (
-                    component.component_type == "card_type"
-                    and component.id == "4"
-                ):
+                if component.component_type == "card_type" and component.id == "4":
                     plugin.activate()

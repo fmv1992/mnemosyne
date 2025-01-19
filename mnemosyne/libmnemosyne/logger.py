@@ -30,7 +30,6 @@ class Logger(Component):
         self.active = True
 
     def get_timestamp(self):
-
         """If self._timestamp == None (the default), then the timestamp will
         be the current time. It is useful to be able to override this, e.g.
         during database import or syncing, when you need to add log entries
@@ -87,9 +86,7 @@ class Logger(Component):
     def deleted_card(self, card):
         pass
 
-    def repetition(
-        self, card, scheduled_interval, actual_interval, thinking_time
-    ):
+    def repetition(self, card, scheduled_interval, actual_interval, thinking_time):
         pass
 
     def added_tag(self, tag):
@@ -153,7 +150,6 @@ class Logger(Component):
         pass
 
     def log_index_of_last_upload(self):
-
         """We don't store this info in the configuration, but determine it on
         the fly, so that users can copy configuration files between their
         machines.
@@ -170,9 +166,7 @@ class Logger(Component):
         max_log_index = 0
         this_machine_id = self.config().machine_id()
         for history_file in history_files:
-            user_and_machine, log_index_and_suffix = history_file.rsplit(
-                "_", 1
-            )
+            user_and_machine, log_index_and_suffix = history_file.rsplit("_", 1)
             if "_" in user_and_machine:
                 user, machine = user_and_machine.split("_")
                 if machine != this_machine_id:
@@ -183,7 +177,6 @@ class Logger(Component):
         return max_log_index
 
     def archive_old_log(self):
-
         """Archive log to history folder if it's large enough."""
 
         if not self.config()["upload_science_logs"]:
@@ -211,9 +204,7 @@ class Logger(Component):
         if self.upload_thread:
             from mnemosyne.libmnemosyne.gui_translator import _
 
-            print(
-                (_("Waiting for uploader thread to stop...").encode("utf-8"))
-            )
+            print((_("Waiting for uploader thread to stop...").encode("utf-8")))
             self.upload_thread.join()
             print((_("Done!").encode("utf-8")))
 

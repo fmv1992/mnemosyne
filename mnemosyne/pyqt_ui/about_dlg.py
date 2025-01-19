@@ -2,14 +2,16 @@
 # about_dlg.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.dialogs import AboutDialog
-from mnemosyne.pyqt_ui.ui_about_dlg import Ui_AboutDlg
-from mnemosyne.version import version
 from PyQt6 import QtCore, QtGui, QtWidgets
+
+from mnemosyne.version import version
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.pyqt_ui.ui_about_dlg import Ui_AboutDlg
+from mnemosyne.libmnemosyne.ui_components.dialogs import AboutDialog
 
 
 class AboutDlg(QtWidgets.QDialog, AboutDialog, Ui_AboutDlg):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
@@ -17,8 +19,7 @@ class AboutDlg(QtWidgets.QDialog, AboutDialog, Ui_AboutDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         # Note: the svg file does not seem to work under windows.
         # watermark = QtGui.QPixmap("pixmaps/mnemosyne.svg").\

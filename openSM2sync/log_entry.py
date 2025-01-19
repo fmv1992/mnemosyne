@@ -4,7 +4,6 @@
 
 
 class EventTypes(object):
-
     """Codes to identify event types."""
 
     # Relevant for all clients.
@@ -53,7 +52,6 @@ class EventTypes(object):
 
 
 class LogEntry(dict):
-
     """A dictionary consisting of (key, value) pairs to sync.
 
     General keys:
@@ -166,3 +164,5 @@ class LogEntry(dict):
     encoded/escaped as appropriate.
 
     """
+
+    pass

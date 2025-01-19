@@ -2,20 +2,20 @@
 # tip_dlg.py <Johannes.Baiter@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.dialogs import TipDialog
-from mnemosyne.pyqt_ui.ui_tip_dlg import Ui_TipDlg
 from PyQt6 import QtCore, QtGui, QtWidgets
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.pyqt_ui.ui_tip_dlg import Ui_TipDlg
+from mnemosyne.libmnemosyne.ui_components.dialogs import TipDialog
 
 
 class TipDlg(QtWidgets.QDialog, TipDialog, Ui_TipDlg):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.tips = []
         self.tips.append(
-            _(
-                """For optimal results, it's best to do your repetitions every day."""
-            )
+            _("""For optimal results, it's best to do your repetitions every day.""")
         )
         self.tips.append(
             _(
@@ -118,9 +118,7 @@ class TipDlg(QtWidgets.QDialog, TipDialog, Ui_TipDlg):
             )
         )
         self.tips.append(
-            _(
-                """Right-click on a tag name in the card browser to edit or delete it."""
-            )
+            _("""Right-click on a tag name in the card browser to edit or delete it.""")
         )
         self.tips.append(
             _(
@@ -211,9 +209,7 @@ class TipDlg(QtWidgets.QDialog, TipDialog, Ui_TipDlg):
             )
         )
         self.tips.append(
-            _(
-                """You can follow the development of Mnemosyne on Twitter or Facebook."""
-            )
+            _("""You can follow the development of Mnemosyne on Twitter or Facebook.""")
         )
         self.tips.append(
             _(
@@ -236,8 +232,7 @@ class TipDlg(QtWidgets.QDialog, TipDialog, Ui_TipDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         if self.config()["show_daily_tips"] == True:
             self.show_tips.setCheckState(QtCore.Qt.CheckState.Checked)
@@ -263,15 +258,15 @@ class TipDlg(QtWidgets.QDialog, TipDialog, Ui_TipDlg):
         self.next_button.setEnabled(tip != len(self.tips) - 1)
 
     def previous(self):
-        self.config()["current_tip"] = (
-            self.config()["current_tip"] - 1
-        ) % len(self.tips)
+        self.config()["current_tip"] = (self.config()["current_tip"] - 1) % len(
+            self.tips
+        )
         self.update_dialog()
 
     def next(self):
-        self.config()["current_tip"] = (
-            self.config()["current_tip"] + 1
-        ) % len(self.tips)
+        self.config()["current_tip"] = (self.config()["current_tip"] + 1) % len(
+            self.tips
+        )
         self.update_dialog()
 
     def reject(self):
@@ -279,7 +274,7 @@ class TipDlg(QtWidgets.QDialog, TipDialog, Ui_TipDlg):
 
     def closeEvent(self, event):
         self.config()["show_daily_tips"] = self.show_tips.isChecked()
-        self.config()["current_tip"] = (
-            self.config()["current_tip"] + 1
-        ) % len(self.tips)
+        self.config()["current_tip"] = (self.config()["current_tip"] + 1) % len(
+            self.tips
+        )
         event.accept()

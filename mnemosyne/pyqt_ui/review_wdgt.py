@@ -4,15 +4,15 @@
 
 import os
 
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
-from mnemosyne.pyqt_ui.ui_review_wdgt import Ui_ReviewWdgt
-from PyQt6 import QtCore, QtGui, QtWebEngineWidgets, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets
 from PyQt6.QtMultimedia import QAudioOutput, QMediaPlayer
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.pyqt_ui.ui_review_wdgt import Ui_ReviewWdgt
+from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
 
 
 class QAOptimalSplit(object):
-
     """Algorithm to make sure the split between question and answer boxes is
     as optimal as possible.
 
@@ -36,13 +36,9 @@ class QAOptimalSplit(object):
         # determine the optimal split between the question and the answer
         # pane.
         self.question_preview = QtWebEngineWidgets.QWebEngineView()
-        self.question_preview.loadFinished.connect(
-            self.question_preview_load_finished
-        )
+        self.question_preview.loadFinished.connect(self.question_preview_load_finished)
         self.answer_preview = QtWebEngineWidgets.QWebEngineView()
-        self.answer_preview.loadFinished.connect(
-            self.answer_preview_load_finished
-        )
+        self.answer_preview.loadFinished.connect(self.answer_preview_load_finished)
         # Calculate an offset to use in the stretching factor of the boxes,
         # e.g. question_box = question_label + question.
         self.stretch_offset = self.question_label.size().height()
@@ -113,7 +109,6 @@ class QAOptimalSplit(object):
 
     def estimate_height(self, html):
         import math
-
         from mnemosyne.libmnemosyne.utils import _abs_path
         from PIL import Image
 
@@ -265,9 +260,7 @@ class QAOptimalSplit(object):
         self.answer.repaint()
 
 
-class ReviewWdgt(
-    QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt
-):
+class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt):
 
     auto_focus_grades = True
     number_keys_show_answer = True
@@ -372,18 +365,13 @@ class ReviewWdgt(
             event.key() == QtCore.Qt.Key.Key_R
             and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
         ):
-            self.review_controller().update_dialog(
-                redraw_all=True
-            )  # Replay media.
+            self.review_controller().update_dialog(redraw_all=True)  # Replay media.
         # QtWebengine issue.
         # elif event.key() == QtCore.Qt.Key.Key_C and \
         #    event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
         #    self.copy()
         # Work around Qt issue.
-        elif event.key() in [
-            QtCore.Qt.Key.Key_Backspace,
-            QtCore.Qt.Key.Key_Delete,
-        ]:
+        elif event.key() in [QtCore.Qt.Key.Key_Backspace, QtCore.Qt.Key.Key_Delete]:
             self.controller().delete_current_card()
         else:
             QtWidgets.QWidget.keyPressEvent(self, event)
@@ -522,11 +510,9 @@ class ReviewWdgt(
         self.grade_buttons.button(grade).setToolTip(text)
 
     def update_status_bar_counters(self):
-        (
-            scheduled_count,
-            non_memorised_count,
-            active_count,
-        ) = self.review_controller().counters()
+        scheduled_count, non_memorised_count, active_count = (
+            self.review_controller().counters()
+        )
         self.sched.setText(_("Scheduled: %d ") % scheduled_count)
         self.notmem.setText(_("Not memorised: %d ") % non_memorised_count)
         self.act.setText(_("Active: %d ") % active_count)
@@ -555,18 +541,13 @@ class ReviewWdgt(
         if stop is None:
             stop = 999999
         self.media_queue.append((filename, start, stop))
-        if (
-            not self.player.playbackState()
-            == QMediaPlayer.PlaybackState.PlayingState
-        ):
+        if not self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
             self.play_next_file()
 
     def play_next_file(self):
-        (
-            filename,
-            self.current_media_start,
-            self.current_media_stop,
-        ) = self.media_queue.pop(0)
+        filename, self.current_media_start, self.current_media_stop = (
+            self.media_queue.pop(0)
+        )
         # print("Starting to play", filename)
         self.player.setSource(QtCore.QUrl.fromLocalFile(filename))
         self.player.positionChanged.connect(self.stop_playing_if_end_reached)

@@ -3,11 +3,12 @@
 #
 
 
+from PyQt6 import QtGui, QtCore, QtWidgets
+
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.dialogs import TranslatorDialog
 from mnemosyne.libmnemosyne.utils import traceback_string
+from mnemosyne.libmnemosyne.ui_components.dialogs import TranslatorDialog
 from mnemosyne.pyqt_ui.ui_translator_dlg import Ui_TranslatorDlg
-from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class DownloadThread(QtCore.QThread):
@@ -15,9 +16,7 @@ class DownloadThread(QtCore.QThread):
     finished_signal = QtCore.pyqtSignal(str)
     error_signal = QtCore.pyqtSignal(str)
 
-    def __init__(
-        self, translator, card_type, foreign_text, target_language_id
-    ):
+    def __init__(self, translator, card_type, foreign_text, target_language_id):
         super().__init__()
         self.translator = translator
         self.card_type = card_type
@@ -32,14 +31,13 @@ class DownloadThread(QtCore.QThread):
             if translation:
                 self.finished_signal.emit(translation)
             else:
-                self.error_signal.emit(
-                    _("Could not contact Google servers...")
-                )
+                self.error_signal.emit(_("Could not contact Google servers..."))
         except Exception as e:
             self.error_signal.emit(str(e) + "\n" + traceback_string())
 
 
 class TranslatorDlg(QtWidgets.QDialog, TranslatorDialog, Ui_TranslatorDlg):
+
     def __init__(self, translator, **kwds):
         self.translator = translator
         super().__init__(**kwds)
@@ -54,9 +52,7 @@ class TranslatorDlg(QtWidgets.QDialog, TranslatorDialog, Ui_TranslatorDlg):
         fact_key = self.config().card_type_property(
             "foreign_fact_key", card_type, default=""
         )
-        font_string = self.config().card_type_property(
-            "font", card_type, fact_key
-        )
+        font_string = self.config().card_type_property("font", card_type, fact_key)
         if font_string:
             font = QtGui.QFont()
             font.fromString(font_string)
@@ -74,9 +70,7 @@ class TranslatorDlg(QtWidgets.QDialog, TranslatorDialog, Ui_TranslatorDlg):
                 saved_index = self.target_languages.count() - 1
         self.target_languages.setCurrentIndex(saved_index)
         # Only now it's safe to connect to the slot.
-        self.target_languages.currentTextChanged.connect(
-            self.target_language_changed
-        )
+        self.target_languages.currentTextChanged.connect(self.target_language_changed)
         # Auto download.
         self.insert_button.setEnabled(False)
         self.download_translation()

@@ -6,11 +6,9 @@ import re
 import time
 from xml.sax import saxutils
 
-from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
-    MediaPreprocessor,
-)
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.file_format import FileFormat
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
 
 re0 = re.compile(r"&#(.+?);", re.DOTALL | re.IGNORECASE)
 
@@ -19,7 +17,6 @@ DAY = 24 * HOUR  # Seconds in a day.
 
 
 class SuperMemo7Txt(FileFormat, MediaPreprocessor):
-
     """Imports SuperMemo 7's text file format:
     A line starting with 'Q: ' holds a question, a line starting with 'A: '
     holds an answer.  Several consecutive question lines form a multi line
@@ -41,7 +38,6 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
         MediaPreprocessor.__init__(self, component_manager)
 
     def process_html_unicode(self, s):
-
         """Parse html style escaped unicode (e.g. &#33267;)"""
 
         for match in re0.finditer(s):
@@ -140,9 +136,7 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
                             else:
                                 last = int(
                                     time.mktime(
-                                        time.strptime(
-                                            attributes[5][5:], "%d.%m.%y"
-                                        )
+                                        time.strptime(attributes[5][5:], "%d.%m.%y")
                                     )
                                 )
                         else:

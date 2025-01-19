@@ -2,11 +2,13 @@
 # remove_tags_dlg.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.pyqt_ui.ui_remove_tags_dlg import Ui_RemoveTagsDlg
 from PyQt6 import QtCore, QtWidgets
+
+from mnemosyne.pyqt_ui.ui_remove_tags_dlg import Ui_RemoveTagsDlg
 
 
 class RemoveTagsDlg(QtWidgets.QDialog, Ui_RemoveTagsDlg):
+
     def __init__(self, tags, return_values, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
@@ -14,8 +16,7 @@ class RemoveTagsDlg(QtWidgets.QDialog, Ui_RemoveTagsDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.return_values = return_values
         for tag in tags:

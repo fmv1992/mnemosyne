@@ -2,38 +2,37 @@
 #  anki2.py Peter.Bienstman@gmail.com>
 #
 
-import json
 import os
 import re
+import json
 import shutil
 import sqlite3
 import zipfile
 
-from mnemosyne.libmnemosyne.card import Card
-from mnemosyne.libmnemosyne.card_types.M_sided import MSided
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
 from mnemosyne.libmnemosyne.fact import Fact
-from mnemosyne.libmnemosyne.fact_view import FactView
-from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
-    MediaPreprocessor,
-)
+from mnemosyne.libmnemosyne.card import Card
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.fact_view import FactView
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.file_format import FileFormat
+from mnemosyne.libmnemosyne.card_types.M_sided import MSided
+from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
 
 sound_re = re.compile("(?i)(\[sound:(?P<fname>[^]]+)\])")
 
 
 class TagCache(dict, Component):
+
     def __init__(self, component_manager):
         Component.__init__(self, component_manager)
         self._tags_with_name = {}
 
     def __getitem__(self, tag_name):
-        if not tag_name in self._tags_with_name:
-            self._tags_with_name[
-                tag_name
-            ] = self.database().get_or_create_tag_with_name(tag_name)
+        if tag_name not in self._tags_with_name:
+            self._tags_with_name[tag_name] = (
+                self.database().get_or_create_tag_with_name(tag_name)
+            )
         return self._tags_with_name[tag_name]
 
 
@@ -59,9 +58,7 @@ class Anki2(FileFormat, MediaPreprocessor):
             shutil.rmtree(tmp_dir)
         zip_file.extractall(tmp_dir)
         # Rename media.
-        media_file_with_id = json.loads(
-            open(os.path.join(tmp_dir, "media")).read()
-        )
+        media_file_with_id = json.loads(open(os.path.join(tmp_dir, "media")).read())
         number_of_files = len(media_file_with_id)
         w.set_progress_text(_("Processing media files..."))
         w.set_progress_range(number_of_files)
@@ -72,9 +69,7 @@ class Anki2(FileFormat, MediaPreprocessor):
             w.increase_progress(1)
             if media_file.startswith("latex-"):
                 continue
-            os.rename(
-                os.path.join(tmp_dir, id), os.path.join(media_dir, media_file)
-            )
+            os.rename(os.path.join(tmp_dir, id), os.path.join(media_dir, media_file))
         # Note: Anki itself goes through some trouble of making sure ids
         # are unique and updating them if needed, because their id scheme
         # is very sensitive to collisions. We decided not to do that here
@@ -151,13 +146,9 @@ class Anki2(FileFormat, MediaPreprocessor):
             models = json.loads(models)
             for mid in models:  # mid: model id
                 card_type_id = "7::" + mid
-                card_type_already_imported = db.has_card_type_with_id(
-                    card_type_id
-                )
+                card_type_already_imported = db.has_card_type_with_id(card_type_id)
                 if card_type_already_imported:
-                    card_type = self.component_manager.card_type_with_id[
-                        card_type_id
-                    ]
+                    card_type = self.component_manager.card_type_with_id[card_type_id]
                 else:
                     card_type = MSided(self.component_manager)
                 card_type.name = models[mid]["name"]
@@ -169,12 +160,12 @@ class Anki2(FileFormat, MediaPreprocessor):
                 # did = models[mid]["did"] # Deck id, ignore.
                 # usn = models[mid]["usn"] # Syncing related, ignore.
                 if "req" in models[mid]:
-                    models[mid]["req"]
+                    required = models[mid]["req"]
                     # Cache for a calculation to determine which fields are
                     # required. "req": [[0, "all", [0]]]
                     # Not yet implemented.
                 else:
-                    pass
+                    required = []
                 flds = models[mid]["flds"]
                 flds.sort(key=lambda x: x["ord"])
                 card_type.fact_keys_and_names = []
@@ -201,13 +192,9 @@ class Anki2(FileFormat, MediaPreprocessor):
                 card_type.fact_views = []
                 for template in tmpls:
                     fact_view_id = card_type.id + "." + str(template["ord"])
-                    fact_view_already_imported = db.has_fact_view_with_id(
-                        fact_view_id
-                    )
+                    fact_view_already_imported = db.has_fact_view_with_id(fact_view_id)
                     if fact_view_already_imported:
-                        fact_view = db.fact_view(
-                            fact_view_id, is_id_internal=False
-                        )
+                        fact_view = db.fact_view(fact_view_id, is_id_internal=False)
                         fact_view.name = template["name"]
                     else:
                         fact_view = FactView(template["name"], fact_view_id)
@@ -240,26 +227,12 @@ class Anki2(FileFormat, MediaPreprocessor):
         card_type_for_nid = {}
         # Import facts and tags.
         w.set_progress_text(_("Importing notes..."))
-        number_of_notes = con.execute("select count() from notes").fetchone()[
-            0
-        ]
+        number_of_notes = con.execute("select count() from notes").fetchone()[0]
         w.set_progress_range(number_of_notes)
         w.set_progress_update_interval(number_of_notes / 20)
         fact_for_nid = {}
         modification_time_for_nid = {}
-        for (
-            id,
-            guid,
-            mid,
-            mod,
-            usn,
-            tags,
-            flds,
-            sfld,
-            csum,
-            flags,
-            data,
-        ) in con.execute(
+        for id, guid, mid, mod, usn, tags, flds, sfld, csum, flags, data in con.execute(
             """select id, guid, mid, mod, usn, tags, flds, sfld,
             csum, flags, data from notes"""
         ):
@@ -270,9 +243,7 @@ class Anki2(FileFormat, MediaPreprocessor):
             # data: seems empty, ignore.
             # Make compatible with openSM2sync:
             guid = guid.replace("`", "ap").replace('"', "qu")
-            guid = (
-                guid.replace("&", "am").replace("<", "lt").replace(">", "gt")
-            )
+            guid = guid.replace("&", "am").replace("<", "lt").replace(">", "gt")
             modification_time_for_nid[id] = mod
             card_type = card_type_for_mid[int(mid)]
             card_type_for_nid[id] = card_type
@@ -285,9 +256,7 @@ class Anki2(FileFormat, MediaPreprocessor):
                 # Deal with sound tags.
                 for match in sound_re.finditer(data):
                     fname = match.group("fname")
-                    data = data.replace(
-                        match.group(0), '<audio src="' + fname + '">'
-                    )
+                    data = data.replace(match.group(0), '<audio src="' + fname + '">')
                 # Deal with latex tags.
                 data = data.replace("[latex]", "<latex>")
                 data = data.replace("[/latex]", "</latex>")
@@ -310,22 +279,10 @@ class Anki2(FileFormat, MediaPreprocessor):
         # otherwise, the sync protocol will use the scheduling data from the
         # latest repetition log, instead of the correct current one.
         w.set_progress_text(_("Importing logs..."))
-        number_of_logs = con.execute("select count() from revlog").fetchone()[
-            0
-        ]
+        number_of_logs = con.execute("select count() from revlog").fetchone()[0]
         w.set_progress_range(number_of_logs)
         w.set_progress_update_interval(number_of_logs / 20)
-        for (
-            id,
-            cid,
-            usn,
-            ease,
-            ivl,
-            lastIvl,
-            factor,
-            time,
-            type_,
-        ) in con.execute(
+        for id, cid, usn, ease, ivl, lastIvl, factor, time, type_ in con.execute(
             """select id, cid, usn, ease, ivl, lastIvl, factor,
             time, type from revlog"""
         ):
@@ -358,9 +315,7 @@ class Anki2(FileFormat, MediaPreprocessor):
             w.increase_progress(1)
         # Import cards.
         w.set_progress_text(_("Importing cards..."))
-        number_of_cards = con.execute("select count() from cards").fetchone()[
-            0
-        ]
+        number_of_cards = con.execute("select count() from cards").fetchone()[0]
         w.set_progress_range(number_of_cards)
         w.set_progress_update_interval(number_of_cards / 20)
         for (
@@ -417,17 +372,12 @@ class Anki2(FileFormat, MediaPreprocessor):
                 card.fact_view = fact_view
                 card.creation_time = creation_time
             else:
-                card = Card(
-                    card_type, fact, fact_view, creation_time=creation_time
-                )
+                card = Card(card_type, fact, fact_view, creation_time=creation_time)
             card.id = id
             card.extra_data["ord"] = ord  # Needed separately for clozes.
-            tag_names = [
-                tag_name.strip() for tag_name in extra_tag_names.split(",")
-            ]
+            tag_names = [tag_name.strip() for tag_name in extra_tag_names.split(",")]
             tag_names += [
-                tag_name.strip()
-                for tag_name in tag_names_for_nid[nid].split(" ")
+                tag_name.strip() for tag_name in tag_names_for_nid[nid].split(" ")
             ]
             tag_names += [deck_name_for_did[did].strip().replace(",", ";")]
             for tag_name in tag_names:
@@ -464,9 +414,7 @@ class Anki2(FileFormat, MediaPreprocessor):
             if deck_name in [criterion.name for criterion in db.criteria()]:
                 continue
             tag = tag_with_name[deck_name]
-            criterion = DefaultCriterion(
-                component_manager=self.component_manager
-            )
+            criterion = DefaultCriterion(component_manager=self.component_manager)
             criterion.name = deck_name
             criterion._tag_ids_active.add(tag._id)
             criterion._tag_ids_forbidden = set()

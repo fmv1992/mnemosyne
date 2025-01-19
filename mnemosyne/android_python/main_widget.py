@@ -3,10 +3,12 @@
 #
 
 import _main_widget
+
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 
 
 class MainWdgt(MainWidget):
+
     def __init__(self, component_manager):
         MainWidget.__init__(self, component_manager)
         self.is_progress_bar_showing = False

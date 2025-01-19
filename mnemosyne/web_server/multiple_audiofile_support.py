@@ -9,6 +9,7 @@ from mnemosyne.web_server.audio_player_container import AudioPlayerContainer
 # Contains the ID's of HTML audioplayers.
 ap_container = AudioPlayerContainer()
 
+
 # Contains the ID of a HTML audioplayer.
 # Is used for JavaScript generation.
 class AudioPlayer:
@@ -63,14 +64,16 @@ class InsertJavascript:
         # init_player(audio_player_b, 'player_b', index_b);
         call_init_player = ""
         for player in ap_container.players:
-            audio_player_with_index += (
-                "var audio_player_{id} = null;\n".format(id=player.id)
+            audio_player_with_index += "var audio_player_{id} = null;\n".format(
+                id=player.id
             )
             audio_player_with_index += "let index_{id} = {val};\n".format(
                 id=player.id, val="{val : 0}"
             )
-            call_init_player += "init_player(audio_player_{id}, 'player_{id}' , index_{id});\n".format(
-                id=player.id
+            call_init_player += (
+                "init_player(audio_player_{id}, 'player_{id}' , index_{id});\n".format(
+                    id=player.id
+                )
             )
         javascript = """
             <script>

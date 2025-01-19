@@ -3,12 +3,13 @@
 #
 
 import os
+from PyQt6 import QtCore, QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.dialogs import ImportDialog
-from mnemosyne.pyqt_ui.qt_worker_thread import QtGuiThread, QtWorkerThread
+from mnemosyne.pyqt_ui.qt_worker_thread import QtWorkerThread, QtGuiThread
 from mnemosyne.pyqt_ui.ui_import_dlg import Ui_ImportDlg
-from PyQt6 import QtCore, QtWidgets
+from mnemosyne.libmnemosyne.ui_components.dialogs import ImportDialog
+
 
 answer = None
 mutex = QtCore.QMutex()
@@ -40,6 +41,7 @@ class ImportThread(QtWorkerThread):
 
 
 class ImportDlg(QtWidgets.QDialog, QtGuiThread, ImportDialog, Ui_ImportDlg):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)

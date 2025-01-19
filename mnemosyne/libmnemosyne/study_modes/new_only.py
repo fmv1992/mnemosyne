@@ -3,11 +3,9 @@
 #
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.review_controllers.SM2_controller import (
-    SM2Controller,
-)
-from mnemosyne.libmnemosyne.schedulers.SM2_mnemosyne import SM2Mnemosyne
 from mnemosyne.libmnemosyne.study_mode import StudyMode
+from mnemosyne.libmnemosyne.schedulers.SM2_mnemosyne import SM2Mnemosyne
+from mnemosyne.libmnemosyne.review_controllers.SM2_controller import SM2Controller
 
 
 class NewOnly(StudyMode):

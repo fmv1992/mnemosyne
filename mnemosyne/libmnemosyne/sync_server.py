@@ -2,21 +2,20 @@
 # sync_server.py <Peter.Bienstman@gmail.com>
 #
 
-import http.client
 import os
+import http.client
 import threading
-
 import mnemosyne.version
 from argon2 import PasswordHasher
 from argon2.exceptions import HashingError, VerificationError
+
+from openSM2sync.ui import UI
+from openSM2sync.server import Server
 from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.utils import expand_path, localhost_IP
-from openSM2sync.server import Server
-from openSM2sync.ui import UI
 
 
 class SyncServer(Component, Server):
-
     """libmnemosyne-specific parts of the openSM2sync server."""
 
     program_name = "Mnemosyne"
@@ -30,9 +29,7 @@ class SyncServer(Component, Server):
         else:
             self.server_only = False
         super().__init__(
-            machine_id=config.machine_id(),
-            port=config["sync_server_port"],
-            **kwds
+            machine_id=config.machine_id(), port=config["sync_server_port"], **kwds
         )
         self.check_for_edited_local_media_files = self.config()[
             "check_for_edited_local_media_files"
@@ -92,12 +89,10 @@ class SyncServer(Component, Server):
                     "127.0.0.1", self.config()["web_server_port"]
                 )
                 con.request("GET", "/release_database")
-                con.getresponse()
+                response = con.getresponse()
             except:
                 pass
-            if not os.path.exists(
-                expand_path(database_name, self.config().data_dir)
-            ):
+            if not os.path.exists(expand_path(database_name, self.config().data_dir)):
                 self.database().new(database_name)
             else:
                 self.database().load(database_name)
@@ -122,7 +117,6 @@ class SyncServer(Component, Server):
             self.review_controller().update_dialog(redraw_all=True)
 
     def flush(self):
-
         """If there are still dangling sessions (i.e. those waiting in vain
         for more client input) in the sync server, we should flush them and
         make sure they restore from backup before doing anything that could
@@ -136,7 +130,6 @@ class SyncServer(Component, Server):
 
 
 class SyncServerThread(threading.Thread, SyncServer):
-
     """Basic threading implementation of the sync server, suitable for text-
     based UIs. A GUI-based client will want to override several functions
     in SyncServer and SyncServerThread in view of the interaction between
@@ -147,10 +140,7 @@ class SyncServerThread(threading.Thread, SyncServer):
     def __init__(self, component_manager):
         threading.Thread.__init__(self)
         SyncServer.__init__(
-            self,
-            component_manager=component_manager,
-            ui=UI(),
-            server_only=True,
+            self, component_manager=component_manager, ui=UI(), server_only=True
         )
 
     def run(self):

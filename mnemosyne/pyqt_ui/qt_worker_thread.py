@@ -4,9 +4,11 @@
 
 import sys
 
+from PyQt6 import QtCore
+
 from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.utils import traceback_string
-from PyQt6 import QtCore
+
 
 answer = None
 mutex = QtCore.QMutex()
@@ -14,7 +16,6 @@ dialog_closed = QtCore.QWaitCondition()
 
 
 class QtWorkerThread(QtCore.QThread):
-
     """Note that in Qt, we cannot do GUI updates in the worker thread, so we
     use the signal/slot mechanism to notify the main thread to do the
     necessary GUI operations.
@@ -47,17 +48,15 @@ class QtWorkerThread(QtCore.QThread):
             # Libmnemosyne itself could also generate dialog messages, so
             # we temporarily override the main_widget with the threaded
             # routines in this class.
-            self.mnemosyne.component_manager.components[None][
-                "main_widget"
-            ].append(self)
+            self.mnemosyne.component_manager.components[None]["main_widget"].append(
+                self
+            )
             self.do_work()
         except Exception as e:
             self.show_error(str(e) + "\n" + traceback_string())
         finally:
             self.mnemosyne.database().release_connection()
-            self.mnemosyne.component_manager.components[None][
-                "main_widget"
-            ].pop()
+            self.mnemosyne.component_manager.components[None]["main_widget"].pop()
         self.work_ended_signal.emit()
 
     def show_information(self, message):
@@ -112,6 +111,7 @@ class QtWorkerThread(QtCore.QThread):
 
 
 class QtGuiThread(Component, QtCore.QObject):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.worker_thread = None  # Assign a QtWorkerThread here.
@@ -121,9 +121,7 @@ class QtGuiThread(Component, QtCore.QObject):
 
     def run_worker_thread(self):
         self.database().release_connection()
-        self.worker_thread.information_signal.connect(
-            self.threaded_show_information
-        )
+        self.worker_thread.information_signal.connect(self.threaded_show_information)
         self.worker_thread.error_signal.connect(self.threaded_show_error)
         self.worker_thread.question_signal.connect(self.threaded_show_question)
         self.worker_thread.set_progress_text_signal.connect(

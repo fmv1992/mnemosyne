@@ -7,6 +7,7 @@ from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 
 
 class MainWdgt(MainWidget):
+
     def set_window_title(self, text):
         _.set_window_title(text.encode("utf-8"))
 
@@ -26,16 +27,12 @@ class MainWdgt(MainWidget):
 
     def get_filename_to_open(self, path, filter, caption=""):
         return _.get_filename_to_open(
-            path.encode("utf-8"),
-            filter.encode("utf-8"),
-            caption.encode("utf-8"),
+            path.encode("utf-8"), filter.encode("utf-8"), caption.encode("utf-8")
         )
 
     def get_filename_to_save(self, path, filter, caption=""):
         return _.get_filename_to_save(
-            path.encode("utf-8"),
-            filter.encode("utf-8"),
-            caption.encode("utf-8"),
+            path.encode("utf-8"), filter.encode("utf-8"), caption.encode("utf-8")
         )
 
     def set_status_bar_message(self, text):

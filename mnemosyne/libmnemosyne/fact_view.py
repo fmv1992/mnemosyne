@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.utils import CompareOnId
 
 
 class FactView(CompareOnId):
-
     """Sequence of keys from a fact to form a question and an answer.
     A fact view needs an id string as well as a name, because the name can
     change for different translations.

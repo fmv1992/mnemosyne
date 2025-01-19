@@ -23,10 +23,7 @@ class CustomTag(Filter):
         self.last_filename = None
 
     def run(self, text, card, fact_key, **render_args):
-        if (
-            "no_side_effects" in render_args
-            and render_args["no_side_effects"] == True
-        ):
+        if "no_side_effects" in render_args and render_args["no_side_effects"] == True:
             return text
         i = text.lower().find(self.tag_name + " src")
         while i != -1:

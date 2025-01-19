@@ -5,14 +5,15 @@
 import os
 import shutil
 
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne_test import MnemosyneTest
 
 last_error = ""
 
 
 class Widget(MainWidget):
+
     def show_error(self, message):
         global last_error
         print(message)
@@ -20,6 +21,7 @@ class Widget(MainWidget):
 
 
 class TestDBImport(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
         self.mnemosyne = Mnemosyne(
@@ -38,9 +40,7 @@ class TestDBImport(MnemosyneTest):
             ("mnemosyne_test", "TestReviewWidget")
         ]
         self.mnemosyne.components.append(("test_db_import", "Widget"))
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
         self.merge_db_path = os.path.join(
             os.getcwd(), "tests", "files", "basedir_to_merge", "to_merge.db"
@@ -77,18 +77,16 @@ class TestDBImport(MnemosyneTest):
         assert last_error == ""
         db = self.database()
         assert (
-            db.con.execute(
-                "select count() from log where event_type != 26"
-            ).fetchone()[0]
+            db.con.execute("select count() from log where event_type != 26").fetchone()[
+                0
+            ]
             == 258
         )
         self.review_controller().reset()
         assert self.database().card_count() == 7
         assert self.database().active_count() == 6
         assert self.database().fact_count() == 5
-        card_type = self.database().card_type(
-            "2::new clone", is_id_internal=False
-        )
+        card_type = self.database().card_type("2::new clone", is_id_internal=False)
         assert (
             self.config().card_type_property("background_colour", card_type)
             == 4278233600

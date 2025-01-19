@@ -10,11 +10,13 @@ from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
 
 
 class ScriptReviewWidget(ReviewWidget):
+
     def redraw_now(self):
         pass
 
 
 class ScriptMainWidget(MainWidget):
+
     def __init__(self, component_manager):
         super().__init__(component_manager)
         self.q_and_a = None
@@ -29,6 +31,7 @@ class ScriptMainWidget(MainWidget):
 
 
 class Mnemosyne(MnemosyneParent):
+
     def __init__(self, data_dir=None, filename=None):
         MnemosyneParent.__init__(
             self, upload_science_logs=False, interested_in_old_reps=True
@@ -48,12 +51,8 @@ class Mnemosyne(MnemosyneParent):
         self.gui_for_component["CramRecent"] = [
             ("mnemosyne.script", "ScriptReviewWidget")
         ]
-        self.gui_for_component["CramAll"] = [
-            ("mnemosyne.script", "ScriptReviewWidget")
-        ]
-        self.gui_for_component["NewOnly"] = [
-            ("mnemosyne.script", "ScriptReviewWidget")
-        ]
+        self.gui_for_component["CramAll"] = [("mnemosyne.script", "ScriptReviewWidget")]
+        self.gui_for_component["NewOnly"] = [("mnemosyne.script", "ScriptReviewWidget")]
         if data_dir is not None:
             data_dir = os.path.abspath(data_dir)
         self.initialise(data_dir, filename=filename)

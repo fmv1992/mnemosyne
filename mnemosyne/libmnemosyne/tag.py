@@ -2,11 +2,10 @@
 # tag.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.utils import CompareOnId, rand_uuid
+from mnemosyne.libmnemosyne.utils import rand_uuid, CompareOnId
 
 
 class Tag(CompareOnId):
-
     """The tag name is the full name, including all levels of the hierarchy
     separated by ::.
 

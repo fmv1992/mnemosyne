@@ -2,15 +2,14 @@
 # review_wdgt.py <Peter.Bienstman@gmail.com>
 #
 
-import re
 from string import Template
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
+import re
 
 
 class ReviewWdgt(ReviewWidget):
-
     """I've tried fiddling with css to get the grades area always show up at
     the bottom of the screen, no matter the contents of the cards, but I
     never got this to work satisfactory both on Firefox and IE. There would
@@ -89,12 +88,8 @@ $js
 """
         )
 
-    def set_client_on_same_machine_as_server(
-        self, client_on_same_machine_as_server
-    ):
-        self.client_on_same_machine_as_server = (
-            client_on_same_machine_as_server
-        )
+    def set_client_on_same_machine_as_server(self, client_on_same_machine_as_server):
+        self.client_on_same_machine_as_server = client_on_same_machine_as_server
 
     def redraw_now(self):
         pass
@@ -137,11 +132,9 @@ $js
         pass
 
     def update_status_bar_counters(self):
-        (
-            scheduled_count,
-            non_memorised_count,
-            active_count,
-        ) = self.review_controller().counters()
+        scheduled_count, non_memorised_count, active_count = (
+            self.review_controller().counters()
+        )
         counters = "Sch.: %d Not mem.: %d Act.: %d" % (
             scheduled_count,
             non_memorised_count,
@@ -229,9 +222,7 @@ $js
                 str1 = self.question[match.start() : match.end()]
                 idstr = re.findall(r"player_(\d+)", str1)
                 i = idstr.pop()
-                player_and_index += "var audio_player_{id} = null;\n".format(
-                    id=i
-                )
+                player_and_index += "var audio_player_{id} = null;\n".format(id=i)
                 player_and_index += "let index_{id} = {val};\n".format(
                     id=i, val="{val : 0}"
                 )
@@ -246,9 +237,7 @@ $js
                 str1 = self.answer[match.start() : match.end()]
                 idstr = re.findall(r"player_(\d+)", str1)
                 i = idstr.pop()
-                player_and_index += "var audio_player_{id} = null;\n".format(
-                    id=i
-                )
+                player_and_index += "var audio_player_{id} = null;\n".format(id=i)
                 player_and_index += "let index_{id} = {val};\n".format(
                     id=i, val="{val : 0}"
                 )

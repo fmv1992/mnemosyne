@@ -6,18 +6,15 @@ import math
 import time
 from xml.etree import cElementTree
 
-from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
-    MediaPreprocessor,
-)
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.file_format import FileFormat
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
 
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
 
 
 class Smconv_XML(FileFormat, MediaPreprocessor):
-
     """Import the xml file created by the smconv.pl script to Mnemosyne.
     smconv.pl is available at http://smconvpl.sourceforge.net and reads
     SuperMemo for Palm databases and exports them to XML.
@@ -123,24 +120,18 @@ class Smconv_XML(FileFormat, MediaPreprocessor):
             if card_other is not None:
                 card.creation_time = int(
                     time.mktime(
-                        time.strptime(
-                            card_other.attrib["datecreate"], "%Y-%m-%d"
-                        )
+                        time.strptime(card_other.attrib["datecreate"], "%Y-%m-%d")
                     )
                 )
                 card.modification_time = int(
                     time.mktime(
-                        time.strptime(
-                            card_other.attrib["datecommit"], "%Y-%m-%d"
-                        )
+                        time.strptime(card_other.attrib["datecommit"], "%Y-%m-%d")
                     )
                 )
                 card.next_rep = self.scheduler().midnight_UTC(
                     int(
                         time.mktime(
-                            time.strptime(
-                                card_other.attrib["datenexttest"], "%Y-%m-%d"
-                            )
+                            time.strptime(card_other.attrib["datenexttest"], "%Y-%m-%d")
                         )
                     )
                 )

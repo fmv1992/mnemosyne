@@ -2,9 +2,9 @@
 # front_to_back.py <Peter.Bienstman@gmail.com>
 #
 
+from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.card_type import CardType
 from mnemosyne.libmnemosyne.fact_view import FactView
-from mnemosyne.libmnemosyne.gui_translator import _
 
 
 class FrontToBack(CardType):

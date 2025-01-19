@@ -4,7 +4,6 @@
 
 
 class Component(object):
-
     """Base class of components that are registered with the component
     manager. This is a list of component types: config, log, database,
     scheduler, stopwatch, gui_translator, card_type, card_type_converter,
@@ -62,15 +61,15 @@ class Component(object):
         self.instantiated_gui_components = []
 
     def activate(self):
-
         """Initialisation code called when the component is about to do actual
         work, and which can't happen in the constructor, e.g. because
         components on which it relies have not yet been registered.
 
         """
 
-    def activate_gui_components(self):
+        pass
 
+    def activate_gui_components(self):
         """GUI classes are only instantiated when activated, since that can take
         a lot of time on mobile clients.
 
@@ -149,7 +148,6 @@ class Component(object):
         return self.component_manager.language_with_id[id]
 
     def flush_sync_server(self):
-
         """If there are still dangling sessions (i.e. those waiting in vain
         for more client input) in the sync server, we should flush them and
         make sure they restore from backup before doing anything that could

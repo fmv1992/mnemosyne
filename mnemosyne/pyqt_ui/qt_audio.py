@@ -6,19 +6,15 @@ import re
 
 from mnemosyne.libmnemosyne.filter import Filter
 
-re_audio = re.compile(
-    r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE
-)
+re_audio = re.compile(r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE)
 re_start = re.compile(r"""start=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 re_stop = re.compile(r"""stop=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 
 
 class QtAudio(Filter):
+
     def run(self, text, card, fact_key, **render_args):
-        if (
-            "no_side_effects" in render_args
-            and render_args["no_side_effects"] == True
-        ):
+        if "no_side_effects" in render_args and render_args["no_side_effects"] == True:
             return text
         if not re_audio.search(text):
             return text

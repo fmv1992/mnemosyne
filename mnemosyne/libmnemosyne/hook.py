@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Hook(Component):
-
     """Function hooks are used by registering an instance of this class as
     component of type hook, with the 'used_for' argument any of the following
     hook points:

@@ -2,12 +2,14 @@
 # card_type_language_list_wdgt.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.gui_translator import _
 from PyQt6 import QtCore, QtWidgets
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
 
 
 class ComboDelegate(QtWidgets.QItemDelegate, Component):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.language_combobox_for_row = {}
@@ -46,11 +48,9 @@ class ComboDelegate(QtWidgets.QItemDelegate, Component):
                 combobox.addItem(card_type.fact_key_names()[0])
             else:
                 combobox.addItems(card_type.fact_key_names())
-                key = self.config().card_type_property(
-                    "foreign_fact_key", card_type
-                )
+                key = self.config().card_type_property("foreign_fact_key", card_type)
                 if key:
-                    card_type.name_for_fact_key(key)
+                    key_name = card_type.name_for_fact_key(key)
             # If this is the first time we set a language, make sure to also
             # save the foreign fact key.
             key = self.config().card_type_property(
@@ -58,9 +58,7 @@ class ComboDelegate(QtWidgets.QItemDelegate, Component):
             )
             if not key:
                 foreign_key_index = index.model().index(row, column + 1)
-                index.model().setData(
-                    foreign_key_index, combobox.currentText()
-                )
+                index.model().setData(foreign_key_index, combobox.currentText())
         self.commitData.emit(editor)
         self.closeEditor.emit(editor)
 
@@ -87,6 +85,7 @@ class ComboDelegate(QtWidgets.QItemDelegate, Component):
 
 
 class Model(QtCore.QAbstractTableModel, Component):
+
     def __init__(self, card_types, **kwds):
         super().__init__(**kwds)
         self.card_types = card_types
@@ -105,8 +104,7 @@ class Model(QtCore.QAbstractTableModel, Component):
         column = index.column()
         if column == 0:
             return (
-                QtCore.Qt.ItemFlag.ItemIsEnabled
-                | QtCore.Qt.ItemFlag.ItemIsSelectable
+                QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
             )
         else:
             return (
@@ -132,9 +130,7 @@ class Model(QtCore.QAbstractTableModel, Component):
                     "language_id", card_type, default=""
                 )
                 return (
-                    ""
-                    if not language_id
-                    else self.language_with_id(language_id).name
+                    "" if not language_id else self.language_with_id(language_id).name
                 )
             elif column == 2:
                 key = self.config().card_type_property(
@@ -151,16 +147,12 @@ class Model(QtCore.QAbstractTableModel, Component):
             )
         elif column == 2:
             self.config().set_card_type_property(
-                "foreign_fact_key",
-                card_type.fact_key_with_name(value),
-                card_type,
+                "foreign_fact_key", card_type.fact_key_with_name(value), card_type
             )
         self.dataChanged.emit(index, index)
         return True
 
-    def headerData(
-        self, column, orientation, role=QtCore.Qt.ItemDataRole.DisplayRole
-    ):
+    def headerData(self, column, orientation, role=QtCore.Qt.ItemDataRole.DisplayRole):
         if (
             orientation == QtCore.Qt.Orientation.Horizontal
             and role == QtCore.Qt.ItemDataRole.DisplayRole
@@ -176,12 +168,11 @@ class Model(QtCore.QAbstractTableModel, Component):
             and role == QtCore.Qt.ItemDataRole.DisplayRole
         ):
             return None
-        return QtCore.QAbstractTableModel.headerData(
-            self, column, orientation, role
-        )
+        return QtCore.QAbstractTableModel.headerData(self, column, orientation, role)
 
 
 class CardTypeLanguageListWdgt(QtWidgets.QTableView, Component):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         delegate = ComboDelegate(

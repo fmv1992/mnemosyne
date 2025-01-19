@@ -4,17 +4,16 @@
 
 import re
 
+from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.card import Card
+from mnemosyne.libmnemosyne.plugin import Plugin
 from mnemosyne.libmnemosyne.card_type import CardType
 from mnemosyne.libmnemosyne.fact_view import FactView
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.plugin import Plugin
 
 cloze_re = re.compile(r"\[(.+?)\]", re.DOTALL)
 
 
 class Cloze(CardType):
-
     """CardType to do cloze deletion on a string, e.g. "The political parties in
     the US are the [democrats] and the [republicans]." would give the following
     cards:
@@ -57,7 +56,6 @@ class Cloze(CardType):
         return bool(cloze_re.search(text))
 
     def q_a_from_cloze(self, text, index):
-
         """Auxiliary function used by other card types to return question
         and answer for the cloze with a given index in a text which can have
         the following form:
@@ -85,14 +83,10 @@ class Cloze(CardType):
             else:
                 cloze_without_hint, hint = cloze, "..."
             if current_index == index:
-                question = question.replace(
-                    "[" + cloze + "]", "[" + hint + "]", 1
-                )
+                question = question.replace("[" + cloze + "]", "[" + hint + "]", 1)
                 answer = cloze_without_hint
             else:
-                question = question.replace(
-                    "[" + cloze + "]", cloze_without_hint, 1
-                )
+                question = question.replace("[" + cloze + "]", cloze_without_hint, 1)
             cursor += 1
             current_index += 1
         for f in self.component_manager.all("hook", "postprocess_q_a_cloze"):
@@ -117,10 +111,7 @@ class Cloze(CardType):
             cards.append(card)
         return cards
 
-    def _edit_clozes(
-        self, fact, new_fact_data, cloze_fact_key, cloze_fact_view
-    ):
-
+    def _edit_clozes(self, fact, new_fact_data, cloze_fact_key, cloze_fact_view):
         """Auxiliary function used by other card types to when editing clozes.
         Should take into account that not all fact views are cloze-based.
 
@@ -162,9 +153,7 @@ class Cloze(CardType):
         return new_cards, edited_cards, deleted_cards
 
     def edit_fact(self, fact, new_fact_data):
-        return self._edit_clozes(
-            fact, new_fact_data, "text", self.fact_views[0]
-        )
+        return self._edit_clozes(fact, new_fact_data, "text", self.fact_views[0])
 
 
 class ClozePlugin(Plugin):

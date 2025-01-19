@@ -2,8 +2,9 @@
 # add_menu_item.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.plugin import Plugin
 from PyQt6 import QtGui
+
+from mnemosyne.libmnemosyne.plugin import Plugin
 
 
 class HelloWorldPlugin(Plugin):

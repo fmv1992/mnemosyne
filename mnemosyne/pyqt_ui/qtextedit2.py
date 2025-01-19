@@ -2,16 +2,15 @@
 # qtextedit2.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.gui_translator import _
 from PyQt6 import QtCore, QtGui, QtWidgets
+
+from mnemosyne.libmnemosyne.gui_translator import _
 
 
 class QTextEdit2(QtWidgets.QTextEdit):
-
     """QTextEdit with extra options in popup menu."""
 
     def __init__(self, parent, card_type, pronunciation_hiding):
-
         """'pronunciation_hiding' is set to None when there is no
         pronunciation key to hide, and to True or False when there is one to
         hide.
@@ -28,16 +27,12 @@ class QTextEdit2(QtWidgets.QTextEdit):
         self.translators = (
             []
             if not language_id
-            else self.card_type.component_manager.all(
-                "translator", language_id
-            )
+            else self.card_type.component_manager.all("translator", language_id)
         )
         self.pronouncers = (
             []
             if not language_id
-            else self.card_type.component_manager.all(
-                "pronouncer", language_id
-            )
+            else self.card_type.component_manager.all("pronouncer", language_id)
         )
 
     def contextMenuEvent(self, e):
@@ -67,17 +62,13 @@ class QTextEdit2(QtWidgets.QTextEdit):
             )
             self.hide_action.setCheckable(True)
             self.hide_action.setChecked(self.pronunciation_hiding)
-            self.hide_action.toggled.connect(
-                self.parent().pronunciation_hiding_toggled
-            )
+            self.hide_action.toggled.connect(self.parent().pronunciation_hiding_toggled)
             popup.addAction(self.hide_action)
         # Translators.
         if len(self.translators):
             popup.addSeparator()
             for translator in self.translators:
-                translator_action = QtGui.QAction(
-                    translator.popup_menu_text, popup
-                )
+                translator_action = QtGui.QAction(translator.popup_menu_text, popup)
                 translator_action.triggered.connect(
                     lambda checked, t=translator: self.translate(t)
                 )
@@ -87,9 +78,7 @@ class QTextEdit2(QtWidgets.QTextEdit):
         if len(self.pronouncers):
             popup.addSeparator()
             for pronouncer in self.pronouncers:
-                pronouncer_action = QtGui.QAction(
-                    pronouncer.popup_menu_text, popup
-                )
+                pronouncer_action = QtGui.QAction(pronouncer.popup_menu_text, popup)
                 pronouncer_action.triggered.connect(
                     lambda checked, p=pronouncer: self.pronounce(p)
                 )
@@ -162,9 +151,7 @@ class QTextEdit2(QtWidgets.QTextEdit):
             self.insertPlainText('<audio src="' + filename + '">')
 
     def insert_video(self):
-        filter = (
-            "(*.mov *.ogg *.ogv *.mp4 *.qt" + " *.MOV *.OGG *.OGV *.MP4 *.QT)"
-        )
+        filter = "(*.mov *.ogg *.ogv *.mp4 *.qt" + " *.MOV *.OGG *.OGV *.MP4 *.QT)"
         filename = self.parent().controller().show_insert_video_dialog(filter)
         if filename:
             self.insertPlainText('<video src="' + filename + '">')

@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Filter(Component):
-
     """Code which operates on a string and filters it to achieve extra
     functionality, e.g. converting relative paths to absolute paths.
 

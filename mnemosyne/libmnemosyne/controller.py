@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Controller(Component):
-
     """A collection of logic used by the GUI.  The logic related to the
     review process is split out in a separated controller class, to
     allow that to be swapped out easily.
@@ -23,8 +22,9 @@ class Controller(Component):
     component_type = "controller"
 
     def heartbeat(self):
-
         """For code that needs to run periodically."""
+
+        pass
 
     def update_title(self):
         raise NotImplementedError
@@ -54,10 +54,7 @@ class Controller(Component):
     ):
         raise NotImplementedError
 
-    def change_card_type(
-        self, facts, old_card_type, new_card_type, correspondence
-    ):
-
+    def change_card_type(self, facts, old_card_type, new_card_type, correspondence):
         """Note: all facts should have the same card type."""
 
         raise NotImplementedError
@@ -96,7 +93,6 @@ class Controller(Component):
         raise NotImplementedError
 
     def show_insert_img_dialog(self, filter):
-
         """Filter contains the file dialog filter with the supported
         filetypes.
 
@@ -105,7 +101,6 @@ class Controller(Component):
         raise NotImplementedError
 
     def show_insert_sound_dialog(self, filter):
-
         """Filter contains the file dialog filter with the supported
         filetypes.
 
@@ -114,7 +109,6 @@ class Controller(Component):
         raise NotImplementedError
 
     def show_insert_video_dialog(self, filter):
-
         """Filter contains the file dialog filter with the supported
         filetypes.
 

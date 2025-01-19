@@ -33,12 +33,12 @@ for the documentation.
 """
 from __future__ import print_function
 
-import collections
-import inspect
-import itertools
-import operator
 import re
 import sys
+import inspect
+import operator
+import itertools
+import collections
 
 __version__ = "4.1.2"
 
@@ -50,8 +50,7 @@ if sys.version >= "3":
 
 else:
     FullArgSpec = collections.namedtuple(
-        "FullArgSpec",
-        "args varargs varkw defaults " "kwonlyargs kwonlydefaults",
+        "FullArgSpec", "args varargs varkw defaults " "kwonlyargs kwonlydefaults"
     )
 
     def getfullargspec(f):
@@ -130,13 +129,9 @@ class FunctionMaker(object):
                 for i, arg in enumerate(self.args):
                     setattr(self, "arg%d" % i, arg)
                 if sys.version < "3":  # easy way
-                    self.shortsignature = (
-                        self.signature
-                    ) = inspect.formatargspec(
+                    self.shortsignature = self.signature = inspect.formatargspec(
                         formatvalue=lambda val: "", *argspec[:-2]
-                    )[
-                        1:-1
-                    ]
+                    )[1:-1]
                 else:  # Python 3 way
                     allargs = list(self.args)
                     allshortargs = list(self.args)
@@ -198,8 +193,7 @@ class FunctionMaker(object):
             raise SyntaxError("not a valid function template\n%s" % src)
         name = mo.group(1)  # extract the function name
         names = set(
-            [name]
-            + [arg.strip(" *") for arg in self.shortsignature.split(",")]
+            [name] + [arg.strip(" *") for arg in self.shortsignature.split(",")]
         )
         for n in names:
             if n in ("_func_", "_call_"):
@@ -269,10 +263,7 @@ def decorate(func, caller):
     """
     evaldict = dict(_call_=caller, _func_=func)
     fun = FunctionMaker.create(
-        func,
-        "return _call_(_func_, %(shortsignature)s)",
-        evaldict,
-        __wrapped__=func,
+        func, "return _call_(_func_, %(shortsignature)s)", evaldict, __wrapped__=func
     )
     if hasattr(func, "__qualname__"):
         fun.__qualname__ = func.__qualname__
@@ -418,9 +409,7 @@ def dispatch_on(*dispatch_args):
             for t, vas in zip(types, vancestors(*types)):
                 n_vas = len(vas)
                 if n_vas > 1:
-                    raise RuntimeError(
-                        "Ambiguous dispatch for %s: %s" % (t, vas)
-                    )
+                    raise RuntimeError("Ambiguous dispatch for %s: %s" % (t, vas))
                 elif n_vas == 1:
                     (va,) = vas
                     mro = type("t", (t, va), {}).mro()[1:]

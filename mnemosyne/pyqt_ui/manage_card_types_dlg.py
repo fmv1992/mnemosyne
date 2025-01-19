@@ -2,43 +2,36 @@
 # manage_card_types_dlg.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.dialogs import ManageCardTypesDialog
-from mnemosyne.pyqt_ui.card_type_language_list_wdgt import (
-    CardTypeLanguageListWdgt,
-)
-from mnemosyne.pyqt_ui.clone_card_type_dlg import CloneCardTypeDlg
-from mnemosyne.pyqt_ui.edit_M_sided_card_type_dlg import EditMSidedCardTypeDlg
-from mnemosyne.pyqt_ui.ui_manage_card_types_dlg import Ui_ManageCardTypesDlg
 from PyQt6 import QtCore, QtWidgets
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.pyqt_ui.card_type_language_list_wdgt import CardTypeLanguageListWdgt
+from mnemosyne.pyqt_ui.clone_card_type_dlg import CloneCardTypeDlg
+from mnemosyne.pyqt_ui.ui_manage_card_types_dlg import Ui_ManageCardTypesDlg
+from mnemosyne.pyqt_ui.edit_M_sided_card_type_dlg import EditMSidedCardTypeDlg
+from mnemosyne.libmnemosyne.ui_components.dialogs import ManageCardTypesDialog
 
 
 class ManageCardTypesDlg(
     QtWidgets.QDialog, ManageCardTypesDialog, Ui_ManageCardTypesDlg
 ):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
         self.native_card_types = CardTypeLanguageListWdgt(
-            parent=self.native_card_types_box,
-            component_manager=self.component_manager,
+            parent=self.native_card_types_box, component_manager=self.component_manager
         )
-        self.vertical_layout_native_card_types.insertWidget(
-            0, self.native_card_types
-        )
+        self.vertical_layout_native_card_types.insertWidget(0, self.native_card_types)
         self.Anki_card_types = CardTypeLanguageListWdgt(
-            parent=self.Anki_card_types_box,
-            component_manager=self.component_manager,
+            parent=self.Anki_card_types_box, component_manager=self.component_manager
         )
-        self.vertical_layout_Anki_card_types.insertWidget(
-            0, self.Anki_card_types
-        )
+        self.vertical_layout_Anki_card_types.insertWidget(0, self.Anki_card_types)
         self.setWindowFlags(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.update()
         state = self.config()["manage_card_types_dlg_state"]
@@ -53,9 +46,7 @@ class ManageCardTypesDlg(
         # Fill up native types panel.
         card_types = []
         for card_type in self.database().sorted_card_types():
-            if not card_type.hidden_from_UI and not card_type.id.startswith(
-                "7"
-            ):
+            if not card_type.hidden_from_UI and not card_type.id.startswith("7"):
                 card_types.append(card_type)
         self.native_card_types.set_card_types(card_types)
         self.rename_native_card_type_button.setEnabled(False)
@@ -92,9 +83,7 @@ class ManageCardTypesDlg(
                 )
             )
             self.config()["clone_help_shown"] = True
-        dlg = CloneCardTypeDlg(
-            parent=self, component_manager=self.component_manager
-        )
+        dlg = CloneCardTypeDlg(parent=self, component_manager=self.component_manager)
         dlg.exec()
         self.update()
 
@@ -113,14 +102,10 @@ class ManageCardTypesDlg(
         self.delete_Anki_card_type_button.setEnabled(True)
 
     def delete_native_card_type(self):
-        self.delete_selected_card_type(
-            self.native_card_types.selected_card_type()
-        )
+        self.delete_selected_card_type(self.native_card_types.selected_card_type())
 
     def delete_Anki_card_type(self):
-        self.delete_selected_card_type(
-            self.Anki_card_types.selected_card_type()
-        )
+        self.delete_selected_card_type(self.Anki_card_types.selected_card_type())
 
     def delete_selected_card_type(self, card_type):
         if not card_type:
@@ -134,22 +119,16 @@ class ManageCardTypesDlg(
         self.update()
 
     def rename_native_card_type(self):
-        self.rename_selected_card_type(
-            self.native_card_types.selected_card_type()
-        )
+        self.rename_selected_card_type(self.native_card_types.selected_card_type())
 
     def rename_Anki_card_type(self):
-        self.rename_selected_card_type(
-            self.Anki_card_types.selected_card_type()
-        )
+        self.rename_selected_card_type(self.Anki_card_types.selected_card_type())
 
     def rename_selected_card_type(self, card_type):
         if not card_type:
             return
 
-        from mnemosyne.pyqt_ui.ui_rename_card_type_dlg import (
-            Ui_RenameCardTypeDlg,
-        )
+        from mnemosyne.pyqt_ui.ui_rename_card_type_dlg import Ui_RenameCardTypeDlg
 
         class RenameDlg(QtWidgets.QDialog, Ui_RenameCardTypeDlg):
             def __init__(self, old_card_type_name):
@@ -167,9 +146,7 @@ class ManageCardTypesDlg(
         card_type = self.Anki_card_types.selected_card_type()
         if not card_type:
             return
-        dlg = EditMSidedCardTypeDlg(
-            card_type, component_manager=self.component_manager
-        )
+        dlg = EditMSidedCardTypeDlg(card_type, component_manager=self.component_manager)
         if dlg.exec() == QtWidgets.QDialog.DialogCode.Accepted:
             self.database().update_card_type(card_type)
             self.update()

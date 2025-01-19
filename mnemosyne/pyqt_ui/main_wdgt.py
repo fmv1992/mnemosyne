@@ -2,10 +2,11 @@
 # main_wdgt.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne.pyqt_ui.ui_main_wdgt import Ui_MainWdgt
 from PyQt6 import QtCore, QtGui, QtWidgets
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.pyqt_ui.ui_main_wdgt import Ui_MainWdgt
+from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 
 # Note: inheritance from Ui_MainWdgt should come last, as it inherits
 # directly from 'object' with supporting a correct super().__init__
@@ -13,6 +14,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
@@ -37,6 +39,15 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
     def createPopupMenu(self):
         # Don't create a silly popup menu saying ('toolBar').
         pass
+
+    def keyPressEvent(self, event):
+        if (
+            event.key() == QtCore.Qt.Key.Key_Q
+            and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
+        ):
+            self.close()
+        else:
+            QtWidgets.QMainWindow.keyPressEvent(self, event)
 
     def closeEvent(self, event):
         # Generated when clicking the window's close button.
@@ -90,21 +101,15 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         return self
 
     def show_information(self, text):
-        QtWidgets.QMessageBox.information(
-            self.top_window(), _("Mnemosyne"), text
-        )
+        QtWidgets.QMessageBox.information(self.top_window(), _("Mnemosyne"), text)
 
     def show_question(self, text, option0, option1, option2):
         dialog = QtWidgets.QMessageBox(self.top_window())
         dialog.setIcon(QtWidgets.QMessageBox.Icon.Question)
         dialog.setWindowTitle(_("Mnemosyne"))
         dialog.setText(text)
-        button0 = dialog.addButton(
-            option0, QtWidgets.QMessageBox.ButtonRole.ActionRole
-        )
-        button1 = dialog.addButton(
-            option1, QtWidgets.QMessageBox.ButtonRole.ActionRole
-        )
+        button0 = dialog.addButton(option0, QtWidgets.QMessageBox.ButtonRole.ActionRole)
+        button1 = dialog.addButton(option1, QtWidgets.QMessageBox.ButtonRole.ActionRole)
         if option2:
             button2 = dialog.addButton(
                 option2, QtWidgets.QMessageBox.ButtonRole.ActionRole
@@ -129,15 +134,11 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         return QtWidgets.QApplication.font().pointSize()
 
     def get_filename_to_open(self, path, filter, caption=""):
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, caption, path, filter
-        )
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, caption, path, filter)
         return filename
 
     def get_filename_to_save(self, path, filter, caption=""):
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(
-            self, caption, path, filter
-        )
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, caption, path, filter)
         return filename
 
     def set_status_bar_message(self, text):
@@ -160,9 +161,7 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
                 & ~QtCore.Qt.WindowType.WindowMinMaxButtonsHint
             )
             self.progress_bar.setWindowTitle(_("Mnemosyne"))
-            self.progress_bar.setWindowModality(
-                QtCore.Qt.WindowModality.WindowModal
-            )
+            self.progress_bar.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
             self.progress_bar.setCancelButton(None)
             self.progress_bar.setMinimumDuration(0)
         self.progress_bar.setLabelText(text)

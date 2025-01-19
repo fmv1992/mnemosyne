@@ -2,18 +2,16 @@
 # M_sided.py <Peter.Bienstman@gmail.com>
 #
 
-import copy
 import os
 import sys
+import copy
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.card_type import CardType
 from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
-from mnemosyne.libmnemosyne.gui_translator import _
 
 
 class MSided(CardType):
-
     """Abstract parent class for M-sided card types with Anki syntax."""
 
     id = "7"
@@ -61,9 +59,7 @@ class MSided(CardType):
     def _render(self, card, render_chain="default", **render_args):
         # Because there is no list of fact keys for q or a for this card type,
         # we need to run the filters after assembling the content, not before.
-        html = self.renderer.render(
-            card, card.fact.data, render_chain, **render_args
-        )
+        html = self.renderer.render(card, card.fact.data, render_chain, **render_args)
         if "body_only" in render_args and render_args["body_only"] == True:
             return html  # Filters will be run later.
         for filter in self.render_chain(render_chain)._filters:

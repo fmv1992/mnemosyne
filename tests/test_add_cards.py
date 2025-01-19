@@ -5,15 +5,16 @@
 import os
 import sys
 
-from mnemosyne.libmnemosyne import Mnemosyne
-from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 from mnemosyne_test import MnemosyneTest
+from mnemosyne.libmnemosyne import Mnemosyne
 from openSM2sync.log_entry import EventTypes
+from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 
 answer = 0
 
 
 class Widget(MainWidget):
+
     def show_information(self, message):
         if message == "Card is already in database.\nDuplicate not added.":
             return 0
@@ -31,11 +32,10 @@ class Widget(MainWidget):
 
 
 class TestAddCards(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(
-            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
-        )
+        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -57,9 +57,7 @@ class TestAddCards(MnemosyneTest):
         self.mnemosyne.components.append(
             ("mnemosyne.libmnemosyne.ui_components.dialogs", "EditCardDialog")
         )
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
     def test_1(self):
@@ -134,11 +132,7 @@ class TestAddCards(MnemosyneTest):
         assert self.database().card_count() == 2
 
     def test_3(self):
-        fact_data = {
-            "f": "foreign word",
-            "p_1": "pronunciation",
-            "m_1": "translation",
-        }
+        fact_data = {"f": "foreign word", "p_1": "pronunciation", "m_1": "translation"}
         card_type = self.card_type_with_id("3")
         self.controller().create_new_cards(
             fact_data, card_type, grade=-1, tag_names=["default"]
@@ -341,13 +335,9 @@ class TestAddCards(MnemosyneTest):
         )[0]
         self.controller().save_file()
 
-        sql_headers = (
-            self.database().con.execute("PRAGMA table_info(log);").fetchall()
-        )
-        [sql_header[1] for sql_header in sql_headers]
-        sql_content = (
-            self.database().con.execute("select * from log").fetchall()
-        )
+        sql_headers = self.database().con.execute("PRAGMA table_info(log);").fetchall()
+        sql_labels = [sql_header[1] for sql_header in sql_headers]
+        sql_content = self.database().con.execute("select * from log").fetchall()
 
         sql_res = (
             self.database()
@@ -422,9 +412,7 @@ class TestAddCards(MnemosyneTest):
         )
 
         fact_data_2 = {"f": "foreign", "m_1": "meaning", "n": "notes"}
-        self.controller().edit_card_and_sisters(
-            card, fact_data_2, card_type, [], {}
-        )
+        self.controller().edit_card_and_sisters(card, fact_data_2, card_type, [], {})
         self.controller().save_file()
         assert (
             self.database()
@@ -433,9 +421,7 @@ class TestAddCards(MnemosyneTest):
             == 1
         )
 
-        self.controller().edit_card_and_sisters(
-            card, fact_data, card_type, [], {}
-        )
+        self.controller().edit_card_and_sisters(card, fact_data, card_type, [], {})
         self.controller().save_file()
         assert (
             self.database()

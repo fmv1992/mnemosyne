@@ -5,10 +5,10 @@
 import time
 from xml.etree import cElementTree
 
-from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.mnemosyne1 import Mnemosyne1
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import MnemosyneError, rand_uuid
+from mnemosyne.libmnemosyne.file_format import FileFormat
+from mnemosyne.libmnemosyne.utils import rand_uuid, MnemosyneError
+from mnemosyne.libmnemosyne.file_formats.mnemosyne1 import Mnemosyne1
 
 
 class Mnemosyne1XML(FileFormat, Mnemosyne1):
@@ -66,9 +66,7 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             tree.getroot().tag != "mnemosyne"
             or tree.getroot().get("core_version") != "1"
         ):
-            w.show_error(
-                _("XML file does not seem to be a Mnemosyne 1.x XML file.")
-            )
+            w.show_error(_("XML file does not seem to be a Mnemosyne 1.x XML file."))
             raise MnemosyneError
         self.starttime = 0
         if tree.getroot().get("time_of_start"):
@@ -146,11 +144,7 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             if element.get("u"):
                 item.unseen = bool(element.get("u"))
             else:
-                if (
-                    item.acq_reps <= 1
-                    and item.ret_reps == 0
-                    and item.grade == 0
-                ):
+                if item.acq_reps <= 1 and item.ret_reps == 0 and item.grade == 0:
                     item.unseen = True
                 else:
                     item.unseen = False

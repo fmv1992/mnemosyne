@@ -3,13 +3,14 @@
 #
 
 from mnemosyne.libmnemosyne.filter import Filter
+from mnemosyne.libmnemosyne.plugin import Plugin
 from mnemosyne.libmnemosyne.filters.non_latin_font_size_increase import (
     NonLatinFontSizeIncrease,
 )
-from mnemosyne.libmnemosyne.plugin import Plugin
 
 
 class ReverseArabic(Filter):
+
     def run(self, text, card, fact_key, **render_args):
         for i in range(len(text)):
             if 0x0590 <= ord(text[i]) <= 0x06FF:
@@ -31,9 +32,7 @@ class ReverseArabicPlugin(Plugin):
             self.render_chain("web_server").register_filter(
                 ReverseArabic, in_front=False
             )
-            self.render_chain("web_server").unregister_filter(
-                NonLatinFontSizeIncrease
-            )
+            self.render_chain("web_server").unregister_filter(NonLatinFontSizeIncrease)
         except KeyError:  # The web server chain is not active.
             pass
 

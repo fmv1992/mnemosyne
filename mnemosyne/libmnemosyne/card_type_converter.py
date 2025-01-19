@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class CardTypeConverter(Component):
-
     """Converts a set of sister cards to a new card type.
 
     used_for = CardTypeConverter.card_type_converter_key\
@@ -29,7 +28,6 @@ class CardTypeConverter(Component):
     component_type = "card_type_converter"
 
     def card_type_converter_key(old_card_type, new_card_type):
-
         """Creates a single key to store a card type converter in the
         component_manager.
 

@@ -5,12 +5,13 @@
 import os
 import sys
 
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne_test import MnemosyneTest
 
 
 class Widget(MainWidget):
+
     def show_question(self, question, option0, option1, option2):
         if option1 == "&Delete":
             return 1
@@ -18,11 +19,10 @@ class Widget(MainWidget):
 
 
 class TestCrammingScheduler(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(
-            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
-        )
+        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -44,9 +44,7 @@ class TestCrammingScheduler(MnemosyneTest):
         self.mnemosyne.gui_for_component["CramAll"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.config()["study_mode"] = "CramAll"
         self.mnemosyne.start_review()
 
@@ -140,9 +138,7 @@ class TestCrammingScheduler(MnemosyneTest):
         self.controller().delete_current_card()
         assert self.review_controller().card == None
 
-    def test_3(
-        self,
-    ):  # suffers from some sort of race condition with the finalise.
+    def test_3(self):  # suffers from some sort of race condition with the finalise.
         card_type = self.card_type_with_id("1")
 
         fact_data = {"f": "1", "b": "b"}
@@ -168,9 +164,7 @@ class TestCrammingScheduler(MnemosyneTest):
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.mnemosyne.start_review()
 
         assert self.scheduler().name == "cramming"

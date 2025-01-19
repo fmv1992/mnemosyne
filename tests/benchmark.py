@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import cProfile
 import os
-import pstats
-import shutil
 import time
+import shutil
+import pstats
+import cProfile
 
 from mnemosyne.libmnemosyne import Mnemosyne
 
@@ -20,15 +20,10 @@ def startup():
 
     # Note that this also includes building the queue and getting the first card.
 
-    mnemosyne = Mnemosyne(
-        upload_science_logs=False, interested_in_old_reps=True
-    )
+    mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True)
     mnemosyne.components.insert(
         0,
-        (
-            "mnemosyne.libmnemosyne.gui_translators.no_gui_translator",
-            "NoGuiTranslator",
-        ),
+        ("mnemosyne.libmnemosyne.gui_translators.no_gui_translator", "NoGuiTranslator"),
     )
     mnemosyne.components.append(
         ("mnemosyne.libmnemosyne.ui_components.main_widget", "MainWidget")
@@ -108,9 +103,7 @@ def count_not_memorised():
 
 
 def activate():
-    from mnemosyne.libmnemosyne.criteria.default_criterion import (
-        DefaultCriterion,
-    )
+    from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
 
     card_type_2 = mnemosyne.card_type_with_id("2")
     c = DefaultCriterion(mnemosyne.component_manager)
@@ -141,9 +134,7 @@ def do_import():
 def test_setup():
     shutil.rmtree("dot_test", ignore_errors=True)
     global mnemosyne
-    mnemosyne = Mnemosyne(
-        upload_science_logs=False, interested_in_old_reps=True
-    )
+    mnemosyne = Mnemosyne(upload_science_logs=False, interested_in_old_reps=True)
     mnemosyne.components.insert(
         0,
         (

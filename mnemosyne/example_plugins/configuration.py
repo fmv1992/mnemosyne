@@ -1,9 +1,11 @@
 # configuration.py <Peter.Bienstman@gmail.com>
 #
 
+from PyQt6 import QtWidgets
+
 from mnemosyne.libmnemosyne.hook import Hook
 from mnemosyne.libmnemosyne.plugin import Plugin
-from PyQt6 import QtWidgets
+
 
 # Hook to set default configuration values.
 

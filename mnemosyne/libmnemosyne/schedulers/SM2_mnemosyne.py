@@ -2,19 +2,19 @@
 # SM2_mnemosyne.py <Peter.Bienstman@gmail.com>
 #
 
-import datetime
-import random
 import time
+import random
+import datetime
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.scheduler import Scheduler
+
 
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
 
 
 class SM2Mnemosyne(Scheduler):
-
     """Scheduler based on http://www.supermemo.com/english/ol/sm2.htm.
     Note that all intervals are in seconds, since time is stored as
     integer POSIX timestamps.
@@ -35,7 +35,6 @@ class SM2Mnemosyne(Scheduler):
     _warned_about_too_many_cards = False
 
     def true_scheduled_interval(self, card):
-
         """Since 'next_rep' is always midnight UTC for retention reps, we need
         to take timezone and 'day_starts_at' into account to calculate the
         true scheduled interval when we are doing the actual repetition.
@@ -49,9 +48,7 @@ class SM2Mnemosyne(Scheduler):
         interval = card.next_rep - card.last_rep
         if card.grade < 2:
             if abs(interval) > 1e-10:
-                self.main_widget().show_error(
-                    "Internal error: interval not zero."
-                )
+                self.main_widget().show_error("Internal error: interval not zero.")
             return interval
         interval += self.config()["day_starts_at"] * HOUR
         if time.localtime(time.time()).tm_isdst and time.daylight:
@@ -61,7 +58,6 @@ class SM2Mnemosyne(Scheduler):
         return int(interval)
 
     def reset(self, new_only=False):
-
         """'_card_ids_in_queue' contains the _ids of the cards making up the
         queue.
 
@@ -94,7 +90,6 @@ class SM2Mnemosyne(Scheduler):
             self.stage = 3
 
     def set_initial_grade(self, cards, grade):
-
         """Sets the initial grades for a set of sister cards, making sure
         their next repetitions do no fall on the same day.
 
@@ -120,7 +115,6 @@ class SM2Mnemosyne(Scheduler):
             )
 
     def calculate_initial_interval(self, grade):
-
         """The first repetition is treated specially, and gives longer
         intervals, to allow for the fact that the user may have seen this
         card before.
@@ -141,7 +135,6 @@ class SM2Mnemosyne(Scheduler):
         return int(noise)
 
     def avoid_sister_cards(self, card):
-
         """Change card.next_rep to make sure that the card is not scheduled
         on the same day as a sister card.
 
@@ -365,7 +358,6 @@ class SM2Mnemosyne(Scheduler):
         return db.card(_card_id, is_id_internal=True)
 
     def is_prefetch_allowed(self, card_to_grade):
-
         """Can we display a new card before having processed the grading of
         the previous one?
 
@@ -374,17 +366,13 @@ class SM2Mnemosyne(Scheduler):
         # The grading of a card which previously had grade 0 will remove the
         # second copy from the queue in 'grade_answer', so we can't prefetch
         # if that second copy happens to be the one coming up.
-        if (
-            self._card_ids_in_queue
-            and card_to_grade._id == self._card_ids_in_queue[0]
-        ):
+        if self._card_ids_in_queue and card_to_grade._id == self._card_ids_in_queue[0]:
             return False
         # Make sure there are enough cards left to find one which is not a
         # duplicate.
         return len(self._card_ids_in_queue) >= 3
 
     def interval_multiplication_factor(self, card, interval):
-
         """Allow plugin to easily scale the scheduled interval."""
 
         return 1.0
@@ -404,9 +392,7 @@ class SM2Mnemosyne(Scheduler):
             card = copy.copy(card)
         # Determine whether we learned on time or not (only relevant for
         # grades 2 or higher).
-        if (
-            self.adjusted_now() - DAY >= card.next_rep
-        ):  # Already due yesterday.
+        if self.adjusted_now() - DAY >= card.next_rep:  # Already due yesterday.
             timing = "LATE"
         else:
             if self.adjusted_now() < card.next_rep:  # Not due today.
@@ -507,13 +493,8 @@ class SM2Mnemosyne(Scheduler):
         new_interval = int(new_interval)
         # Optional: limit interval:
         if self.config()["max_scheduled_interval_days"]:
-            if (
-                new_interval
-                > self.config()["max_scheduled_interval_days"] * DAY
-            ):
-                new_interval = (
-                    self.config()["max_scheduled_interval_days"] * DAY
-                )
+            if new_interval > self.config()["max_scheduled_interval_days"] * DAY:
+                new_interval = self.config()["max_scheduled_interval_days"] * DAY
         # When doing a dry run, stop here and return the scheduled interval.
         if dry_run:
             return new_interval
@@ -554,7 +535,6 @@ class SM2Mnemosyne(Scheduler):
         return self.database().active_count()
 
     def card_count_scheduled_n_days_from_now(self, n):
-
         """Yesterday: n=-1, today: n=0, tomorrow: n=1, ... .
 
         Is not implemented in the database, because this could need internal
@@ -588,9 +568,7 @@ class SM2Mnemosyne(Scheduler):
         ]
         new_fact_ids = [
             _fact_id
-            for _fact_id in db.fact_ids_newly_learned_today(
-                start_of_day, end_of_day
-            )
+            for _fact_id in db.fact_ids_newly_learned_today(start_of_day, end_of_day)
         ]
 
         return new_fact_ids + forgotten_fact_ids
@@ -605,9 +583,7 @@ class SM2Mnemosyne(Scheduler):
             self.main_widget().show_information(
                 ("You've memorised 15 new or failed cards.")
                 + " "
-                + (
-                    "If you do this for many days, you could get a big workload later."
-                )
+                + ("If you do this for many days, you could get a big workload later.")
             )
             self._warned_about_too_many_cards = True
             # log the event, so we won't show an alert more than once a day
@@ -635,6 +611,4 @@ class SM2Mnemosyne(Scheduler):
 
         start_of_day, end_of_day = self._today_start_and_end_timestamp()
 
-        return self.database().has_already_warned_today(
-            start_of_day, end_of_day
-        )
+        return self.database().has_already_warned_today(start_of_day, end_of_day)

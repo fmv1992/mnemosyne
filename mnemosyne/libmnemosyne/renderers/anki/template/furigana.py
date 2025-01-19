@@ -4,7 +4,6 @@
 # Based off Kieran Clancy's initial implementation.
 
 import re
-
 from ..hooks import addHook
 
 r = r" ?([^ >]+?)\[(.+?)\]"

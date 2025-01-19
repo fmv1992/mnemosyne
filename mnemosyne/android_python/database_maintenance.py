@@ -2,11 +2,12 @@
 # database_maintenance.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.database import DatabaseMaintenance
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.database import DatabaseMaintenance
 
 
 class AndroidDatabaseMaintenance(DatabaseMaintenance):
+
     def run(self):
         # Use shown_question here, since this is implemented to block.
         answer = self.main_widget().show_question(

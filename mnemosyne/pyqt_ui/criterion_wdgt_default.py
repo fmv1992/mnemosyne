@@ -2,21 +2,17 @@
 # criterion_wdgt_default.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.criterion_widget import (
-    CriterionWidget,
-)
-from mnemosyne.pyqt_ui.card_type_tree_wdgt import CardTypesTreeWdgt
-from mnemosyne.pyqt_ui.tag_tree_wdgt import TagsTreeWdgt
-from mnemosyne.pyqt_ui.ui_criterion_wdgt_default import Ui_DefaultCriterionWdgt
 from PyQt6 import QtWidgets
 
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.ui_components.criterion_widget import CriterionWidget
+from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
+from mnemosyne.pyqt_ui.tag_tree_wdgt import TagsTreeWdgt
+from mnemosyne.pyqt_ui.card_type_tree_wdgt import CardTypesTreeWdgt
+from mnemosyne.pyqt_ui.ui_criterion_wdgt_default import Ui_DefaultCriterionWdgt
 
-class DefaultCriterionWdgt(
-    QtWidgets.QWidget, CriterionWidget, Ui_DefaultCriterionWdgt
-):
 
+class DefaultCriterionWdgt(QtWidgets.QWidget, CriterionWidget, Ui_DefaultCriterionWdgt):
     """Note that this dialog can support active tags and forbidden tags,
     but not at the same time, in order to keep the interface compact.
 
@@ -44,18 +40,10 @@ class DefaultCriterionWdgt(
         for tag in self.database().tags():
             criterion._tag_ids_active.add(tag._id)
         self.display_criterion(criterion)
-        self.card_type_tree_wdgt.tree_wdgt.itemChanged.connect(
-            self.criterion_changed
-        )
-        self.tag_tree_wdgt.tree_wdgt.itemChanged.connect(
-            self.criterion_changed
-        )
-        self.card_type_tree_wdgt.tree_wdgt.itemClicked.connect(
-            self.criterion_clicked
-        )
-        self.tag_tree_wdgt.tree_wdgt.itemClicked.connect(
-            self.criterion_clicked
-        )
+        self.card_type_tree_wdgt.tree_wdgt.itemChanged.connect(self.criterion_changed)
+        self.tag_tree_wdgt.tree_wdgt.itemChanged.connect(self.criterion_changed)
+        self.card_type_tree_wdgt.tree_wdgt.itemClicked.connect(self.criterion_clicked)
+        self.tag_tree_wdgt.tree_wdgt.itemClicked.connect(self.criterion_clicked)
 
     def display_criterion(self, criterion):
         self.card_type_tree_wdgt.display(criterion)
@@ -66,7 +54,6 @@ class DefaultCriterionWdgt(
             self.active_or_forbidden.setCurrentIndex(0)
 
     def criterion(self):
-
         """Build the criterion from the information the user entered in the
         widget.
 
@@ -79,18 +66,13 @@ class DefaultCriterionWdgt(
             self.tag_tree_wdgt.checked_to_active_tags_in_criterion(criterion)
         # Tag tree contains forbidden tags.
         else:
-            self.tag_tree_wdgt.checked_to_forbidden_tags_in_criterion(
-                criterion
-            )
+            self.tag_tree_wdgt.checked_to_forbidden_tags_in_criterion(criterion)
             for tag in self.database().tags():
                 criterion._tag_ids_active.add(tag._id)
         return criterion
 
     def criterion_clicked(self):
-        if (
-            self.parent.was_showing_a_saved_set
-            and not self.parent.is_shutting_down
-        ):
+        if self.parent.was_showing_a_saved_set and not self.parent.is_shutting_down:
             self.main_widget().show_information(
                 _(
                     "Cards you (de)activate now will not be stored in the previously selected set unless you click 'Save this set for later use' again. This allows you to make some quick-and-dirty modifications."

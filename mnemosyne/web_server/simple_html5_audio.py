@@ -3,17 +3,15 @@
 #
 
 import re
-import urllib.error
-import urllib.parse
 import urllib.request
+import urllib.parse
+import urllib.error
 
 from mnemosyne.libmnemosyne.filter import Filter
 
 player_id = 1
 
-re_audio = re.compile(
-    r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE
-)
+re_audio = re.compile(r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE)
 
 
 class SimpleHtml5Audio(Filter):
@@ -21,9 +19,7 @@ class SimpleHtml5Audio(Filter):
         if not re_audio.search(text):
             return text
         for match in re_audio.finditer(text):
-            filename = urllib.parse.quote(
-                match.group(1).encode("utf-8"), safe="/:"
-            )
+            filename = urllib.parse.quote(match.group(1).encode("utf-8"), safe="/:")
             filename = urllib.parse.quote(match.group(1), safe="/:")
             # Prevent wsgi from decoding this as as non-unicode behind
             # our back ( https://bugs.python.org/issue16679).

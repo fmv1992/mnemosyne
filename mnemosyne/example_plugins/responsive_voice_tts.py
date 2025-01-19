@@ -7,8 +7,8 @@
 import urllib
 
 from mnemosyne.libmnemosyne.plugin import Plugin
-from mnemosyne.libmnemosyne.pronouncer import Pronouncer
 from mnemosyne.libmnemosyne.utils import expand_path
+from mnemosyne.libmnemosyne.pronouncer import Pronouncer
 
 
 class ResponsiveVoicePronouncer(Pronouncer):
@@ -18,16 +18,11 @@ class ResponsiveVoicePronouncer(Pronouncer):
     popup_menu_text = "Insert ResponsiveVoice text-to-speech..."
 
     def download_tmp_audio_file(self, card_type, foreign_text):
-
         """Returns a temporary filename with the audio."""
 
-        language_id = self.config().card_type_property(
-            "sublanguage_id", card_type
-        )
+        language_id = self.config().card_type_property("sublanguage_id", card_type)
         if not language_id:
-            language_id = self.config().card_type_property(
-                "language_id", card_type
-            )
+            language_id = self.config().card_type_property("language_id", card_type)
 
         foreign_text = urllib.parse.quote(foreign_text.encode("utf-8"))
         headers = {"User-Agent": "Mozilla/5.0"}
@@ -39,9 +34,7 @@ class ResponsiveVoicePronouncer(Pronouncer):
         with urllib.request.urlopen(req) as response:
             data = response.read()
 
-        filename = expand_path(
-            "__GTTS__TMP__.mp3", self.database().media_dir()
-        )
+        filename = expand_path("__GTTS__TMP__.mp3", self.database().media_dir())
         with open(filename, "wb") as mp3_file:
             mp3_file.write(data)
         return filename

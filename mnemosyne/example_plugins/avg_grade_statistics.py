@@ -2,11 +2,11 @@
 # avg_grade_statistics.py <Peter.Bienstman@gmail.com>
 #
 
+from openSM2sync.log_entry import EventTypes
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.plugin import Plugin
 from mnemosyne.libmnemosyne.statistics_page import PlotStatisticsPage
 from mnemosyne.pyqt_ui.statistics_wdgts_plotting import BarChartDaysWdgt
-from openSM2sync.log_entry import EventTypes
 
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
@@ -79,29 +79,18 @@ class AvgGradeWdgt(BarChartDaysWdgt):
         if hasattr(self.page, "LAST_WEEK") and variant == self.page.LAST_WEEK:
             xticks = list(range(-7, 1, 1))
             xticklabels = ticklabels_neg(-7, 1, 1)
-        elif (
-            hasattr(self.page, "LAST_MONTH")
-            and variant == self.page.LAST_MONTH
-        ):
+        elif hasattr(self.page, "LAST_MONTH") and variant == self.page.LAST_MONTH:
             xticks = list(range(-30, -4, 5)) + [0]
             xticklabels = ticklabels_neg(-30, -4, 5) + ["0"]
 
-        elif (
-            hasattr(self.page, "LAST_3_MONTHS")
-            and variant == self.page.LAST_3_MONTHS
-        ):
+        elif hasattr(self.page, "LAST_3_MONTHS") and variant == self.page.LAST_3_MONTHS:
             xticks = list(range(-90, -9, 10)) + [0]
             xticklabels = ticklabels_neg(-90, -9, 10) + ["0"]
 
-        elif (
-            hasattr(self.page, "LAST_6_MONTHS")
-            and variant == self.page.LAST_6_MONTHS
-        ):
+        elif hasattr(self.page, "LAST_6_MONTHS") and variant == self.page.LAST_6_MONTHS:
             xticks = list(range(-180, -19, 20)) + [0]
             xticklabels = ticklabels_neg(-180, -19, 20) + ["0"]
-        elif (
-            hasattr(self.page, "LAST_YEAR") and variant == self.page.LAST_YEAR
-        ):
+        elif hasattr(self.page, "LAST_YEAR") and variant == self.page.LAST_YEAR:
             xticks = list(range(-360, -59, 60)) + [0]
             xticklabels = ticklabels_neg(-360, -59, 60) + ["0"]
         else:
@@ -121,9 +110,7 @@ class AvgGradeWdgt(BarChartDaysWdgt):
 
 class AvgGradePlugin(Plugin):
     name = "Average grades"
-    description = (
-        "Average grade given to scheduled cards as a function of time"
-    )
+    description = "Average grade given to scheduled cards as a function of time"
     components = [AvgGrade, AvgGradeWdgt]
     supported_API_level = 3
 

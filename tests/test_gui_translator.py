@@ -3,20 +3,17 @@
 #
 
 
-from mnemosyne.libmnemosyne.gui_translator import (
-    GuiTranslator,
-    iso6931_code_for_language_name,
-)
+from mnemosyne_test import MnemosyneTest
+from mnemosyne.libmnemosyne.gui_translator import GuiTranslator
+from mnemosyne.libmnemosyne.gui_translators.no_gui_translator import NoGuiTranslator
+from mnemosyne.libmnemosyne.gui_translator import iso6931_code_for_language_name
 from mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator import (
     GetTextGuiTranslator,
 )
-from mnemosyne.libmnemosyne.gui_translators.no_gui_translator import (
-    NoGuiTranslator,
-)
-from mnemosyne_test import MnemosyneTest
 
 
 class TestGuiTranslator(MnemosyneTest):
+
     def test_gui_translator_2(self):
         self.mnemosyne.gui_translator()
         t = NoGuiTranslator(None)
@@ -35,9 +32,7 @@ class TestGuiTranslator(MnemosyneTest):
         from mnemosyne.libmnemosyne.gui_translator import _
 
         self.config()["ui_language"] = "de"
-        self.mnemosyne.component_manager.current(
-            "gui_translator"
-        ).set_language("de")
+        self.mnemosyne.component_manager.current("gui_translator").set_language("de")
         assert _("This is a test.") == "Dies ist ein Test."
 
     def test_1(self):

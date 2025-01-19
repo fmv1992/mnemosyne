@@ -3,14 +3,13 @@
 #
 
 import os
-import sqlite3
 import sys
 import time
+import sqlite3
 
-from mnemosyne.libmnemosyne.file_formats.science_log_parser import (
-    ScienceLogParser,
-)
 from openSM2sync.log_entry import EventTypes
+from mnemosyne.libmnemosyne.file_formats.science_log_parser import ScienceLogParser
+
 
 SCHEMA = """
     begin;
@@ -48,14 +47,13 @@ SCHEMA = """
 
 
 class LogDatabase(object):
+
     def __init__(self, log_dir):
         self.log_dir = log_dir
         self._connection = None
         db_name = os.path.join(self.log_dir, "logs.db")
         initialisation_needed = not os.path.exists(db_name)
-        self.con = sqlite3.connect(
-            db_name, timeout=0.1, isolation_level="EXCLUSIVE"
-        )
+        self.con = sqlite3.connect(db_name, timeout=0.1, isolation_level="EXCLUSIVE")
         self.con.row_factory = sqlite3.Row
         if initialisation_needed:
             self.con.executescript(SCHEMA)
@@ -153,12 +151,7 @@ class LogDatabase(object):
         )
 
     def log_loaded_database(
-        self,
-        timestamp,
-        machine_id,
-        scheduled_count,
-        non_memorised_count,
-        active_count,
+        self, timestamp, machine_id, scheduled_count, non_memorised_count, active_count
     ):
         self.con.execute(
             """insert into log(user_id, event, timestamp, object_id, acq_reps,
@@ -175,12 +168,7 @@ class LogDatabase(object):
         )
 
     def log_saved_database(
-        self,
-        timestamp,
-        machine_id,
-        scheduled_count,
-        non_memorised_count,
-        active_count,
+        self, timestamp, machine_id, scheduled_count, non_memorised_count, active_count
     ):
         self.con.execute(
             """insert into log(user_id, event, timestamp, object_id, acq_reps,
@@ -200,24 +188,14 @@ class LogDatabase(object):
         self.con.execute(
             """insert into log(user_id, event, timestamp, object_id)
             values(?,?,?,?)""",
-            (
-                self.parser.user_id,
-                EventTypes.ADDED_CARD,
-                int(timestamp),
-                card_id,
-            ),
+            (self.parser.user_id, EventTypes.ADDED_CARD, int(timestamp), card_id),
         )
 
     def log_deleted_card(self, timestamp, card_id):
         self.con.execute(
             """insert into log(user_id, event, timestamp, object_id)
             values(?,?,?,?)""",
-            (
-                self.parser.user_id,
-                EventTypes.DELETED_CARD,
-                int(timestamp),
-                card_id,
-            ),
+            (self.parser.user_id, EventTypes.DELETED_CARD, int(timestamp), card_id),
         )
 
     def log_repetition(
@@ -285,9 +263,7 @@ class LogDatabase(object):
         for cursor in self.con.execute("select * from log"):
             print(
                 cursor["user_id"],
-                time.strftime(
-                    "%Y-%m-%d %H:%M:%S", time.localtime(cursor["timestamp"])
-                ),
+                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(cursor["timestamp"])),
                 cursor["object_id"],
                 cursor["grade"],
                 cursor["easiness"],
@@ -299,9 +275,7 @@ class LogDatabase(object):
                 cursor["scheduled_interval"],
                 cursor["actual_interval"],
                 cursor["thinking_time"],
-                time.strftime(
-                    "%Y-%m-%d %H:%M:%S", time.localtime(cursor["next_rep"])
-                ),
+                time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(cursor["next_rep"])),
                 cursor["event"],
                 file=f,
             )

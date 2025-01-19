@@ -3,17 +3,15 @@
 #
 
 import os
-import pickle
 import sys
 import time
+import pickle
 
-from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.mnemosyne1 import Mnemosyne1
-from mnemosyne.libmnemosyne.file_formats.science_log_parser import (
-    ScienceLogParser,
-)
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.utils import MnemosyneError
+from mnemosyne.libmnemosyne.file_format import FileFormat
+from mnemosyne.libmnemosyne.file_formats.mnemosyne1 import Mnemosyne1
+from mnemosyne.libmnemosyne.file_formats.science_log_parser import ScienceLogParser
 
 
 class Mnemosyne1Mem(FileFormat, Mnemosyne1):
@@ -44,9 +42,7 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
         self.import_logs(filename)
         # Force an ADDED_CARD log entry for those cards that did not figure in
         # the txt logs, e.g. due to missing or corrupt logs.
-        db.add_missing_added_card_log_entries(
-            set(item.id for item in self.items)
-        )
+        db.add_missing_added_card_log_entries(set(item.id for item in self.items))
         # In 2.x, repetition events are used to update a card's last_rep and
         # next_rep during sync. In 1.x, there was no such information, and
         # calculating it from the logs will fail if they are incomplete.
@@ -61,16 +57,14 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
 
     def read_items_from_mnemosyne1_mem(self, filename):
         sys.modules["mnemosyne.core"] = object()
-        sys.modules[
-            "mnemosyne.core.mnemosyne_core"
-        ] = Mnemosyne1.MnemosyneCore()
+        sys.modules["mnemosyne.core.mnemosyne_core"] = Mnemosyne1.MnemosyneCore()
         # For importing Python 2 pickles, we run into this bug:
         # http://bugs.python.org/issue22005
         # Workaround is opening this file using 'bytes' encoding, but
         # this requires extra work for us in setting up the data members.
         try:
             memfile = open(filename, "rb")
-            memfile.readline()
+            header = memfile.readline()
             self.starttime, self.categories, self.items = pickle.load(
                 memfile, encoding="bytes"
             )
@@ -96,12 +90,8 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
                 item.acq_reps = item.__dict__[b"acq_reps"]
                 item.ret_reps = item.__dict__[b"ret_reps"]
                 item.lapses = item.__dict__[b"lapses"]
-                item.acq_reps_since_lapse = item.__dict__[
-                    b"acq_reps_since_lapse"
-                ]
-                item.ret_reps_since_lapse = item.__dict__[
-                    b"ret_reps_since_lapse"
-                ]
+                item.acq_reps_since_lapse = item.__dict__[b"acq_reps_since_lapse"]
+                item.ret_reps_since_lapse = item.__dict__[b"ret_reps_since_lapse"]
                 del item.__dict__[b"id"]
                 del item.__dict__[b"cat"]
                 del item.__dict__[b"q"]
@@ -168,8 +158,7 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
             w.increase_progress(1)
         if ignored_files:
             w.show_information(
-                _("Ignoring unparsable files:<br/>")
-                + "<br/>".join(ignored_files)
+                _("Ignoring unparsable files:<br/>") + "<br/>".join(ignored_files)
             )
         # Manage database indexes.
         db.after_1x_log_import()

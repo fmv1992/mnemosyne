@@ -4,12 +4,10 @@
 
 import os
 
-from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.mnemosyne2_cards import (
-    Mnemosyne2Cards,
-)
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.utils import expand_path
+from mnemosyne.libmnemosyne.file_format import FileFormat
+from mnemosyne.libmnemosyne.file_formats.mnemosyne2_cards import Mnemosyne2Cards
 
 
 class Mnemosyne2Db(FileFormat):
@@ -76,9 +74,7 @@ class Mnemosyne2Db(FileFormat):
         db.load(receiving_database_filename)
         log_index_before_import = db.current_log_index()
         db.importing_with_learning_data = True
-        cards_format.do_import(
-            tmp_cards_filename, extra_tag_names, show_metadata=False
-        )
+        cards_format.do_import(tmp_cards_filename, extra_tag_names, show_metadata=False)
         db.importing_with_learning_data = False
         db.merge_logs_from_other_database(filename, log_index_before_import)
         os.remove(tmp_cards_filename)
@@ -96,7 +92,7 @@ class Mnemosyne2Db(FileFormat):
             self.log().edited_setting(property_name)
             for card_type in user_card_types:
                 if card_type.id in config_to_merge[property_name]:
-                    self.config()[property_name][
-                        card_type.id
-                    ] = config_to_merge[property_name][card_type.id]
+                    self.config()[property_name][card_type.id] = config_to_merge[
+                        property_name
+                    ][card_type.id]
         db.skip_science_log()

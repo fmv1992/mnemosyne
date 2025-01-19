@@ -9,7 +9,6 @@ _ = None
 
 
 class GuiTranslator(Component):
-
     """Note: static text will be marked as translatable by
     `static_variable = _("...")`, e.g. in CardType. However, if want to have
     this text show up translated in the GUI, we need to use
@@ -41,7 +40,6 @@ class GuiTranslator(Component):
         return []
 
     def set_language(self, language):
-
         """'language' should be an iso 693-1 code."""
 
         self.set_translator(language)
@@ -51,11 +49,11 @@ class GuiTranslator(Component):
         raise NotImplementedError
 
     def translate_ui(self, language):
-
         """To be overridden by a GUI to do GUI-specific translation."""
 
-    def __call__(self, text):
+        pass
 
+    def __call__(self, text):
         """Used to do translations / mark translatable strings by _("...")."""
 
         return self._translator(text)
@@ -259,6 +257,4 @@ language_name_for_iso6931_code = {
 
 
 def iso6931_code_for_language_name(language):
-    return dict((v, k) for k, v in language_name_for_iso6931_code.items())[
-        language
-    ]
+    return dict((v, k) for k, v in language_name_for_iso6931_code.items())[language]

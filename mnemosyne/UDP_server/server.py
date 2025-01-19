@@ -2,15 +2,16 @@
 # server.py <Peter.Bienstman@gmail.com>
 #
 
+import sys
 import select
 import socketserver
-import sys
 
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.utils import traceback_string
 
 
 class OutputCatcher:
+
     def __init__(self, socket):
         self.socket = socket
 
@@ -19,6 +20,7 @@ class OutputCatcher:
 
 
 class MyHandler(socketserver.BaseRequestHandler):
+
     def handle(self):
         data = self.request[0].strip()
         socket = self.request[1]
@@ -38,13 +40,11 @@ class MyHandler(socketserver.BaseRequestHandler):
 
 
 class Server(socketserver.UDPServer):
-    def __init__(
-        self, port, upload_science_logs=False, interested_in_old_reps=False
-    ):
+
+    def __init__(self, port, upload_science_logs=False, interested_in_old_reps=False):
         self.mnemosyne = Mnemosyne(upload_science_logs, interested_in_old_reps)
         self.mnemosyne.components.insert(
-            0,
-            ("mnemosyne.libmnemosyne.gui_translator", "GetTextGuiTranslator"),
+            0, ("mnemosyne.libmnemosyne.gui_translator", "GetTextGuiTranslator")
         )
         self.mnemosyne.components.append(
             ("mnemosyne.UDP_server.main_wdgt", "MainWidget")

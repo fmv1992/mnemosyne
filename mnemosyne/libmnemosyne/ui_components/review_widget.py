@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.ui_component import UiComponent
 
 
 class ReviewWidget(UiComponent):
-
     """Describes the interface that the review widget needs to implement
     in order to be used by the review controller.
 
@@ -55,12 +54,14 @@ class ReviewWidget(UiComponent):
         pass
 
     def set_grades_enabled(self, is_enabled):
-
         """Enable whole grade area, including title."""
 
-    def set_grade_enabled(self, grade, is_enabled):
+        pass
 
+    def set_grade_enabled(self, grade, is_enabled):
         """Enable just a single grade button."""
+
+        pass
 
     def set_default_grade(self, grade):
         pass
@@ -84,7 +85,6 @@ class ReviewWidget(UiComponent):
         pass
 
     def redraw_now(self):
-
         """Tell the widget that now would be a good time to redraw
         immediately. Some toolkits queue redraw events until there is no more
         processing going on, but this defeats libmnemosyne's optimisation of

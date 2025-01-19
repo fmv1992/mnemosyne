@@ -4,7 +4,6 @@
 
 
 class TextFormat(object):
-
     """Class handling the conversion from log entries and other data to
     text streams and vice versa.
 

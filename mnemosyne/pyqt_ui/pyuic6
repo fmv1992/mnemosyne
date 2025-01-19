@@ -45,7 +45,7 @@ class CompileUi(object):
         output = StringIO()
         i18n_elements = []
         for line in source:
-            if not "def retranslateUi" in line:
+            if "def retranslateUi" not in line:
                 if i18n_rexp.match(line):
                     i18n_elements.append(line)
                 output.write(line)
@@ -65,7 +65,7 @@ class CompileUi(object):
 
         if cls._wrappeduic:
             return
-        from PyQt6.uic.Compiler import compiler, indenter, qtproxies
+        from PyQt6.uic.Compiler import compiler, qtproxies, indenter
 
         class _UICompiler(compiler.UICompiler):
 

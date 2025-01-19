@@ -3,13 +3,12 @@
 #
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.review_controllers.SM2_controller import (
-    SM2Controller,
-)
+from mnemosyne.libmnemosyne.review_controllers.SM2_controller import SM2Controller
 from mnemosyne.libmnemosyne.schedulers.cramming import Cramming
 
 
 class SM2ControllerCramming(SM2Controller):
+
     def grade_answer(self, grade):
         self.flush_sync_server()
         card_to_grade = self.card

@@ -5,14 +5,14 @@
 import os
 import sys
 
+from PyQt6.QtCore import QTranslator, QCoreApplication, QLocale
+
 from mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator import (
     GetTextGuiTranslator,
 )
-from PyQt6.QtCore import QCoreApplication, QLocale, QTranslator
 
 
 class QtGuiTranslator(GetTextGuiTranslator):
-
     """This deals with translating Qt itself. The rest of the strings are
     still translated using the gettext mechanism, as we've modified pyuic4
     to use gettext too.

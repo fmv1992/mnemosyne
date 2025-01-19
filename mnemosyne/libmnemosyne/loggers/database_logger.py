@@ -12,7 +12,6 @@ from mnemosyne.libmnemosyne.logger import Logger
 
 
 class DatabaseLogger(Logger):
-
     """Stores all the log events in the database."""
 
     def started_program(self, version_string=None):
@@ -20,10 +19,7 @@ class DatabaseLogger(Logger):
             ts = time.time()
             td = datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)
             utc_offset = int(
-                (
-                    td.microseconds
-                    + (td.seconds + td.days * 24.0 * 3600) * 10**6
-                )
+                (td.microseconds + (td.seconds + td.days * 24.0 * 3600) * 10**6)
                 / 10**6
                 / 60
                 / 60
@@ -54,11 +50,9 @@ class DatabaseLogger(Logger):
         if machine_id is None:
             machine_id = self.config().machine_id()
         if scheduled_count == None:
-            (
-                scheduled_count,
-                non_memorised_count,
-                active_count,
-            ) = self.review_controller().counters()
+            scheduled_count, non_memorised_count, active_count = (
+                self.review_controller().counters()
+            )
         self.database().log_loaded_database(
             self.timestamp,
             machine_id,
@@ -77,11 +71,9 @@ class DatabaseLogger(Logger):
         if machine_id is None:
             machine_id = self.config().machine_id()
         if scheduled_count == None:
-            (
-                scheduled_count,
-                non_memorised_count,
-                active_count,
-            ) = self.review_controller().counters()
+            scheduled_count, non_memorised_count, active_count = (
+                self.review_controller().counters()
+            )
         self.database().log_saved_database(
             self.timestamp,
             machine_id,
@@ -102,9 +94,7 @@ class DatabaseLogger(Logger):
     def deleted_card(self, card):
         self.database().log_deleted_card(self.timestamp, card.id)
 
-    def repetition(
-        self, card, scheduled_interval, actual_interval, thinking_time
-    ):
+    def repetition(self, card, scheduled_interval, actual_interval, thinking_time):
         self.database().log_repetition(
             self.timestamp,
             card.id,

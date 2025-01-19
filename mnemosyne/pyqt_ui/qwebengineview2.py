@@ -6,7 +6,6 @@ from PyQt6 import QtWebEngineWidgets
 
 
 class QWebEngineView2(QtWebEngineWidgets.QWebEngineView):
-
     """QWebEngineView which restores the focus to the review widget,
     so that the keyboard shortcuts still continue to work.
 

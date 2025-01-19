@@ -4,7 +4,6 @@
 
 
 class BinaryFormat(object):
-
     """Used when doing the initial sync and downloading the entire database
     as a binary file in order to speed up the sync.
 

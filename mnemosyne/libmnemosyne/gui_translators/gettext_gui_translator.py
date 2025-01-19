@@ -2,14 +2,15 @@
 # gettext_gui_translator.py <Johannes.Baiter@gmail.com>
 #
 
-import gettext
+from mnemosyne.libmnemosyne.gui_translator import GuiTranslator
+
 import os
 import sys
-
-from mnemosyne.libmnemosyne.gui_translator import GuiTranslator
+import gettext
 
 
 class GetTextGuiTranslator(GuiTranslator):
+
     def __init__(self, component_manager):
         GuiTranslator.__init__(self, component_manager)
         # Check if we're running in a development environment.
@@ -24,9 +25,7 @@ class GetTextGuiTranslator(GuiTranslator):
                 os.path.split(x)[1]
                 for x in os.listdir(self.lang_path)
                 if os.path.isdir(os.path.join(self.lang_path, x))
-                and os.path.exists(
-                    os.path.join(self.lang_path, x, "LC_MESSAGES")
-                )
+                and os.path.exists(os.path.join(self.lang_path, x, "LC_MESSAGES"))
                 and "mnemosyne.mo"
                 in os.listdir(os.path.join(self.lang_path, x, "LC_MESSAGES"))
             ]
@@ -35,8 +34,5 @@ class GetTextGuiTranslator(GuiTranslator):
 
     def set_translator(self, language):
         self._translator = gettext.translation(
-            "mnemosyne",
-            localedir=self.lang_path,
-            languages=[language],
-            fallback=True,
+            "mnemosyne", localedir=self.lang_path, languages=[language], fallback=True
         ).gettext

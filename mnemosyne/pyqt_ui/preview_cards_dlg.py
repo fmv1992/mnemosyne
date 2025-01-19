@@ -2,23 +2,21 @@
 # Widget to preview set of sister cards <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.pyqt_ui.review_wdgt import QAOptimalSplit
-from mnemosyne.pyqt_ui.ui_preview_cards_dlg import Ui_PreviewCardsDlg
 from PyQt6 import QtCore, QtWidgets
 
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.pyqt_ui.review_wdgt import QAOptimalSplit
+from mnemosyne.pyqt_ui.ui_preview_cards_dlg import Ui_PreviewCardsDlg
 
-class PreviewCardsDlg(
-    QtWidgets.QDialog, Component, QAOptimalSplit, Ui_PreviewCardsDlg
-):
+
+class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit, Ui_PreviewCardsDlg):
 
     page_up_down_signal = QtCore.pyqtSignal(int)
     UP = 0
     DOWN = 1
 
     def __init__(self, cards, tag_text, **kwds):
-
         """We need to provide tag_text explicitly, since it's possible that
         the cards have not yet been added to the database.
 
@@ -35,8 +33,7 @@ class PreviewCardsDlg(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.tag_text = tag_text
         self.cards = cards
@@ -47,7 +44,6 @@ class PreviewCardsDlg(
         self.update_dialog()
 
     def keyPressEvent(self, event):
-
         """When this dialog is called from the card browser, PageUp and
         PageDown keys can be used to move the previous/next card in the list.
 

@@ -7,9 +7,7 @@ import urllib
 
 from mnemosyne.libmnemosyne.filter import Filter
 
-re_audio = re.compile(
-    r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE
-)
+re_audio = re.compile(r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE)
 re_start = re.compile(r"""start=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 re_stop = re.compile(r"""stop=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 
@@ -71,7 +69,6 @@ script = """
 
 
 class Html5Audio(Filter):
-
     """Incorporate media player supporting more than 1 sound file."""
 
     def run(self, text, card, fact_key, **render_args):

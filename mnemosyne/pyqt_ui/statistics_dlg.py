@@ -2,15 +2,15 @@
 # statistics_dlg.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.dialogs import StatisticsDialog
-from mnemosyne.pyqt_ui.ui_statistics_dlg import Ui_StatisticsDlg
 from PyQt6 import QtCore, QtWidgets
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.pyqt_ui.ui_statistics_dlg import Ui_StatisticsDlg
+from mnemosyne.libmnemosyne.ui_components.dialogs import StatisticsDialog
 
 
 class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
-
     """A tab widget containing several statistics pages. The number and names
     of the tab pages are determined at run time.
 
@@ -26,8 +26,7 @@ class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         previous_page_index = self.config()["previous_statistics_page"]
         page_index = 0
@@ -75,9 +74,7 @@ class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
     def display_page(self, page_index):
         page = self.tab_widget.widget(page_index)
         self.config()["previous_statistics_page"] = page_index
-        self.config()["previous_variant_for_statistics_page"].setdefault(
-            page_index, 0
-        )
+        self.config()["previous_variant_for_statistics_page"].setdefault(page_index, 0)
         variant_index = self.config()["previous_variant_for_statistics_page"][
             page_index
         ]
@@ -88,7 +85,6 @@ class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
 
 
 class StatisticsPageWdgt(QtWidgets.QWidget, Component):
-
     """A page in the StatisticsDlg tab widget. This page widget only contains
     a combobox to select different variants of the page. The widget that
     displays the statistics information itself is only generated when it
@@ -121,7 +117,6 @@ class StatisticsPageWdgt(QtWidgets.QWidget, Component):
         self.combobox.currentIndexChanged.connect(self.display_variant)
 
     def display_variant(self, variant_index):
-
         """Lazy creation of the actual widget that displays the statistics."""
 
         # Hide the previous widget if there was once.
@@ -130,9 +125,7 @@ class StatisticsPageWdgt(QtWidgets.QWidget, Component):
             self.current_variant_widget.hide()
         # Create widget if it has not been shown before.
         if not self.variant_widgets[variant_index]:
-            self.statistics_page.prepare_statistics(
-                self.variant_ids[variant_index]
-            )
+            self.statistics_page.prepare_statistics(self.variant_ids[variant_index])
             widget_class = self.component_manager.current(
                 "statistics_widget", used_for=self.statistics_page.__class__
             )

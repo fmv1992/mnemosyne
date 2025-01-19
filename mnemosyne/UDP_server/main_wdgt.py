@@ -2,11 +2,12 @@
 # main_wdgt.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 from mnemosyne.UDP_server.UDP_widget import UDP_Widget
+from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 
 
 class MainWdgt(MainWidget, UDP_Widget):
+
     def __init__(self, component_manager):
         MainWidget.__init__(self, component_manager)
 

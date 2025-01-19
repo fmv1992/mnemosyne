@@ -11,23 +11,18 @@ except ImportError:
     from md5 import md5
 
 if "ANDROID" in os.environ:
-    pass
+    from mnemosyne.android_python.utf8_filenames import *
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import (
-    contract_path,
-    copy_file_to_dir,
-    expand_path,
-    is_filesystem_case_insensitive,
-    normalise_path,
-    remove_empty_dirs_in,
-)
+from mnemosyne.libmnemosyne.utils import normalise_path
+from mnemosyne.libmnemosyne.utils import expand_path, contract_path
+from mnemosyne.libmnemosyne.utils import is_filesystem_case_insensitive
+from mnemosyne.libmnemosyne.utils import copy_file_to_dir, remove_empty_dirs_in
 
 re_src = re.compile(r"""(src|data)=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 
 
 class SQLiteMedia(object):
-
     """Code to be injected into the SQLite database class through inheritance,
     so that SQLite.py does not becomes too large.
 
@@ -67,7 +62,6 @@ class SQLiteMedia(object):
         return re_src.search("".join(fact.data.values())) != None
 
     def _media_hash(self, filename):
-
         """A hash function that will be used to determine whether or not a
         media file has been modified outside of Mnemosyne.
 
@@ -108,8 +102,7 @@ class SQLiteMedia(object):
                 new_hashes[filename] = new_hash
         for filename, new_hash in new_hashes.items():
             self.con.execute(
-                "update media set _hash=? where filename=?",
-                (new_hash, filename),
+                "update media set _hash=? where filename=?", (new_hash, filename)
             )
             self.log().edited_media_file(filename)
 
@@ -133,9 +126,7 @@ class SQLiteMedia(object):
     def active_dynamic_media_files(self):
         # Other media files, e.g. latex.
         filenames = set()
-        for hook in self.component_manager.all(
-            "hook", "active_dynamic_media_files"
-        ):
+        for hook in self.component_manager.all("hook", "active_dynamic_media_files"):
             # Prefilter data we need to screen.
             sql_command = """select value from data_for_fact where _fact_id in
                 (select _fact_id from cards where active=1) and ("""
@@ -147,7 +138,6 @@ class SQLiteMedia(object):
         return filenames
 
     def _process_media(self, fact):
-
         """Copy the media files to the media directory and edit the media
         table. We don't keep track of which facts use which media and delete
         a media file if it's no longer in use. The reason for this is that some
@@ -220,7 +210,6 @@ class SQLiteMedia(object):
                     self.log().added_media_file(filename)
 
     def unused_media_files(self):
-
         """Returns a set of media files which are in the media directory but
         which are not referenced in the cards.
 
@@ -253,7 +242,6 @@ class SQLiteMedia(object):
         return files_in_media_dir - files_in_db
 
     def delete_unused_media_files(self, unused_files):
-
         """Delete media files which are no longer in use. 'unused_files'
         should be a subset of 'self.unused_media_files', because here we no
         longer check if these media files are used or not.
@@ -263,17 +251,13 @@ class SQLiteMedia(object):
             os.remove(expand_path(filename, self.media_dir()))
             self.log().deleted_media_file(filename)
         # Purge empty dirs.
-        for root, dirnames, filenames in os.walk(
-            self.media_dir(), topdown=False
-        ):
+        for root, dirnames, filenames in os.walk(self.media_dir(), topdown=False):
             contracted_root = contract_path(root, self.media_dir())
             if not contracted_root or contracted_root.startswith("_"):
                 continue
             if len(filenames) == 0 and len(dirnames) == 0:
                 os.rmdir(root)
         # Other media files, e.g. latex.
-        for f in self.component_manager.all(
-            "hook", "delete_unused_media_files"
-        ):
+        for f in self.component_manager.all("hook", "delete_unused_media_files"):
             f.run()
         remove_empty_dirs_in(self.media_dir())

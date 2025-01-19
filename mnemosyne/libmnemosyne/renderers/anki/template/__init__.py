@@ -1,4 +1,5 @@
 from .template import Template
+from .view import View
 
 
 def render(template, context=None, **kwargs):

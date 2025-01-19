@@ -2,18 +2,18 @@
 # configuration.py <Peter.Bienstman@gmail.com>
 #
 
-import importlib
 import os
 import re
-import sqlite3
 import sys
-import textwrap
-import threading
 import time
+import sqlite3
+import threading
+import importlib
+import textwrap
 from locale import getdefaultlocale
 
-from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.schedulers.cramming import RANDOM
 from mnemosyne.libmnemosyne.utils import rand_uuid, traceback_string
 
@@ -106,7 +106,6 @@ class Configuration(Component, dict):
         self.set_defaults()
 
     def set_defaults(self):
-
         """Fill the config with default values.  Is called after every load,
         since a new version of Mnemosyne might have introduced new keys.
 
@@ -114,8 +113,7 @@ class Configuration(Component, dict):
 
         for key, value in list(
             {
-                "last_database": self.database().default_name
-                + self.database().suffix,
+                "last_database": self.database().default_name + self.database().suffix,
                 "first_run": True,
                 "import_img_dir": self.data_dir,
                 "import_sound_dir": self.data_dir,
@@ -240,9 +238,7 @@ class Configuration(Component, dict):
 
             try:
                 ph = PasswordHasher()
-                self["remote_access_password"] = ph.hash(
-                    self["remote_access_password"]
-                )
+                self["remote_access_password"] = ph.hash(self["remote_access_password"])
                 self["remote_access_password_algo"] = "argon2"
             except HashingError:
                 pass
@@ -338,9 +334,7 @@ class Configuration(Component, dict):
         if sys.platform == "win32":
             import ctypes
 
-            n = ctypes.windll.kernel32.GetEnvironmentVariableW(
-                "APPDATA", None, 0
-            )
+            n = ctypes.windll.kernel32.GetEnvironmentVariableW("APPDATA", None, 0)
             buf = ctypes.create_unicode_buffer("\0" * n)
             ctypes.windll.kernel32.GetEnvironmentVariableW("APPDATA", buf, n)
             self.data_dir = join(buf.value, "Mnemosyne")
@@ -366,7 +360,6 @@ class Configuration(Component, dict):
             self.config_dir = join(self.config_dir, "mnemosyne")
 
     def fill_dirs(self):
-
         """Fill data_dir and config_dir. Do this even if they already exist,
         because we might have added new files since the last version.
 
@@ -413,7 +406,6 @@ class Configuration(Component, dict):
     def set_card_type_property(
         self, property_name, property_value, card_type, fact_key=None
     ):
-
         """Set a property (like font, colour, ..) for a certain card type.
         If fact_key is None, then this will be applied to all fact keys.
 
@@ -445,9 +437,7 @@ class Configuration(Component, dict):
             for _fact_key in fact_keys:
                 self[property_name][card_type.id][_fact_key] = property_value
 
-    def card_type_property(
-        self, property_name, card_type, fact_key=None, default=None
-    ):
+    def card_type_property(self, property_name, card_type, fact_key=None, default=None):
         if property_name in self.card_type_properties_generic:
             try:
                 return self[property_name][card_type.id]
@@ -463,9 +453,7 @@ class Configuration(Component, dict):
         for property_name in self.card_type_properties_generic:
             old_value = self.card_type_property(property_name, old_card_type)
             if old_value:
-                self.set_card_type_property(
-                    property_name, old_value, new_card_type
-                )
+                self.set_card_type_property(property_name, old_value, new_card_type)
         for property_name in self.card_type_properties_for_fact_key:
             for fact_key in new_card_type.fact_keys():
                 old_value = self.card_type_property(
@@ -482,11 +470,7 @@ class Configuration(Component, dict):
                 del self[property_name][card_type.id]
 
     def machine_id(self):
-        return (
-            open(os.path.join(self.config_dir, "machine.id"))
-            .readline()
-            .rstrip()
-        )
+        return open(os.path.join(self.config_dir, "machine.id")).readline().rstrip()
 
     def load_user_config(self):
         if self.config_dir not in sys.path:
@@ -504,12 +488,9 @@ class Configuration(Component, dict):
                     if var in self:
                         self[var] = getattr(config, var)
             except:
-                raise RuntimeError(
-                    _("Error in config.py:") + "\n" + traceback_string()
-                )
+                raise RuntimeError(_("Error in config.py:") + "\n" + traceback_string())
 
     def change_user_id(self, new_user_id):
-
         """When a client syncs for the first time with a server, we need to
         set the client's user_id identical to the one of the server, in order
         for the uploaded anonymous logs to be consistent.
@@ -520,9 +501,7 @@ class Configuration(Component, dict):
             return
         old_user_id = self["user_id"]
         self["user_id"] = new_user_id
-        from mnemosyne.libmnemosyne.component_manager import (
-            migrate_component_manager,
-        )
+        from mnemosyne.libmnemosyne.component_manager import migrate_component_manager
 
         migrate_component_manager(old_user_id, new_user_id)
         self.save()

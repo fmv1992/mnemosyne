@@ -5,6 +5,7 @@
 from mnemosyne.libmnemosyne.plugin import Plugin
 from mnemosyne.libmnemosyne.statistics_page import HtmlStatisticsPage
 
+
 # The statistics page.
 
 
@@ -13,7 +14,7 @@ class MyHtmlStatistics(HtmlStatisticsPage):
     name = "My html staticsics"
 
     def prepare_statistics(self, variant):
-        self.review_controller().card
+        card = self.review_controller().card
         self.html = """<html<body>
         <style type="text/css">
         table { height: 100%;

@@ -6,6 +6,7 @@ from mnemosyne_test import MnemosyneTest
 
 
 class TestHtmlCss(MnemosyneTest):
+
     def test_1(self):
         self.config()["font"] = {
             "1": {
@@ -90,24 +91,18 @@ class TestHtmlCss(MnemosyneTest):
         card.question("sync_to_card_only_client")
         card.question("card_browser")
         card.question("card_browser", ignore_text_colour=True)
-        card.question(
-            "card_browser", ignore_text_colour=True, search_string="e"
-        )
+        card.question("card_browser", ignore_text_colour=True, search_string="e")
 
         card2.question()
         card2.answer()
         card2.question("sync_to_card_only_client")
         card2.question("card_browser")
         card2.question("card_browser", ignore_text_colour=True)
-        card2.question(
-            "card_browser", ignore_text_colour=True, search_string="e"
-        )
+        card2.question("card_browser", ignore_text_colour=True, search_string="e")
 
         card3.question()
         card3.answer()
         card3.question("sync_to_card_only_client")
         card3.question("card_browser")
         card3.question("card_browser", ignore_text_colour=True)
-        card3.question(
-            "card_browser", ignore_text_colour=True, search_string="e"
-        )
+        card3.question("card_browser", ignore_text_colour=True, search_string="e")

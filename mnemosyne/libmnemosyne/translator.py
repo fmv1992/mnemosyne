@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Translator(Component):
-
     """Generic translation service for words and sentences. Not to be confused
     the GuiTranslator, which is for translating the user interface.
 
@@ -21,13 +20,11 @@ class Translator(Component):
     popup_menu_text = None  # "Insert translation..."
 
     def translate(self, card_type, foreign_text, dest_language_id):
-
         """Returns translated text."""
 
         raise NotImplementedError
 
     def show_dialog(self, card_type, foreign_text):
-
         """Returns translated text to insert. The user can set the target
         language in the dialog."""
 

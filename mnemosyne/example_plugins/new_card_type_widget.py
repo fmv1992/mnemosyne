@@ -4,10 +4,12 @@
 
 # Colour the widget for the front to back card type red.
 
-from mnemosyne.libmnemosyne.card_types.front_to_back import FrontToBack
-from mnemosyne.libmnemosyne.plugin import Plugin
-from mnemosyne.pyqt_ui.card_type_wdgt_generic import GenericCardTypeWdgt
 from PyQt6 import QtGui
+
+from mnemosyne.libmnemosyne.plugin import Plugin
+from mnemosyne.libmnemosyne.card_types.front_to_back import FrontToBack
+from mnemosyne.pyqt_ui.card_type_wdgt_generic import GenericCardTypeWdgt
+
 
 # Don't forget to inherit from CardTypeWidget located in
 # mnemosyne.libmnemosyne.ui_components.card_type_widget!

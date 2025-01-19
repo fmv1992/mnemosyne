@@ -3,11 +3,11 @@
 #
 
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.study_mode import StudyMode
+from mnemosyne.libmnemosyne.schedulers.cramming import Cramming
 from mnemosyne.libmnemosyne.review_controllers.SM2_controller_cramming import (
     SM2ControllerCramming,
 )
-from mnemosyne.libmnemosyne.schedulers.cramming import Cramming
-from mnemosyne.libmnemosyne.study_mode import StudyMode
 
 
 class CramAll(StudyMode):

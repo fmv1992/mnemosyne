@@ -7,19 +7,20 @@ import os
 import time
 import urllib
 
-from .binary_formats.mnemosyne_format import MnemosyneFormat
-from .log_entry import EventTypes
 from .partner import Partner
+from .log_entry import EventTypes
 from .text_formats.xml_format import XMLFormat
-from .utils import rand_uuid, traceback_string
+from .utils import traceback_string, rand_uuid
+
 
 # Register binary formats.
+
+from .binary_formats.mnemosyne_format import MnemosyneFormat
 
 BinaryFormats = [MnemosyneFormat]
 
 
 class Session(object):
-
     """Very basic session support.
 
     Note that although the current code supports multiple open sessions at
@@ -48,13 +49,10 @@ class Session(object):
         return time.time() > self.expires
 
     def close(self):
-        self.database.update_last_log_index_synced_for(
-            self.client_info["machine_id"]
-        )
+        self.database.update_last_log_index_synced_for(self.client_info["machine_id"])
         self.database.save()
 
     def terminate(self):
-
         """Restore from backup if the session failed to close normally."""
 
         if self.backup_file:
@@ -167,10 +165,7 @@ class Server(Partner):
             else:
                 return "400 Bad Request", None, None
         # See if the token matches.
-        if (
-            not "session_token" in args
-            or args["session_token"] not in self.sessions
-        ):
+        if "session_token" not in args or args["session_token"] not in self.sessions:
             return "403 Forbidden", None, None
         # See if the method exists.
         if hasattr(self, method) and callable(getattr(self, method)):
@@ -196,7 +191,6 @@ class Server(Partner):
         self.ui.close_progress()
 
     def cancel_session_with_token(self, session_token):
-
         """Cancel a session at the user's request, e.g. after detecting
         conflicts.
 
@@ -209,7 +203,6 @@ class Server(Partner):
         self.ui.close_progress()
 
     def terminate_session_with_token(self, session_token):
-
         """Clean up a session which failed to close normally."""
 
         session = self.sessions[session_token]
@@ -227,7 +220,6 @@ class Server(Partner):
         return False
 
     def is_idle(self):
-
         """No sessions, expired or otherwise."""
 
         return len(self.sessions) == 0
@@ -272,7 +264,6 @@ class Server(Partner):
         return None
 
     def supports_binary_transfer(self, session):
-
         """For testability, can easily be overridden by testsuite."""
 
         return self.binary_format_for(session) is not None
@@ -281,13 +272,11 @@ class Server(Partner):
     # to implement e.g. authorisation, storage, ... .
 
     def authorise(self, username, password):
-
         """Returns True if 'password' is correct for 'username'."""
 
         raise NotImplementedError
 
     def load_database(self, database_name):
-
         """Returns a database object for the database named 'database_name'.
         Should create the database if it does not exist yet.
 
@@ -296,11 +285,12 @@ class Server(Partner):
         raise NotImplementedError
 
     def unload_database(self, database):
-
         """Here, there is the possibility for a custom server to do some
         after sync cleanup.
 
         """
+
+        pass
 
     # The following are methods that are supported by the server through GET
     # and PUT calls. 'get_foo_bar' gets executed after a 'GET /foo_bar'
@@ -316,13 +306,9 @@ class Server(Partner):
             self.ui.set_progress_text("Client logging in...")
             client_info_repr = environ["wsgi.input"].readline()
             client_info = self.text_format.parse_partner_info(client_info_repr)
-            if not self.authorise(
-                client_info["username"], client_info["password"]
-            ):
+            if not self.authorise(client_info["username"], client_info["password"]):
                 self.ui.close_progress()
-                return self.text_format.repr_message("Access denied").encode(
-                    "utf-8"
-                )
+                return self.text_format.repr_message("Access denied").encode("utf-8")
             # Close old session waiting in vain for client input.
             # This will also close any session which timed out while
             # trying to log in just before, so we need to make sure the
@@ -347,26 +333,23 @@ class Server(Partner):
                 self.machine_id in session.client_info["partners"]
             )
             client_in_server_partners = (
-                session.client_info["machine_id"]
-                in session.database.partners()
+                session.client_info["machine_id"] in session.database.partners()
             )
-            if (
-                server_in_client_partners and not client_in_server_partners
-            ) or (client_in_server_partners and not server_in_client_partners):
+            if (server_in_client_partners and not client_in_server_partners) or (
+                client_in_server_partners and not server_in_client_partners
+            ):
                 if not session.client_info["is_database_empty"]:
                     self.terminate_session_with_token(session.token)
                     self.ui.close_progress()
-                    return self.text_format.repr_message(
-                        "Sync cycle detected"
-                    ).encode("utf-8")
+                    return self.text_format.repr_message("Sync cycle detected").encode(
+                        "utf-8"
+                    )
             # Detect the case where a user has copied the entire mnemosyne
             # directory before syncing.
             if session.client_info["machine_id"] == self.machine_id:
                 self.terminate_session_with_token(session.token)
                 self.ui.close_progress()
-                return self.text_format.repr_message(
-                    "same machine ids"
-                ).encode("utf-8")
+                return self.text_format.repr_message("same machine ids").encode("utf-8")
             # Create partnerships.
             session.database.create_if_needed_partnership_with(
                 client_info["machine_id"]
@@ -383,24 +366,16 @@ class Server(Partner):
                 "database_version": session.database.version,
                 "partners": session.database.partners(),
                 "session_token": session.token,
-                "supports_binary_transfer": self.supports_binary_transfer(
-                    session
-                ),
+                "supports_binary_transfer": self.supports_binary_transfer(session),
                 "is_database_empty": session.database.is_empty(),
             }
             # Signal if we need a sync reset after restoring from a backup.
-            server_info[
-                "sync_reset_needed"
-            ] = session.database.is_sync_reset_needed(
+            server_info["sync_reset_needed"] = session.database.is_sync_reset_needed(
                 client_info["machine_id"]
             )
             # Add optional program-specific information.
-            server_info = session.database.append_to_sync_partner_info(
-                server_info
-            )
-            return self.text_format.repr_partner_info(server_info).encode(
-                "utf-8"
-            )
+            server_info = session.database.append_to_sync_partner_info(server_info)
+            return self.text_format.repr_partner_info(server_info).encode("utf-8")
         except:
             # We need to be really thorough in our exception handling, so as
             # to always revert the database to its last backup if an error
@@ -437,9 +412,7 @@ class Server(Partner):
             if session.number_of_client_entries == 0:
                 return self.text_format.repr_message("OK").encode("utf-8")
             self.ui.set_progress_range(session.number_of_client_entries)
-            self.ui.set_progress_update_interval(
-                session.number_of_client_entries / 50
-            )
+            self.ui.set_progress_update_interval(session.number_of_client_entries / 50)
             for log_entry in element_loop:
                 session.client_log.append(log_entry)
                 if log_entry["type"] not in self.dont_cause_conflict:
@@ -450,9 +423,7 @@ class Server(Partner):
             # If we haven't downloaded all entries yet, tell the client
             # it's OK to continue.
             if len(session.client_log) < session.number_of_client_entries:
-                return self.text_format.repr_message("Continue").encode(
-                    "utf-8"
-                )
+                return self.text_format.repr_message("Continue").encode("utf-8")
             # Now we have all the data from the client and we can determine
             # whether there are conflicts.
             for log_entry in session.database.log_entries_to_sync_for(
@@ -466,9 +437,7 @@ class Server(Partner):
                     log_entry["type"] not in self.dont_cause_conflict
                     and log_entry["o_id"] in session.client_o_ids
                 ):
-                    return self.text_format.repr_message("Conflict").encode(
-                        "utf-8"
-                    )
+                    return self.text_format.repr_message("Conflict").encode("utf-8")
             if session.database.is_empty():
                 session.database.change_user_id(session.client_info["user_id"])
             return self.text_format.repr_message("OK").encode("utf-8")
@@ -482,9 +451,7 @@ class Server(Partner):
             filename = session.database.path()
             session.database.abandon()
             file_size = int(environ["CONTENT_LENGTH"])
-            self.download_binary_file(
-                environ["wsgi.input"], filename, file_size
-            )
+            self.download_binary_file(environ["wsgi.input"], filename, file_size)
             session.database.load(filename)
             session.database.change_user_id(session.client_info["user_id"])
             session.database.create_if_needed_partnership_with(
@@ -518,15 +485,11 @@ class Server(Partner):
                 session.client_info["machine_id"],
                 session.client_info["interested_in_old_reps"],
             )
-            number_of_entries = (
-                session.database.number_of_log_entries_to_sync_for(
-                    session.client_info["machine_id"],
-                    session.client_info["interested_in_old_reps"],
-                )
+            number_of_entries = session.database.number_of_log_entries_to_sync_for(
+                session.client_info["machine_id"],
+                session.client_info["interested_in_old_reps"],
             )
-            for buffer in self._stream_log_entries(
-                log_entries, number_of_entries
-            ):
+            for buffer in self._stream_log_entries(log_entries, number_of_entries):
                 yield buffer
         except:
             yield self.handle_error(session, traceback_string())
@@ -559,9 +522,7 @@ class Server(Partner):
             number_of_entries = session.database.number_of_log_entries(
                 session.client_info["interested_in_old_reps"]
             )
-            for buffer in self._stream_log_entries(
-                log_entries, number_of_entries
-            ):
+            for buffer in self._stream_log_entries(log_entries, number_of_entries):
                 yield buffer
         except:
             yield self.handle_error(session, traceback_string())
@@ -577,6 +538,7 @@ class Server(Partner):
             )
             global mnemosyne_content_length
             mnemosyne_content_length = os.path.getsize(filename)
+
             # Since we want to modify the headers in this function, we cannot
             # use 'yield' directly to stream content, but have to add one layer
             # of indirection: http://www.cherrypy.org/wiki/ReturnVsYield
@@ -597,9 +559,7 @@ class Server(Partner):
         except:
             return self.handle_error(session, traceback_string())
 
-    def get_server_generate_log_entries_for_settings(
-        self, environ, session_token
-    ):
+    def get_server_generate_log_entries_for_settings(self, environ, session_token):
         try:
             session = self.sessions[session_token]
             session.database.generate_log_entries_for_settings()
@@ -610,7 +570,7 @@ class Server(Partner):
     def put_client_binary_file(self, environ, session_token, filename):
         try:
             session = self.sessions[session_token]
-            environ["wsgi.input"]
+            socket = environ["wsgi.input"]
             size = int(environ["CONTENT_LENGTH"])
             # Make sure a malicious client cannot overwrite anything outside
             # of the media directory.
@@ -626,9 +586,7 @@ class Server(Partner):
         except:
             return self.handle_error(session, traceback_string())
 
-    def get_server_media_filenames(
-        self, environ, session_token, redownload_all=False
-    ):
+    def get_server_media_filenames(self, environ, session_token, redownload_all=False):
         try:
             session = self.sessions[session_token]
             global mnemosyne_content_length
@@ -689,7 +647,7 @@ class Server(Partner):
         try:
             session = self.sessions[session_token]
             global mnemosyne_content_length
-            environ["wsgi.input"]
+            socket = environ["wsgi.input"]
             # Make sure a malicious client cannot access anything outside
             # of the media directory.
             filename = filename.replace("../", "").replace("..\\", "")
@@ -697,6 +655,7 @@ class Server(Partner):
             filename = os.path.join(session.database.data_dir(), filename)
             file_size = os.path.getsize(filename)
             mnemosyne_content_length = file_size
+
             # Since we want to modify the headers in this function, we cannot
             # use 'yield' directly to stream content, but have to add one layer
             # of indirection: http://www.cherrypy.org/wiki/ReturnVsYield
@@ -708,9 +667,7 @@ class Server(Partner):
             # code in a try block.
             def content():
                 try:
-                    for buffer in self.stream_binary_file(
-                        filename, progress_bar=False
-                    ):
+                    for buffer in self.stream_binary_file(filename, progress_bar=False):
                         yield buffer
                 except:
                     yield self.handle_error(session, traceback_string())

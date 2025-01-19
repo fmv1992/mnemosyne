@@ -33,6 +33,15 @@ build:
 	# Just the bare minimum to get things running
 	make -C mnemosyne/pyqt_ui
 
+format:
+	cp ./makefile /tmp
+	git checkout 99fca5c -- . || true
+	cp /tmp/makefile ./makefile
+	dos2unix **/*.py || true
+	pre-commit run ruff --all-files || true
+	@# pre-commit run black --all-files
+	black . --config pyproject.toml
+
 build-po:
 	make -C po update
 	make -C po

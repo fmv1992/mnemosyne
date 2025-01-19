@@ -2,12 +2,11 @@
 # tag_tree.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
 
 
 class TagTree(Component, dict):
-
     """Organises the tags in a hierarchical tree. By convention, hierarchical
     levels in tags are denoted by a :: separator.
 
@@ -56,9 +55,7 @@ class TagTree(Component, dict):
                     other_tag_name.startswith(tag.name + "::")
                     and other_tag_name != tag.name
                 ):
-                    preprocessed_tag_name_for[tag] = (
-                        tag.name + "::" + _("Untagged")
-                    )
+                    preprocessed_tag_name_for[tag] = tag.name + "::" + _("Untagged")
                     break
         # Build the actual tag tree.
         for tag in tags:
@@ -70,7 +67,7 @@ class TagTree(Component, dict):
                 if partial_tag:
                     partial_tag += "::"
                 partial_tag += node
-                if not partial_tag in self.display_name_for_node:
+                if partial_tag not in self.display_name_for_node:
                     self[parent].append(partial_tag)
                     self[partial_tag] = []
                     self.display_name_for_node[partial_tag] = node.replace(
@@ -85,9 +82,7 @@ class TagTree(Component, dict):
             if node == "__ALL__":
                 self.card_count_for_node[node] = self.database().card_count()
             else:
-                self.card_count_for_node[
-                    node
-                ] = self.database().card_count_for_tags(
+                self.card_count_for_node[node] = self.database().card_count_for_tags(
                     self.tags_in_subtree(node), active_only=False
                 )
 

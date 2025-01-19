@@ -4,14 +4,15 @@
 
 import os
 
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne_test import MnemosyneTest
 
 last_error = ""
 
 
 class Widget(MainWidget):
+
     def show_error(self, message):
         raise NotImplementedError
 
@@ -22,6 +23,7 @@ class Widget(MainWidget):
 
 
 class TestSmconvImport(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
         self.mnemosyne = Mnemosyne(
@@ -40,9 +42,7 @@ class TestSmconvImport(MnemosyneTest):
             ("mnemosyne_test", "TestReviewWidget")
         ]
         self.mnemosyne.components.append(("test_smconv_import", "Widget"))
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
     def sm7_importer(self):
@@ -54,13 +54,11 @@ class TestSmconvImport(MnemosyneTest):
         global last_error
         filename = os.path.join(os.getcwd(), "tests", "files", "smconv.xml")
         self.sm7_importer().do_import(filename)
-        assert last_error is ""
+        assert last_error == ""
         assert len([c for c in self.database().cards()]) == 3
 
     def teardown_method(self):
-        filename = os.path.join(
-            os.getcwd(), "dot_test", "default.db_media", "a.png"
-        )
+        filename = os.path.join(os.getcwd(), "dot_test", "default.db_media", "a.png")
         if os.path.exists(filename):
             os.remove(filename)
         filename = os.path.join(os.getcwd(), "dot_test", "test.txt")

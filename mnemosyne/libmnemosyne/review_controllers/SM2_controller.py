@@ -33,9 +33,7 @@ class SM2Controller(ReviewController):
 
     tooltip[RET_PHASE][0] = _("You've forgotten this card completely.")
     tooltip[RET_PHASE][1] = _("You've forgotten this card.")
-    tooltip[RET_PHASE][2] = _(
-        "Barely correct answer. The interval was way too long."
-    )
+    tooltip[RET_PHASE][2] = _("Barely correct answer. The interval was way too long.")
     tooltip[RET_PHASE][3] = _(
         "Correct answer, but with much effort. The interval was probably too long."
     )
@@ -59,7 +57,6 @@ class SM2Controller(ReviewController):
         self.show_new_question()
 
     def reset_but_try_to_keep_current_card(self):
-
         """This is typically called after activities which invalidate the
         current queue, like 'Activate cards' or 'Configure'. For the best user
         experience, we try to keep the card that is currently being asked if
@@ -142,7 +139,6 @@ class SM2Controller(ReviewController):
         self.update_dialog()
 
     def grade_answer(self, grade):
-
         """Note that this also pulls in a new question."""
 
         self.flush_sync_server()
@@ -192,11 +188,7 @@ class SM2Controller(ReviewController):
     def counters(self):
         if self.non_memorised_count is None:
             self.reload_counters()
-        return (
-            self.scheduled_count,
-            self.non_memorised_count,
-            self.active_count,
-        )
+        return self.scheduled_count, self.non_memorised_count, self.active_count
 
     def reload_counters(self):
         sch = self.scheduler()
@@ -224,9 +216,7 @@ class SM2Controller(ReviewController):
 
     def update_qa_area(self, redraw_all=False):
         if redraw_all and self.card:
-            self.card = self.database().card(
-                self.card._id, is_id_internal=True
-            )
+            self.card = self.database().card(self.card._id, is_id_internal=True)
         w = self.review_widget()
         # When the answer should be shown on top of the question, we draw the
         # answer in the question field to eliminate flicker.
@@ -255,9 +245,7 @@ class SM2Controller(ReviewController):
                 self.config()["QA_split"] == "adaptive"
                 and not self.card.fact_view.a_on_top_of_q
             ):
-                w.set_answer(
-                    self.card.answer(self.render_chain, no_side_effects=True)
-                )
+                w.set_answer(self.card.answer(self.render_chain, no_side_effects=True))
             w.reveal_question()
         # Show answer.
         if self.card is None or self._state == "SELECT SHOW":
@@ -267,9 +255,7 @@ class SM2Controller(ReviewController):
                 not self.config()["QA_split"] == "single_window"
                 and not self.card.fact_view.a_on_top_of_q
             ):
-                w.set_answer(
-                    self.card.answer(self.render_chain, no_side_effects=False)
-                )
+                w.set_answer(self.card.answer(self.render_chain, no_side_effects=False))
                 w.reveal_answer()
             else:
                 # Draw answer in question box.
@@ -295,11 +281,7 @@ class SM2Controller(ReviewController):
             show_enabled, default, text = False, False, _("Show answer")
             self.grades_enabled = True
         elif self._state == "SELECT AHEAD":
-            show_enabled, default, text = (
-                True,
-                False,
-                _("Learn ahead of schedule"),
-            )
+            show_enabled, default, text = True, False, _("Learn ahead of schedule")
             self.grades_enabled = False
         w.update_show_button(text, default, show_enabled)
 
@@ -337,8 +319,7 @@ class SM2Controller(ReviewController):
                 )
                 days = int(math.ceil(interval / (24.0 * 60 * 60)))
                 w.set_grade_tooltip(
-                    grade,
-                    _(self.tooltip[phase][grade]) + self.next_rep_string(days),
+                    grade, _(self.tooltip[phase][grade]) + self.next_rep_string(days)
                 )
             else:
                 w.set_grade_tooltip(grade, _(self.tooltip[phase][grade]))
@@ -349,9 +330,7 @@ class SM2Controller(ReviewController):
             ):
                 w.set_grade_text(
                     grade,
-                    self.scheduler().process_answer(
-                        self.card, grade, dry_run=True
-                    ),
+                    self.scheduler().process_answer(self.card, grade, dry_run=True),
                 )
             else:
                 w.set_grade_text(grade, str(grade))
@@ -377,12 +356,10 @@ class SM2Controller(ReviewController):
 
     def is_question_showing(self):
         return (
-            self.review_controller()._state == "SELECT SHOW"
-            and self.card is not None
+            self.review_controller()._state == "SELECT SHOW" and self.card is not None
         )
 
     def is_answer_showing(self):
         return (
-            self.review_controller()._state == "SELECT GRADE"
-            and self.card is not None
+            self.review_controller()._state == "SELECT GRADE" and self.card is not None
         )

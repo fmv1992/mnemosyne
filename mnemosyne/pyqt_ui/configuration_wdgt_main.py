@@ -3,6 +3,8 @@
 #
 
 
+from PyQt6 import QtCore, QtWidgets
+
 from mnemosyne.libmnemosyne.gui_translator import (
     _,
     iso6931_code_for_language_name,
@@ -11,10 +13,7 @@ from mnemosyne.libmnemosyne.gui_translator import (
 from mnemosyne.libmnemosyne.ui_components.configuration_widget import (
     ConfigurationWidget,
 )
-from mnemosyne.pyqt_ui.ui_configuration_wdgt_main import (
-    Ui_ConfigurationWdgtMain,
-)
-from PyQt6 import QtCore, QtWidgets
+from mnemosyne.pyqt_ui.ui_configuration_wdgt_main import Ui_ConfigurationWdgtMain
 
 
 class ConfigurationWdgtMain(
@@ -29,13 +28,9 @@ class ConfigurationWdgtMain(
         self.save_after_n_reps.setValue(self.config()["save_after_n_reps"])
         self.max_backups.setValue(self.config()["max_backups"])
         if self.config()["upload_science_logs"] == True:
-            self.upload_science_logs.setCheckState(
-                QtCore.Qt.CheckState.Checked
-            )
+            self.upload_science_logs.setCheckState(QtCore.Qt.CheckState.Checked)
         else:
-            self.upload_science_logs.setCheckState(
-                QtCore.Qt.CheckState.Unchecked
-            )
+            self.upload_science_logs.setCheckState(QtCore.Qt.CheckState.Unchecked)
         if self.config()["QA_split"] == "fixed":
             self.card_presentation.setCurrentIndex(0)
         elif self.config()["QA_split"] == "adaptive":
@@ -69,10 +64,7 @@ class ConfigurationWdgtMain(
     def apply(self):
         self.config()["save_after_n_reps"] = self.save_after_n_reps.value()
         self.config()["max_backups"] = self.max_backups.value()
-        if (
-            self.upload_science_logs.checkState()
-            == QtCore.Qt.CheckState.Checked
-        ):
+        if self.upload_science_logs.checkState() == QtCore.Qt.CheckState.Checked:
             self.config()["upload_science_logs"] = True
         else:
             self.config()["upload_science_logs"] = False

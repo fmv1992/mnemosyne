@@ -2,27 +2,23 @@
 # default_controller.py <Peter.Bienstman@gmail.com>
 #
 
-import copy
 import os
 import sys
+import copy
 import time
 
-from mnemosyne.libmnemosyne.card_type_converter import CardTypeConverter
-from mnemosyne.libmnemosyne.controller import Controller
 from mnemosyne.libmnemosyne.fact import Fact
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import (
-    contract_path,
-    expand_path,
-    remove_empty_dirs_in,
-)
+from mnemosyne.libmnemosyne.controller import Controller
+from mnemosyne.libmnemosyne.utils import remove_empty_dirs_in
+from mnemosyne.libmnemosyne.utils import expand_path, contract_path
+from mnemosyne.libmnemosyne.card_type_converter import CardTypeConverter
 
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
 
 
 class DefaultController(Controller):
-
     """A collection of logic used by the GUI.  The logic related to the
     review process is split out in a separated controller class, to
     allow that to be swapped out easily.
@@ -42,7 +38,6 @@ class DefaultController(Controller):
         self.next_rollover = self.database().start_of_day_n_days_ago(n=-1)
 
     def heartbeat(self, db_maintenance=True):
-
         """Making sure, even if the user leaves the program open indefinitely,
         that backups get taken, that the cards scheduled for the day get dumped
         to the log and that the the logs get uploaded, and that the new cards
@@ -94,9 +89,7 @@ class DefaultController(Controller):
     def do_db_maintenance(self):
         if time.time() < self.config()["last_db_maintenance"] + 30 * DAY:
             self.main_widget().show_information(
-                _(
-                    "No need to do database maintenance more than once per month."
-                )
+                _("No need to do database maintenance more than once per month.")
             )
             return
         else:
@@ -148,7 +141,6 @@ class DefaultController(Controller):
         self.stopwatch().unpause()
 
     def _retain_only_child_tags(self, tag_names):
-
         """In case e.g. tag_names is ["a", "a::b"], return only ["a::b"]."""
 
         parent_tag_names = []
@@ -171,7 +163,6 @@ class DefaultController(Controller):
         check_for_duplicates=True,
         save=True,
     ):
-
         """Create a new set of sister cards. If the grade is 2 or higher,
         we perform a initial review with that grade and move the cards into
         the long term retention process. For other grades, we treat the card
@@ -203,9 +194,7 @@ class DefaultController(Controller):
                         )
                         break
                 if answer is None:
-                    question = _(
-                        "There is already data present for this card:\n\n"
-                    )
+                    question = _("There is already data present for this card:\n\n")
                     existing_fact_data = {}
                     for fact_key in card_type.fact_keys():
                         existing_fact_data[fact_key] = ""
@@ -220,13 +209,8 @@ class DefaultController(Controller):
                             ):
                                 if len(existing_fact_data[fact_key]) != 0:
                                     existing_fact_data[fact_key] += " / "
-                                existing_fact_data[fact_key] += duplicate[
-                                    fact_key
-                                ]
-                    for (
-                        fact_key,
-                        fact_key_name,
-                    ) in card_type.fact_keys_and_names:
+                                existing_fact_data[fact_key] += duplicate[fact_key]
+                    for fact_key, fact_key_name in card_type.fact_keys_and_names:
                         question += (
                             _(fact_key_name)
                             + ": "
@@ -327,7 +311,6 @@ class DefaultController(Controller):
         new_fact_data,
         warn=True,
     ):
-
         """This is an internal function, used by 'edit_card_and_sisters' and
         'change_card_type'. It should not be called from the outside by
         itself, otherwise the database will not be saved.
@@ -343,9 +326,7 @@ class DefaultController(Controller):
         assert cards_from_fact[0].card_type == old_card_type
         if not new_card_type.is_fact_data_valid(new_fact_data):
             self.main_widget().show_error(
-                _(
-                    "Card data not correctly formatted for conversion.\n\nSkipping "
-                )
+                _("Card data not correctly formatted for conversion.\n\nSkipping ")
                 + "|".join(list(fact.data.values()))
                 + ".\n"
             )
@@ -366,12 +347,8 @@ class DefaultController(Controller):
             if ancestor_id_old == ancestor_id_new:
                 edited_cards = cards_from_fact
                 new_fact_view_for = {}
-                for index, old_fact_view in enumerate(
-                    old_card_type.fact_views
-                ):
-                    new_fact_view_for[
-                        old_fact_view
-                    ] = new_card_type.fact_views[index]
+                for index, old_fact_view in enumerate(old_card_type.fact_views):
+                    new_fact_view_for[old_fact_view] = new_card_type.fact_views[index]
                 for card in edited_cards:
                     card.card_type = new_card_type
                     card.fact_view = new_fact_view_for[card.fact_view]
@@ -390,9 +367,7 @@ class DefaultController(Controller):
                                 "Can't preserve history when converting between these card types."
                             )
                             + " "
-                            + _(
-                                "The learning history of the cards will be reset."
-                            ),
+                            + _("The learning history of the cards will be reset."),
                             _("&OK"),
                             _("&Cancel"),
                             "",
@@ -400,9 +375,7 @@ class DefaultController(Controller):
                         if answer == 1:  # Cancel.
                             return -1
                 # Go ahead with conversion
-                is_currently_asked = (
-                    self.review_controller().card in cards_from_fact
-                )
+                is_currently_asked = self.review_controller().card in cards_from_fact
                 tag_names = cards_from_fact[0].tag_string().split(", ")
                 # Don't use progress bars in the next call, as nested
                 # progress bars (e.g. from change_card_type) are not
@@ -474,11 +447,7 @@ class DefaultController(Controller):
         # Change the card type if needed. This does not take into account
         # changes to fact yet, which will come just afterwards.
         result = self._change_card_type(
-            card.fact,
-            card.card_type,
-            new_card_type,
-            correspondence,
-            new_fact_data,
+            card.fact, card.card_type, new_card_type, correspondence, new_fact_data
         )
         if result in [-2, -1]:  # Error, aborted.
             return result
@@ -535,10 +504,7 @@ class DefaultController(Controller):
         db.save()
         return 0
 
-    def change_card_type(
-        self, facts, old_card_type, new_card_type, correspondence
-    ):
-
+    def change_card_type(self, facts, old_card_type, new_card_type, correspondence):
         """Note: all facts should have the same card type."""
 
         db = self.database()
@@ -558,12 +524,7 @@ class DefaultController(Controller):
             else:
                 new_fact_data = copy.copy(fact.data)
             result = self._change_card_type(
-                fact,
-                old_card_type,
-                new_card_type,
-                correspondence,
-                new_fact_data,
-                warn,
+                fact, old_card_type, new_card_type, correspondence, new_fact_data, warn
             )
             if result == -1:  # Cancel.
                 w.close_progress()
@@ -592,9 +553,7 @@ class DefaultController(Controller):
         tag = db.get_or_create_tag_with_name(_("Starred"))
         _sister_card_ids = [
             card._id
-            for card in self.database().cards_from_fact(
-                review_controller.card.fact
-            )
+            for card in self.database().cards_from_fact(review_controller.card.fact)
         ]
         db.add_tag_to_cards_with_internal_ids(tag, _sister_card_ids)
         review_controller.card = db.card(
@@ -620,9 +579,7 @@ class DefaultController(Controller):
                 + " "
                 + _("Are you sure you want to do this,")
                 + " "
-                + _(
-                    "and not just deactivate cards in the 'Activate cards' dialog?"
-                )
+                + _("and not just deactivate cards in the 'Activate cards' dialog?")
             )
         else:
             question = (
@@ -634,9 +591,7 @@ class DefaultController(Controller):
                 + " "
                 + _("Are you sure you want to do this,")
                 + " "
-                + _(
-                    "and not just deactivate cards in the 'Activate cards' dialog?"
-                )
+                + _("and not just deactivate cards in the 'Activate cards' dialog?")
             )
         answer = self.main_widget().show_question(
             question, _("&Cancel"), _("&Delete"), ""
@@ -689,9 +644,7 @@ class DefaultController(Controller):
         if no_of_cards == 1:
             question = _("Reset learning history of this card?")
         elif no_of_cards == 2:
-            question = _(
-                "Reset learning history of this card and 1 sister card?"
-            )
+            question = _("Reset learning history of this card and 1 sister card?")
         else:
             question = (
                 _("Reset learning history of this card and")
@@ -723,17 +676,11 @@ class DefaultController(Controller):
             for card in db.cards_from_fact(fact):
                 card.grade = -2  # Marker for reset event.
                 self.log().repetition(
-                    card,
-                    scheduled_interval=0,
-                    actual_interval=0,
-                    thinking_time=0,
+                    card, scheduled_interval=0, actual_interval=0, thinking_time=0
                 )
                 card.reset_learning_data()
                 self.log().repetition(
-                    card,
-                    scheduled_interval=0,
-                    actual_interval=0,
-                    thinking_time=0,
+                    card, scheduled_interval=0, actual_interval=0, thinking_time=0
                 )
                 db.update_card(card)
             if progress_bar:
@@ -758,9 +705,7 @@ class DefaultController(Controller):
         cloned_card_type.fact_views = []
         for fact_view in card_type.fact_views:
             cloned_fact_view = copy.copy(fact_view)
-            cloned_fact_view.id = (
-                clone_id + "." + fact_view.id.rsplit(".", 1)[1]
-            )
+            cloned_fact_view.id = clone_id + "." + fact_view.id.rsplit(".", 1)[1]
             cloned_card_type.fact_views.append(cloned_fact_view)
             self.database().add_fact_view(cloned_fact_view)
         self.database().add_card_type(cloned_card_type)
@@ -773,16 +718,13 @@ class DefaultController(Controller):
             card_type
         ) or self.database().is_in_use(card_type):
             self.main_widget().show_error(
-                _(
-                    "Card type %s is in use or is a system card type, cannot delete it."
-                )
+                _("Card type %s is in use or is a system card type, cannot delete it.")
                 % (card_type.name,)
             )
             return
         if self.database().has_clones(card_type):
             self.main_widget().show_error(
-                _("Card type %s has clones, cannot delete it.")
-                % (card_type.name,)
+                _("Card type %s has clones, cannot delete it.") % (card_type.name,)
             )
             return
         fact_views = card_type.fact_views
@@ -796,9 +738,7 @@ class DefaultController(Controller):
 
     def rename_card_type(self, card_type, new_name):
         if not self.database().is_user_card_type(card_type):
-            self.main_widget().show_error(
-                _("Cannot rename a system card type.")
-            )
+            self.main_widget().show_error(_("Cannot rename a system card type."))
             return
         for card_type_ in self.card_types():
             if card_type_.name == new_name:
@@ -856,8 +796,7 @@ class DefaultController(Controller):
         data_dir = self.config().data_dir
         old_path = expand_path(self.config()["last_database"], data_dir)
         filename = self.main_widget().get_filename_to_open(
-            path=old_path,
-            filter=_("Mnemosyne databases") + " (*%s)" % db.suffix,
+            path=old_path, filter=_("Mnemosyne databases") + " (*%s)" % db.suffix
         )
         if not filename:
             self.stopwatch().unpause()
@@ -944,9 +883,7 @@ class DefaultController(Controller):
             self.config()["single_database_help_shown"] = True
         self.flush_sync_server()
         suffix = self.database().suffix
-        old_path = expand_path(
-            self.config()["last_database"], self.config().data_dir
-        )
+        old_path = expand_path(self.config()["last_database"], self.config().data_dir)
         old_media_dir = self.database().media_dir()
         filename = self.main_widget().get_filename_to_save(
             path=old_path, filter=_("Mnemosyne databases") + " (*%s)" % suffix
@@ -991,7 +928,6 @@ class DefaultController(Controller):
         self.stopwatch().unpause()
 
     def show_insert_img_dialog(self, filter):
-
         """Show a file dialog filtered on the supported filetypes, get a
         filename, massage it, and return it to the widget to be inserted.
         There is more media file logic inside the database code too, as the
@@ -1004,10 +940,7 @@ class DefaultController(Controller):
 
         from mnemosyne.libmnemosyne.utils import copy_file_to_dir
 
-        data_dir, media_dir = (
-            self.config().data_dir,
-            self.database().media_dir(),
-        )
+        data_dir, media_dir = self.config().data_dir, self.database().media_dir()
         path = expand_path(self.config()["import_img_dir"], data_dir)
         filter = _("Image files") + " " + filter
         filename = self.main_widget().get_filename_to_open(
@@ -1025,10 +958,7 @@ class DefaultController(Controller):
     def show_insert_sound_dialog(self, filter):
         from mnemosyne.libmnemosyne.utils import copy_file_to_dir
 
-        data_dir, media_dir = (
-            self.config().data_dir,
-            self.database().media_dir(),
-        )
+        data_dir, media_dir = self.config().data_dir, self.database().media_dir()
         path = expand_path(self.config()["import_sound_dir"], data_dir)
         filter = _("Sound files") + " " + filter
         filename = self.main_widget().get_filename_to_open(
@@ -1046,10 +976,7 @@ class DefaultController(Controller):
     def show_insert_video_dialog(self, filter):
         from mnemosyne.libmnemosyne.utils import copy_file_to_dir
 
-        data_dir, media_dir = (
-            self.config().data_dir,
-            self.database().media_dir(),
-        )
+        data_dir, media_dir = self.config().data_dir, self.database().media_dir()
         path = expand_path(self.config()["import_video_dir"], data_dir)
         filter = _("Video files") + " " + filter
         filename = self.main_widget().get_filename_to_open(
@@ -1067,10 +994,7 @@ class DefaultController(Controller):
     def show_insert_flash_dialog(self, filter):
         from mnemosyne.libmnemosyne.utils import copy_file_to_dir
 
-        data_dir, media_dir = (
-            self.config().data_dir,
-            self.database().media_dir(),
-        )
+        data_dir, media_dir = self.config().data_dir, self.database().media_dir()
         path = expand_path(self.config()["import_flash_dir"], data_dir)
         filter = _("Flash files") + " " + filter
         filename = self.main_widget().get_filename_to_open(
@@ -1158,15 +1082,13 @@ class DefaultController(Controller):
         filenames = [
             filename
             for filename in plugin_file.namelist()
-            if not filename.startswith("/") and not ".." in filename
+            if not filename.startswith("/") and ".." not in filename
         ]
         # Find actual plugin.
         plugin_file.extractall(plugin_dir, filenames)
         import re
 
-        re_plugin = re.compile(
-            r""".*class (.+?)\(Plugin""", re.DOTALL | re.IGNORECASE
-        )
+        re_plugin = re.compile(r""".*class (.+?)\(Plugin""", re.DOTALL | re.IGNORECASE)
         plugin_filename, plugin_class_name = None, None
         for filename in filenames:
             if filename.endswith(".py"):
@@ -1180,9 +1102,7 @@ class DefaultController(Controller):
             self.main_widget().show_error(_("No plugin found!"))
             return
         # Write manifest to allow uninstalling.
-        manifest = open(
-            os.path.join(plugin_dir, plugin_class_name + ".manifest"), "w"
-        )
+        manifest = open(os.path.join(plugin_dir, plugin_class_name + ".manifest"), "w")
         for filename in filenames:
             if not os.path.isdir(os.path.join(plugin_dir, filename)):
                 print(filename, file=manifest)
@@ -1311,9 +1231,7 @@ class DefaultController(Controller):
             "check_for_edited_local_media_files"
         ]
         client.interested_in_old_reps = self.config()["interested_in_old_reps"]
-        client.store_pregenerated_data = (
-            self.database().store_pregenerated_data
-        )
+        client.store_pregenerated_data = self.database().store_pregenerated_data
         client.do_backup = self.config()["backup_before_sync"]
         client.upload_science_logs = self.config()["upload_science_logs"]
         try:
@@ -1322,7 +1240,6 @@ class DefaultController(Controller):
             client.database.release_connection()
 
     def show_download_source_dialog(self):
-
         """The following code is here to be able to enforce the AGPL licence.
 
         If you run Mnemosyne as a service over the network, you need to provide

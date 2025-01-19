@@ -3,25 +3,25 @@
 #
 
 import os
-import random
 import time
+import random
+import urllib.request
 import urllib.error
 import urllib.parse
-import urllib.request
 from threading import Thread
 
-from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import MnemosyneError, traceback_string
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.utils import traceback_string, MnemosyneError
 
 
 class LogUploader(Thread, Component):
+
     def __init__(self, component_manager):
         Thread.__init__(self)
         Component.__init__(self, component_manager)
 
     def upload(self, filename):
-
         """Upload a single file to our serverside CGI script.
         Based on code by Jeff Bauer, Aaron Watters, Jim Fulton.
 
@@ -50,9 +50,7 @@ class LogUploader(Thread, Component):
         )
         hdr.append("Content-Type: application/octet-stream")
         hdr.append("Content-Length: %d" % len(data))
-        header = (("--%s\n" % boundary) + "\n".join(hdr) + "\n\n").encode(
-            "utf-8"
-        )
+        header = (("--%s\n" % boundary) + "\n".join(hdr) + "\n\n").encode("utf-8")
         footer = ("\n--%s--\n" % boundary).encode("utf-8")
         query = header + data + footer
         contentType = "multipart/form-data; boundary=%s" % boundary

@@ -3,17 +3,18 @@
 #
 
 import os
+from pytest import raises
 
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne_test import MnemosyneTest
-from pytest import raises
 
 filename = None
 last_error = None
 
 
 class Widget(MainWidget):
+
     def show_information(self, s1):
         raise NotImplementedError
 
@@ -26,6 +27,7 @@ class Widget(MainWidget):
 
 
 class TestPlugin(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
         self.mnemosyne = Mnemosyne(
@@ -44,16 +46,14 @@ class TestPlugin(MnemosyneTest):
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
     def test_1(self):
         with raises(AssertionError):
             from mnemosyne.libmnemosyne.plugin import Plugin
 
-            Plugin(self.mnemosyne.component_manager)
+            p = Plugin(self.mnemosyne.component_manager)
 
     def test_2(self):
 
@@ -158,11 +158,9 @@ class TestPlugin(MnemosyneTest):
 
     def test_4(self):
 
-        from mnemosyne.libmnemosyne.card_types.front_to_back import FrontToBack
         from mnemosyne.libmnemosyne.plugin import Plugin
-        from mnemosyne.pyqt_ui.card_type_wdgt_generic import (
-            GenericCardTypeWdgt,
-        )
+        from mnemosyne.libmnemosyne.card_types.front_to_back import FrontToBack
+        from mnemosyne.pyqt_ui.card_type_wdgt_generic import GenericCardTypeWdgt
 
         class RedGenericCardTypeWdgt(GenericCardTypeWdgt):
 
@@ -210,9 +208,7 @@ class TestPlugin(MnemosyneTest):
 
     def test_install_plugin(self):
         global filename
-        filename = os.path.join(
-            os.getcwd(), "tests", "files", "hide_toolbar.plugin"
-        )
+        filename = os.path.join(os.getcwd(), "tests", "files", "hide_toolbar.plugin")
         self.controller().install_plugin()
         assert os.path.exists(
             os.path.join(os.getcwd(), "dot_test", "plugins", "plugin_data")
@@ -231,10 +227,7 @@ class TestPlugin(MnemosyneTest):
         )
         assert not os.path.exists(
             os.path.join(
-                os.getcwd(),
-                "dot_test",
-                "plugins",
-                "HideToolbarPlugin.manifest",
+                os.getcwd(), "dot_test", "plugins", "HideToolbarPlugin.manifest"
             )
         )
         assert os.path.exists(os.path.join(os.getcwd(), "dot_test", "plugins"))

@@ -2,12 +2,11 @@
 # criterion.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.utils import rand_uuid
+from mnemosyne.libmnemosyne.component import Component
 
 
 class Criterion(Component):
-
     """Used to select a subset of cards, e.g. which cards are currently
     active, i.e. included in the review process.
 
@@ -35,7 +34,6 @@ class Criterion(Component):
         return not self.__eq__(other)
 
     def is_empty(self):
-
         """Used to prevent people from creating a criterion which can never
         contain any cards (e.g. disabling all card types).
 
@@ -44,7 +42,6 @@ class Criterion(Component):
         return False
 
     def apply_to_card(self, card):
-
         """Set the card active or not depending on the criterion. Does not
         write to the database. Called e.g. after creating, updating or
         reviewing cards, to see whether these cards should start out their
@@ -80,7 +77,6 @@ class Criterion(Component):
         pass
 
     def data_to_string(self):
-
         """Convert variables to a string for storage in the database. We don't
         use pickle here as that would make it difficult for non-Python programs
         to read the database.
@@ -93,7 +89,6 @@ class Criterion(Component):
         raise NotImplementedError
 
     def data_to_sync_string(self):
-
         """Convert variables to a string for sending across during syncing.
         Could be different from 'data_to_string', as it should use ids instead
         of _ids."""
@@ -105,7 +100,6 @@ class Criterion(Component):
 
 
 class CriterionApplier(Component):
-
     """Can be registered 'used_for' a certain Criterion to apply it in bulk to
     all the cards in the database. Is much faster than fetching each card from
     the database, calling Criterion.apply_to_card, and storing it back in the

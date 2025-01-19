@@ -2,11 +2,11 @@
 # compile_zip.py
 #
 
-import compileall
 import os
-import shutil
 import sys
+import shutil
 import zipfile
+import compileall
 
 # Replaces *.py files in a zip archive with compiled versions.
 

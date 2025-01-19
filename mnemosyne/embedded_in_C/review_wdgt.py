@@ -7,6 +7,7 @@ from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
 
 
 class ReviewWdgt(ReviewWidget):
+
     def set_question_box_visible(self, is_visible):
         _.set_question_box_visible(is_visible)
 

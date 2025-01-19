@@ -5,24 +5,24 @@
 import os
 import sys
 
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne_test import MnemosyneTest
 
 answer = None
 
 
 class Widget(MainWidget):
+
     def show_question(self, question, option0, option1, option2):
         return answer
 
 
 class TestCloze(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(
-            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
-        )
+        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -41,9 +41,7 @@ class TestCloze(MnemosyneTest):
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
         from mnemosyne.libmnemosyne.card_types.cloze import ClozePlugin
@@ -106,11 +104,7 @@ class TestCloze(MnemosyneTest):
 
         fact_data = {"text": "a_ [b_] [c_]"}
         self.controller().edit_card_and_sisters(
-            card,
-            fact_data,
-            card_type,
-            new_tag_names=["default2"],
-            correspondence=[],
+            card, fact_data, card_type, new_tag_names=["default2"], correspondence=[]
         )
 
         for c in self.database().cards_from_fact(fact):
@@ -121,11 +115,7 @@ class TestCloze(MnemosyneTest):
 
         fact_data = {"text": "a_ [b_]"}
         self.controller().edit_card_and_sisters(
-            card,
-            fact_data,
-            card_type,
-            new_tag_names=["default2"],
-            correspondence=[],
+            card, fact_data, card_type, new_tag_names=["default2"], correspondence=[]
         )
 
         for c in self.database().cards_from_fact(fact):
@@ -136,11 +126,7 @@ class TestCloze(MnemosyneTest):
 
         fact_data = {"text": "a_ [b_] [d] [e]"}
         self.controller().edit_card_and_sisters(
-            card,
-            fact_data,
-            card_type,
-            new_tag_names=["default2"],
-            correspondence=[],
+            card, fact_data, card_type, new_tag_names=["default2"], correspondence=[]
         )
 
         for c in self.database().cards_from_fact(fact):
@@ -180,7 +166,7 @@ class TestCloze(MnemosyneTest):
         card = self.controller().create_new_cards(
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
-        card.fact
+        fact = card.fact
         new_fact_data = {"text": "a [b] [c]"}
 
         new_card_type = self.card_type_with_id("5")
@@ -209,7 +195,7 @@ class TestCloze(MnemosyneTest):
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
 
-        card.fact
+        fact = card.fact
         new_fact_data = {"text": "a [b] [c]"}
 
         new_card_type = self.card_type_with_id("5")
@@ -256,11 +242,7 @@ class TestCloze(MnemosyneTest):
 
         fact_data = {"text": "[buds] [bud]"}
         self.controller().edit_card_and_sisters(
-            cards[0],
-            fact_data,
-            card_type,
-            new_tag_names=["default"],
-            correspondence={},
+            cards[0], fact_data, card_type, new_tag_names=["default"], correspondence={}
         )
         cards = self.database().cards_from_fact(fact)
 
@@ -280,11 +262,7 @@ class TestCloze(MnemosyneTest):
 
         fact_data = {"text": "[as] [bud]"}
         self.controller().edit_card_and_sisters(
-            cards[0],
-            fact_data,
-            card_type,
-            new_tag_names=["default"],
-            correspondence={},
+            cards[0], fact_data, card_type, new_tag_names=["default"], correspondence={}
         )
         cards = self.database().cards_from_fact(fact)
 
@@ -304,11 +282,7 @@ class TestCloze(MnemosyneTest):
 
         fact_data = {"text": "[buds] [a]"}
         self.controller().edit_card_and_sisters(
-            cards[0],
-            fact_data,
-            card_type,
-            new_tag_names=["default"],
-            correspondence={},
+            cards[0], fact_data, card_type, new_tag_names=["default"], correspondence={}
         )
         cards = self.database().cards_from_fact(fact)
 
@@ -326,11 +300,7 @@ class TestCloze(MnemosyneTest):
 
         fact_data = {"text": "[consumerism]"}
         self.controller().edit_card_and_sisters(
-            cards[0],
-            fact_data,
-            card_type,
-            new_tag_names=["default"],
-            correspondence={},
+            cards[0], fact_data, card_type, new_tag_names=["default"], correspondence={}
         )
         cards = self.database().cards_from_fact(fact)
 
@@ -401,10 +371,7 @@ third in 2008"""
         answer = 0  # OK
 
         self.controller().change_card_type(
-            [fact],
-            card_type,
-            self.card_type_with_id("1"),
-            correspondence={"text": "f"},
+            [fact], card_type, self.card_type_with_id("1"), correspondence={"text": "f"}
         )
 
         fact = self.database().fact(fact._id, is_id_internal=True)
@@ -425,10 +392,7 @@ third in 2008"""
         answer = 1  # cancel
 
         self.controller().change_card_type(
-            [fact],
-            card_type,
-            self.card_type_with_id("1"),
-            correspondence={"text": "f"},
+            [fact], card_type, self.card_type_with_id("1"), correspondence={"text": "f"}
         )
 
         fact = self.database().fact(fact._id, is_id_internal=True)

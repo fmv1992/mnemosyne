@@ -6,14 +6,12 @@ import inspect
 
 
 class UDP_Widget(object):
-
     """Common code for main_widget and review_widget to communicate
     callbacks to the client and get results back.
 
     """
 
     def callback(self, *args):
-
         """Create a string to pass to the UDP client to identify which
         function it needs to call and with which arguments, e.g.
 

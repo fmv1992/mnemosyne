@@ -2,8 +2,9 @@
 # lock_down.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.plugin import Plugin
 from PyQt6 import QtWidgets
+
+from mnemosyne.libmnemosyne.plugin import Plugin
 
 
 class LockDownPlugin(Plugin):

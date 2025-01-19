@@ -2,12 +2,14 @@
 # review_wdgt_cramming.py <Peter.Bienstman@gmail.com>
 #
 
+from PyQt6 import QtCore, QtWidgets, QtGui
+
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.pyqt_ui.review_wdgt import ReviewWdgt
-from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 class ReviewWdgtCramming(ReviewWdgt):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.grade_0_button.setText(_("Wrong"))
@@ -56,11 +58,7 @@ class ReviewWdgtCramming(ReviewWdgt):
         super().keyPressEvent(event)
 
     def update_status_bar_counters(self):
-        (
-            wrong_count,
-            unseen_count,
-            active_count,
-        ) = self.review_controller().counters()
+        wrong_count, unseen_count, active_count = self.review_controller().counters()
         self.wrong.setText(_("Wrong:") + " %d " % wrong_count)
         self.unseen.setText(_("Unseen:") + " %d " % unseen_count)
         self.active.setText(_("Active:") + " %d " % active_count)

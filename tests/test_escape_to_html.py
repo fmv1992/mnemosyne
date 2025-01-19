@@ -6,6 +6,7 @@ from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
 
 
 class TestEscapeToHtml:
+
     def test_1(self):
         in_string = "<1"
         out_string = "&lt;1"

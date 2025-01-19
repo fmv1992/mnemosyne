@@ -3,15 +3,15 @@
 #
 
 import os
-
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne_test import MnemosyneTest
 
 last_error = ""
 
 
 class Widget(MainWidget):
+
     def show_error(self, message):
         global last_error
         last_error = message
@@ -30,6 +30,7 @@ class Widget(MainWidget):
 
 
 class TestTsvImport(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
         self.mnemosyne = Mnemosyne(
@@ -48,9 +49,7 @@ class TestTsvImport(MnemosyneTest):
             ("mnemosyne_test", "TestReviewWidget")
         ]
         self.mnemosyne.components.append(("test_tsv_import", "Widget"))
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
     def tsv_importer(self):
@@ -89,18 +88,14 @@ class TestTsvImport(MnemosyneTest):
 
     def test_4(self):
         global last_error
-        filename = os.path.join(
-            os.getcwd(), "tests", "files", "word_import.txt"
-        )
+        filename = os.path.join(os.getcwd(), "tests", "files", "word_import.txt")
         self.tsv_importer().do_import(filename, "extra_tag_name")
         assert self.database().card_count() == 5
         assert last_error == ""
 
     def test_5(self):
         global last_error
-        filename = os.path.join(
-            os.getcwd(), "tests", "files", "excel_import.txt"
-        )
+        filename = os.path.join(os.getcwd(), "tests", "files", "excel_import.txt")
         self.tsv_importer().do_import(filename, "extra_tag_name")
         assert self.database().card_count() == 5
         assert last_error == ""
@@ -136,17 +131,13 @@ class TestTsvImport(MnemosyneTest):
 
     def test_media(self):
         global last_error
-        open(
-            os.path.join(os.getcwd(), "dot_test", "default.db_media", "a.png"),
-            "w",
-        )
+        open(os.path.join(os.getcwd(), "dot_test", "default.db_media", "a.png"), "w")
         filename = os.path.join(os.getcwd(), "tests", "files", "tsv_media.txt")
         self.tsv_importer().do_import(filename)
         assert self.database().card_count() == 2
         assert (
             self.database().card_count_for_tags(
-                [self.database().get_or_create_tag_with_name("MISSING_MEDIA")],
-                False,
+                [self.database().get_or_create_tag_with_name("MISSING_MEDIA")], False
             )
             == 1
         )
@@ -156,14 +147,10 @@ class TestTsvImport(MnemosyneTest):
         card = self.controller().create_new_cards(
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
-        self.tsv_importer().do_export(
-            os.path.join(os.getcwd(), "dot_test", "test.txt")
-        )
+        self.tsv_importer().do_export(os.path.join(os.getcwd(), "dot_test", "test.txt"))
 
     def teardown_method(self):
-        filename = os.path.join(
-            os.getcwd(), "dot_test", "default.db_media", "a.png"
-        )
+        filename = os.path.join(os.getcwd(), "dot_test", "default.db_media", "a.png")
         if os.path.exists(filename):
             os.remove(filename)
         filename = os.path.join(os.getcwd(), "dot_test", "test.txt")

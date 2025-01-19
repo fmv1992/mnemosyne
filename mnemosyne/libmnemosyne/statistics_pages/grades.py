@@ -3,8 +3,8 @@
 #
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.statistics_page import PlotStatisticsPage
 from mnemosyne.libmnemosyne.tag_tree import TagTree
+from mnemosyne.libmnemosyne.statistics_page import PlotStatisticsPage
 
 
 class Grades(PlotStatisticsPage):

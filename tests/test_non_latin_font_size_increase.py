@@ -6,6 +6,7 @@ from mnemosyne_test import MnemosyneTest
 
 
 class TestNonLatinFontSizeIncrease(MnemosyneTest):
+
     def test_1(self):
         fact_data = {"f": "question " + chr(40960), "b": "answer"}
         card_type = self.card_type_with_id("1")

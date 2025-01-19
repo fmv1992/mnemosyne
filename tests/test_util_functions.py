@@ -3,17 +3,11 @@
 #
 
 
-from mnemosyne.libmnemosyne.utils import (
-    contract_path,
-    copy_file_to_dir,
-    is_filesystem_case_insensitive,
-    mangle,
-    numeric_string_cmp_key,
-    strip_tags,
-)
+from mnemosyne.libmnemosyne.utils import *
 
 
 class TestUtilFunctions(object):
+
     def test_numeric_string_cmp_1(self):
         s1 = "abc123"
         s2 = "abc1000"
@@ -64,13 +58,8 @@ class TestUtilFunctions(object):
     def test_copy(self):
         assert copy_file_to_dir("/home/joe/test.py", "/home/joe") == "test.py"
         assert copy_file_to_dir("/home/joe/test.py", "/home/joe/") == "test.py"
-        assert (
-            copy_file_to_dir("/home/joe/a/test.py", "/home/joe") == "a/test.py"
-        )
-        assert (
-            copy_file_to_dir("/home/joe/a/test.py", "/home/joe/")
-            == "a/test.py"
-        )
+        assert copy_file_to_dir("/home/joe/a/test.py", "/home/joe") == "a/test.py"
+        assert copy_file_to_dir("/home/joe/a/test.py", "/home/joe/") == "a/test.py"
 
     def test_strip_tags(self):
         assert strip_tags("""<img = "">""") == ""

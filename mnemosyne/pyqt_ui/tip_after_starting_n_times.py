@@ -2,13 +2,12 @@
 # tip_after_starting_n_times.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.pyqt_ui.tip_dlg import TipDlg
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
 
 
 class TipAfterStartingNTimes(Component):
-
     """Mixin class to show different tips after opening a dialog N times.
 
     'started_n_times_counter' is a string to be used in config to keep track

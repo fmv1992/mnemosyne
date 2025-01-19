@@ -8,7 +8,6 @@ from mnemosyne.libmnemosyne.filter import Filter
 
 
 class RTLHandler(Filter):
-
     """Handle RTL for Arabic and Hebrew text, such that e.g. punctuation
     comes out alright.
 

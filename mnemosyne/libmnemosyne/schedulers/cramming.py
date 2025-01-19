@@ -34,9 +34,7 @@ class Cramming(SM2Mnemosyne):
         if not db.is_loaded() or not db.active_count():
             return
         max_ret_reps = (
-            self.config()["max_ret_reps_for_recent_cards"]
-            if self.new_only
-            else -1
+            self.config()["max_ret_reps_for_recent_cards"] if self.new_only else -1
         )
         if self.new_only and db.recently_memorised_count(max_ret_reps) == 0:
             return
@@ -55,10 +53,7 @@ class Cramming(SM2Mnemosyne):
         # Stage 1: do all the unseen cards.
         if self.stage == 1:
             for _card_id, _fact_id in db.cards_with_scheduler_data(
-                self.UNSEEN,
-                sort_key=sort_key,
-                limit=25,
-                max_ret_reps=max_ret_reps,
+                self.UNSEEN, sort_key=sort_key, limit=25, max_ret_reps=max_ret_reps
             ):
                 if _fact_id not in self._fact_ids_in_queue:
                     self._card_ids_in_queue.append(_card_id)
@@ -69,10 +64,7 @@ class Cramming(SM2Mnemosyne):
         # Stage 2: do the cards we got wrong.
         if self.stage == 2:
             for _card_id, _fact_id in db.cards_with_scheduler_data(
-                self.WRONG,
-                sort_key=sort_key,
-                limit=25,
-                max_ret_reps=max_ret_reps,
+                self.WRONG, sort_key=sort_key, limit=25, max_ret_reps=max_ret_reps
             ):
                 if _fact_id not in self._fact_ids_in_queue:
                     self._card_ids_in_queue.append(_card_id)

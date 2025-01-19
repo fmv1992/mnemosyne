@@ -3,21 +3,18 @@
 #
 
 import re
-import urllib.error
-import urllib.parse
 import urllib.request
+import urllib.parse
+import urllib.error
 
 from mnemosyne.libmnemosyne.filter import Filter
 
-re_audio = re.compile(
-    r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE
-)
+re_audio = re.compile(r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE)
 re_start = re.compile(r"""start=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 re_stop = re.compile(r"""stop=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 
 
 class JQueryMbHtml5Audio(Filter):
-
     """Audio system based on
 
     http://pupunzi.open-lab.com/2013/03/13/making-html5-audio-actually-work-on-mobile/
@@ -39,9 +36,7 @@ class JQueryMbHtml5Audio(Filter):
         sound_files = ""
         play_command = ""
         for match in re_audio.finditer(text):
-            filename = urllib.parse.quote(
-                match.group(1).encode("utf-8"), safe="/:"
-            )
+            filename = urllib.parse.quote(match.group(1).encode("utf-8"), safe="/:")
             id = filename.split(".", 1)[0].replace("/", "")
             start, stop = 0, 2
             if match.group(2):
@@ -67,11 +62,7 @@ class JQueryMbHtml5Audio(Filter):
                 stop,
             )
             play_command += (
-                """$.mbAudio.queue.add("""
-                + '"'
-                + id
-                + '"'
-                + ""","snippet");"""
+                """$.mbAudio.queue.add(""" + '"' + id + '"' + ""","snippet");"""
             )
             text = text.replace(match.group(0), "")
         text = (

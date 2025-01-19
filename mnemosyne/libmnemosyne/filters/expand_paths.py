@@ -9,7 +9,6 @@ from mnemosyne.libmnemosyne.utils import expand_path
 
 
 class ExpandPaths(Filter):
-
     """Fill out relative paths for src tags (e.g. img src or sound src)."""
 
     def run(self, text, card, fact_key, **render_args):
@@ -44,7 +43,6 @@ class ExpandPaths(Filter):
         # in javascript.
         if "db_media:///" in text:
             text = text.replace(
-                "db_media:///",
-                self.database().media_dir().replace("\\", "/") + "/",
+                "db_media:///", self.database().media_dir().replace("\\", "/") + "/"
             )
         return text

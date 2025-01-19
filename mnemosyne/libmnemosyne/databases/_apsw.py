@@ -9,13 +9,14 @@
 
 import os
 import sys
-
 import apsw
-from mnemosyne.libmnemosyne.component import Component
+
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
 
 
 class _APSWCursor(object):
+
     def __init__(self, cursor):
         self.cursor = cursor
 

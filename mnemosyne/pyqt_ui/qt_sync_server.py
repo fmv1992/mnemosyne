@@ -2,14 +2,15 @@
 # qt_sync_server.py <Peter.Bienstman@gmail.com>
 #
 
-import socket
 import sys
+import socket
 
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.sync_server import SyncServer
-from mnemosyne.libmnemosyne.utils import traceback_string
 from PyQt6 import QtCore
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.utils import traceback_string
+from mnemosyne.libmnemosyne.sync_server import SyncServer
 
 # The following is some thread synchronisation machinery to ensure that
 # either the sync server thread or the main thread is doing database
@@ -22,7 +23,6 @@ database_released = QtCore.QWaitCondition()
 
 
 class ServerThread(QtCore.QThread, SyncServer):
-
     """When a sync request comes in, the main thread will release the
     database connection, which will be recreated in the server thread. After
     the sync is finished, the server thread will release the database
@@ -194,9 +194,7 @@ class QtSyncServer(Component, QtCore.QObject):
             # Restart the thread to have the new settings take effect.
             self.deactivate()
             try:
-                self.thread = ServerThread(
-                    component_manager=self.component_manager
-                )
+                self.thread = ServerThread(component_manager=self.component_manager)
             except socket.error as exception:
                 (errno, e) = exception.args
                 if errno == 98:
@@ -215,9 +213,7 @@ class QtSyncServer(Component, QtCore.QObject):
                     self.main_widget().show_error(
                         _("Unable to start sync server.")
                         + " "
-                        + _(
-                            "You don't have the permission to use the requested port."
-                        )
+                        + _("You don't have the permission to use the requested port.")
                     )
                     self.thread = None
                     return
@@ -225,9 +221,7 @@ class QtSyncServer(Component, QtCore.QObject):
                     raise e
             self.thread.sync_started_signal.connect(self.unload_database)
             self.thread.sync_ended_signal.connect(self.load_database)
-            self.thread.information_signal.connect(
-                self.threaded_show_information
-            )
+            self.thread.information_signal.connect(self.threaded_show_information)
             self.thread.error_signal.connect(self.threaded_show_error)
             self.thread.question_signal.connect(self.threaded_show_question)
             self.thread.set_progress_text_signal.connect(
@@ -272,7 +266,7 @@ class QtSyncServer(Component, QtCore.QObject):
         mutex.lock()
         try:
             self.database().load(self.config()["last_database"])
-        except Exception as e:  # Database locked in server thread.
+        except Exception:  # Database locked in server thread.
             database_released.wait(mutex)
             self.database().load(self.config()["last_database"])
         self.log().loaded_database()

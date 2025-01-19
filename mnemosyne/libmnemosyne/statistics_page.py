@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class StatisticsPage(Component):
-
     """A self-contained piece of statistical information, typically displayed
     in the GUI as a page in a tabbed widget.
 
@@ -32,7 +31,6 @@ class StatisticsPage(Component):
         Component.__init__(self, component_manager)
 
     def prepare_statistics(self, variant_id):
-
         """This method calculates the data for the requested variant and sets
         the approriate hints to be picked up by the corresponding widget.
 
@@ -42,7 +40,6 @@ class StatisticsPage(Component):
 
 
 class PlotStatisticsPage(StatisticsPage):
-
     """A statistics page where the data is represented on a graphical plot."""
 
     def __init__(self, component_manager):
@@ -52,7 +49,6 @@ class PlotStatisticsPage(StatisticsPage):
 
 
 class HtmlStatisticsPage(StatisticsPage):
-
     """A statistics page which generates html to displayed in a browser
     widget.
 

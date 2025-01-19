@@ -2,12 +2,14 @@
 # add_tags_dlg.py <Peter.Bienstman@gmail.com>
 #
 
+from PyQt6 import QtCore, QtWidgets
+
 from mnemosyne.pyqt_ui.add_cards_dlg import AddEditCards
 from mnemosyne.pyqt_ui.ui_add_tags_dlg import Ui_AddTagsDlg
-from PyQt6 import QtCore, QtWidgets
 
 
 class AddTagsDlg(QtWidgets.QDialog, AddEditCards, Ui_AddTagsDlg):
+
     def __init__(self, return_values, **kwds):
 
         super().__init__(**kwds)
@@ -16,8 +18,7 @@ class AddTagsDlg(QtWidgets.QDialog, AddEditCards, Ui_AddTagsDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.return_values = return_values
         self.update_tags_combobox("")

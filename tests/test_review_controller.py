@@ -5,21 +5,20 @@
 import os
 import sys
 
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
 from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
-from mnemosyne_test import MnemosyneTest
 
 expected_scheduled_count = None
 
 
 class MyReviewWidget(ReviewWidget):
+
     def update_status_bar_counters(self):
-        (
-            scheduled_count,
-            non_memorised_count,
-            active_count,
-        ) = self.review_controller().counters()
+        scheduled_count, non_memorised_count, active_count = (
+            self.review_controller().counters()
+        )
         if expected_scheduled_count is not None:
             assert scheduled_count == expected_scheduled_count
 
@@ -28,13 +27,12 @@ class MyReviewWidget(ReviewWidget):
 
 
 class TestReviewController(MnemosyneTest):
+
     def setup_method(self):
         global expected_scheduled_count
         expected_scheduled_count = None
         self.initialise_data_dir()
-        path = os.path.join(
-            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
-        )
+        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -58,9 +56,7 @@ class TestReviewController(MnemosyneTest):
         self.mnemosyne.components.append(
             ("mnemosyne.libmnemosyne.ui_components.dialogs", "EditCardDialog")
         )
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
     def test_1(self):

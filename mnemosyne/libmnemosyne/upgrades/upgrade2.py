@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Upgrade2(Component):
-
     """Upgrade to SQL format 2, making sure card ids are unique."""
 
     def run(self):
@@ -15,7 +14,7 @@ class Upgrade2(Component):
             "select _id, id from cards order by _id"
         ):
             _id, id = cursor
-            if not id in cards_with_id:
+            if id not in cards_with_id:
                 cards_with_id[id] = []
             cards_with_id[id].append(_id)
         for id in cards_with_id:

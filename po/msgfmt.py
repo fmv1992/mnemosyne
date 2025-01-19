@@ -24,33 +24,33 @@ Options:
         Display version information and exit.
 """
 
-import array
+import os
+import sys
 import ast
 import getopt
-import os
 import struct
-import sys
+import array
 from email.parser import HeaderParser
 
 __version__ = "1.1"
 
 MESSAGES = {}
 
-
+
 def usage(code, msg=""):
     print(__doc__, file=sys.stderr)
     if msg:
         print(msg, file=sys.stderr)
     sys.exit(code)
 
-
+
 def add(id, str, fuzzy):
     "Add a non-fuzzy translation to the dictionary."
     global MESSAGES
     if not fuzzy and str:
         MESSAGES[id] = str
 
-
+
 def generate():
     "Return the generated output."
     global MESSAGES
@@ -94,7 +94,7 @@ def generate():
     output += strs
     return output
 
-
+
 def make(filename, outfile):
     ID = 1
     STR = 2
@@ -143,9 +143,7 @@ def make(filename, outfile):
                 if not msgid:
                     # See whether there is an encoding declaration
                     p = HeaderParser()
-                    charset = p.parsestr(
-                        msgstr.decode(encoding)
-                    ).get_content_charset()
+                    charset = p.parsestr(msgstr.decode(encoding)).get_content_charset()
                     if charset:
                         encoding = charset
             section = ID
@@ -156,8 +154,7 @@ def make(filename, outfile):
         elif l.startswith("msgid_plural"):
             if section != ID:
                 print(
-                    "msgid_plural not preceded by msgid on %s:%d"
-                    % (infile, lno),
+                    "msgid_plural not preceded by msgid on %s:%d" % (infile, lno),
                     file=sys.stderr,
                 )
                 sys.exit(1)
@@ -180,8 +177,7 @@ def make(filename, outfile):
             else:
                 if is_plural:
                     print(
-                        "indexed msgstr required for plural on  %s:%d"
-                        % (infile, lno),
+                        "indexed msgstr required for plural on  %s:%d" % (infile, lno),
                         file=sys.stderr,
                     )
                     sys.exit(1)
@@ -196,11 +192,7 @@ def make(filename, outfile):
         elif section == STR:
             msgstr += l.encode(encoding)
         else:
-            print(
-                "Syntax error on %s:%d" % (infile, lno),
-                "before:",
-                file=sys.stderr,
-            )
+            print("Syntax error on %s:%d" % (infile, lno), "before:", file=sys.stderr)
             print(l, file=sys.stderr)
             sys.exit(1)
     # Add last entry
@@ -215,7 +207,7 @@ def make(filename, outfile):
     except IOError as msg:
         print(msg, file=sys.stderr)
 
-
+
 def main():
     try:
         opts, args = getopt.getopt(

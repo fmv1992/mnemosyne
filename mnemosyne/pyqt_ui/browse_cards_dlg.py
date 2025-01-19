@@ -2,23 +2,24 @@
 # browse_cards_dlg.py <Peter.Bienstman@gmail.com>
 #
 
-import locale
 import sys
 import time
+import locale
 
-from mnemosyne.libmnemosyne.card import Card
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
-from mnemosyne.libmnemosyne.fact import Fact
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.tag import Tag
-from mnemosyne.libmnemosyne.ui_components.dialogs import BrowseCardsDialog
-from mnemosyne.pyqt_ui.card_type_tree_wdgt import CardTypesTreeWdgt
-from mnemosyne.pyqt_ui.convert_card_type_keys_dlg import ConvertCardTypeKeysDlg
-from mnemosyne.pyqt_ui.tag_tree_wdgt import TagsTreeWdgt
-from mnemosyne.pyqt_ui.tip_after_starting_n_times import TipAfterStartingNTimes
-from mnemosyne.pyqt_ui.ui_browse_cards_dlg import Ui_BrowseCardsDlg
 from PyQt6 import QtCore, QtGui, QtSql, QtWidgets
+
+from mnemosyne.libmnemosyne.tag import Tag
+from mnemosyne.libmnemosyne.fact import Fact
+from mnemosyne.libmnemosyne.card import Card
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.pyqt_ui.tag_tree_wdgt import TagsTreeWdgt
+from mnemosyne.pyqt_ui.ui_browse_cards_dlg import Ui_BrowseCardsDlg
+from mnemosyne.pyqt_ui.card_type_tree_wdgt import CardTypesTreeWdgt
+from mnemosyne.libmnemosyne.ui_components.dialogs import BrowseCardsDialog
+from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
+from mnemosyne.pyqt_ui.convert_card_type_keys_dlg import ConvertCardTypeKeysDlg
+from mnemosyne.pyqt_ui.tip_after_starting_n_times import TipAfterStartingNTimes
 
 _ID = 0
 ID = 1
@@ -45,6 +46,7 @@ ACTIVE = 21
 
 
 class CardModel(QtSql.QSqlTableModel, Component):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.search_string = ""
@@ -56,20 +58,16 @@ class CardModel(QtSql.QSqlTableModel, Component):
         self.background_colour_for_card_type_id = {}
         for card_type_id, rgb in self.config()["background_colour"].items():
             # If the card type has been deleted since, don't bother.
-            if not card_type_id in self.component_manager.card_type_with_id:
+            if card_type_id not in self.component_manager.card_type_with_id:
                 continue
-            self.background_colour_for_card_type_id[
-                card_type_id
-            ] = QtGui.QColor(rgb)
+            self.background_colour_for_card_type_id[card_type_id] = QtGui.QColor(rgb)
         self.font_colour_for_card_type_id = {}
         for card_type_id in self.config()["font_colour"]:
-            if not card_type_id in self.component_manager.card_type_with_id:
+            if card_type_id not in self.component_manager.card_type_with_id:
                 continue
             if not self.card_type_with_id(card_type_id).fact_keys_and_names:
                 continue  # M-sided card type.
-            first_key = self.card_type_with_id(
-                card_type_id
-            ).fact_keys_and_names[0][0]
+            first_key = self.card_type_with_id(card_type_id).fact_keys_and_names[0][0]
             self.font_colour_for_card_type_id[card_type_id] = QtGui.QColor(
                 self.config()["font_colour"][card_type_id][first_key]
             )
@@ -96,9 +94,10 @@ class CardModel(QtSql.QSqlTableModel, Component):
                     .color(QtGui.QPalette.ColorRole.Base)
                 )
         column = index.column()
-        if (
-            role == QtCore.Qt.ItemDataRole.TextAlignmentRole
-            and column not in (QUESTION, ANSWER, TAGS)
+        if role == QtCore.Qt.ItemDataRole.TextAlignmentRole and column not in (
+            QUESTION,
+            ANSWER,
+            TAGS,
         ):
             return QtCore.QVariant(QtCore.Qt.AlignmentFlag.AlignCenter)
         if role == QtCore.Qt.ItemDataRole.FontRole and column not in (
@@ -153,7 +152,6 @@ class CardModel(QtSql.QSqlTableModel, Component):
 
 
 class QA_Delegate(QtWidgets.QStyledItemDelegate, Component):
-
     """Uses webview to render the questions and answers."""
 
     # Unfortunately, due to the port from Webkit in Qt4 to Webengine in Qt5
@@ -336,9 +334,7 @@ class QA_Delegate(QtWidgets.QStyledItemDelegate, Component):
                 )
             )
         self.doc.setStyleSheet("background:transparent")
-        self.doc.setAttribute(
-            QtCore.Qt.WidgetAttribute.WA_TranslucentBackground
-        )
+        self.doc.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
         self.doc.show()
         while not self.load_finished:
             QtWidgets.QApplication.instance().processEvents(
@@ -356,10 +352,8 @@ class QA_Delegate(QtWidgets.QStyledItemDelegate, Component):
                 QtWidgets.QPalette.ColorRole.Highlight,
             )
         else:
-            background_colour = (
-                index.model().background_colour_for_card_type_id.get(
-                    card.card_type.id, None
-                )
+            background_colour = index.model().background_colour_for_card_type_id.get(
+                card.card_type.id, None
             )
         if background_colour:
             painter.fillRect(rect, background_colour)
@@ -367,28 +361,19 @@ class QA_Delegate(QtWidgets.QStyledItemDelegate, Component):
         painter.translate(rect.topLeft())
         painter.setClipRect(rect.translated(-rect.topLeft()))
         self.doc.setStyleSheet("background:transparent")
-        self.doc.setAttribute(
-            QtCore.Qt.WidgetAttribute.WA_TranslucentBackground
-        )
+        self.doc.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
         self.doc.render(painter)
         painter.restore()
 
 
 class BrowseCardsDlg(
-    QtWidgets.QDialog,
-    BrowseCardsDialog,
-    TipAfterStartingNTimes,
-    Ui_BrowseCardsDlg,
+    QtWidgets.QDialog, BrowseCardsDialog, TipAfterStartingNTimes, Ui_BrowseCardsDlg
 ):
 
     started_n_times_counter = "started_browse_cards_n_times"
     tip_after_n_times = {
-        3: _(
-            "Right-click on a tag name in the card browser to edit or delete it."
-        ),
-        6: _(
-            "Double-click on a card or tag name in the card browser to edit them."
-        ),
+        3: _("Right-click on a tag name in the card browser to edit or delete it."),
+        6: _("Double-click on a card or tag name in the card browser to edit them."),
         9: _(
             "You can reorder columns in the card browser by dragging the header label."
         ),
@@ -404,9 +389,7 @@ class BrowseCardsDlg(
         21: _(
             "In the search box, you can use SQL wildcards like _ (matching a single character) and % (matching one or more characters)."
         ),
-        24: _(
-            "Cards with strike-through text are inactive in the current set."
-        ),
+        24: _("Cards with strike-through text are inactive in the current set."),
     }
 
     def __init__(self, **kwds):
@@ -417,8 +400,7 @@ class BrowseCardsDlg(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags()
-            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.saved_row = None
         self.selected_rows = []
@@ -452,9 +434,7 @@ class BrowseCardsDlg(
             component_manager=kwds["component_manager"],
             parent=self.container_2,
         )
-        self.tag_tree_wdgt.tags_changed_signal.connect(
-            self.reload_database_and_redraw
-        )
+        self.tag_tree_wdgt.tags_changed_signal.connect(self.reload_database_and_redraw)
         self.layout_2.addWidget(self.tag_tree_wdgt)
         self.label_3 = QtWidgets.QLabel(
             _("containing this text in the cards:"), self.container_2
@@ -480,15 +460,11 @@ class BrowseCardsDlg(
         self.card_model.setFilter("cards.active=1")
         self.card_model.select()
         self.update_card_counters()
-        self.card_type_tree_wdgt.tree_wdgt.itemClicked.connect(
-            self.update_filter
-        )
+        self.card_type_tree_wdgt.tree_wdgt.itemClicked.connect(self.update_filter)
         self.tag_tree_wdgt.tree_wdgt.itemClicked.connect(self.update_filter)
         self.any_all_tags.currentTextChanged.connect(self.update_filter)
         # Context menu.
-        self.table.setContextMenuPolicy(
-            QtCore.Qt.ContextMenuPolicy.CustomContextMenu
-        )
+        self.table.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.table.customContextMenuRequested.connect(self.context_menu)
         # Restore state.
         state = self.config()["browse_cards_dlg_state"]
@@ -590,10 +566,7 @@ class BrowseCardsDlg(
             and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
         ):
             self.search_box.setFocus()
-        elif event.key() in [
-            QtCore.Qt.Key.Key_Delete,
-            QtCore.Qt.Key.Key_Backspace,
-        ]:
+        elif event.key() in [QtCore.Qt.Key.Key_Delete, QtCore.Qt.Key.Key_Backspace]:
             self.menu_delete()
         else:
             QtWidgets.QDialog.keyPressEvent(self, event)
@@ -603,9 +576,7 @@ class BrowseCardsDlg(
         if len(selected_rows) == 0:
             return []
         index = selected_rows[0]
-        _fact_id_index = index.model().index(
-            index.row(), _FACT_ID, index.parent()
-        )
+        _fact_id_index = index.model().index(index.row(), _FACT_ID, index.parent())
         _fact_id = index.model().data(_fact_id_index)
         fact = self.database().fact(_fact_id, is_id_internal=True)
         return self.database().cards_from_fact(fact)
@@ -613,9 +584,7 @@ class BrowseCardsDlg(
     def facts_from_selection(self):
         _fact_ids = set()
         for index in self.table.selectionModel().selectedRows():
-            _fact_id_index = index.model().index(
-                index.row(), _FACT_ID, index.parent()
-            )
+            _fact_id_index = index.model().index(index.row(), _FACT_ID, index.parent())
             _fact_id = index.model().data(_fact_id_index)
             _fact_ids.add(_fact_id)
         facts = []
@@ -626,9 +595,7 @@ class BrowseCardsDlg(
     def _card_ids_from_selection(self):
         _card_ids = set()
         for index in self.table.selectionModel().selectedRows():
-            _card_id_index = index.model().index(
-                index.row(), _ID, index.parent()
-            )
+            _card_id_index = index.model().index(index.row(), _ID, index.parent())
             _card_id = index.model().data(_card_id_index)
             _card_ids.add(_card_id)
         return _card_ids
@@ -695,17 +662,12 @@ class BrowseCardsDlg(
         cards = self.sister_cards_from_single_selection()
         tag_text = cards[0].tag_string()
         self.preview_dlg = PreviewCardsDlg(
-            cards,
-            tag_text,
-            component_manager=self.component_manager,
-            parent=self,
+            cards, tag_text, component_manager=self.component_manager, parent=self
         )
         self.preview_dlg.page_up_down_signal.connect(self.page_up_down_preview)
         self.preview_dlg.exec()
         # Avoid multiple connections.
-        self.preview_dlg.page_up_down_signal.disconnect(
-            self.page_up_down_preview
-        )
+        self.preview_dlg.page_up_down_signal.disconnect(self.page_up_down_preview)
 
     def page_up_down_preview(self, up_down):
         from mnemosyne.pyqt_ui.preview_cards_dlg import PreviewCardsDlg
@@ -736,9 +698,7 @@ class BrowseCardsDlg(
             return
         _fact_ids = set()
         for index in self.table.selectionModel().selectedRows():
-            _fact_id_index = index.model().index(
-                index.row(), _FACT_ID, index.parent()
-            )
+            _fact_id_index = index.model().index(index.row(), _FACT_ID, index.parent())
             _fact_id = index.model().data(_fact_id_index)
             _fact_ids.add(_fact_id)
         facts = []
@@ -783,9 +743,7 @@ class BrowseCardsDlg(
         new_card_type = return_values["new_card_type"]
         # Get correspondence.
         self.correspondence = {}
-        if not current_card_type.fact_keys().issubset(
-            new_card_type.fact_keys()
-        ):
+        if not current_card_type.fact_keys().issubset(new_card_type.fact_keys()):
             dlg = ConvertCardTypeKeysDlg(
                 current_card_type,
                 new_card_type,
@@ -818,9 +776,7 @@ class BrowseCardsDlg(
         from mnemosyne.pyqt_ui.add_tags_dlg import AddTagsDlg
 
         dlg = AddTagsDlg(
-            return_values,
-            component_manager=self.component_manager,
-            parent=self,
+            return_values, component_manager=self.component_manager, parent=self
         )
         if dlg.exec() != QtWidgets.QDialog.DialogCode.Accepted:
             return
@@ -859,18 +815,14 @@ class BrowseCardsDlg(
             if not tag_name:
                 continue
             tag = self.database().get_or_create_tag_with_name(tag_name)
-            self.database().remove_tag_from_cards_with_internal_ids(
-                tag, _card_ids
-            )
+            self.database().remove_tag_from_cards_with_internal_ids(tag, _card_ids)
         self.tag_tree_wdgt.rebuild()
         self.load_qt_database()
         self.display_card_table()
 
     def menu_reset(self):
         answer = self.main_widget().show_question(
-            _(
-                "Reset history of selected cards? Sister cards will be reset as well."
-            ),
+            _("Reset history of selected cards? Sister cards will be reset as well."),
             _("&OK"),
             _("&Cancel"),
             "",
@@ -879,9 +831,7 @@ class BrowseCardsDlg(
             return
         _fact_ids = set()
         for index in self.table.selectionModel().selectedRows():
-            _fact_id_index = index.model().index(
-                index.row(), _FACT_ID, index.parent()
-            )
+            _fact_id_index = index.model().index(index.row(), _FACT_ID, index.parent())
             _fact_id = index.model().data(_fact_id_index)
             _fact_ids.add(_fact_id)
         facts = []
@@ -901,9 +851,7 @@ class BrowseCardsDlg(
         qt_db.setDatabaseName(self.database().path())
         if not qt_db.open():
             QtWidgets.QMessageBox.warning(
-                None,
-                _("Mnemosyne"),
-                _("Database error: ") + qt_db.lastError().text(),
+                None, _("Mnemosyne"), _("Database error: ") + qt_db.lastError().text()
             )
             sys.exit(1)
 
@@ -967,9 +915,7 @@ class BrowseCardsDlg(
         )
         self.table.setItemDelegateForColumn(
             ANSWER,
-            QA_Delegate(
-                ANSWER, component_manager=self.component_manager, parent=self
-            ),
+            QA_Delegate(ANSWER, component_manager=self.component_manager, parent=self),
         )
         self.table.setEditTriggers(
             QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers
@@ -992,12 +938,11 @@ class BrowseCardsDlg(
             saved_index = self.card_model.index(self.saved_row, QUESTION)
             self.table.scrollTo(saved_index)
             self.table.scrollTo(
-                saved_index,
-                QtWidgets.QAbstractItemView.ScrollHint.PositionAtTop,
+                saved_index, QtWidgets.QAbstractItemView.ScrollHint.PositionAtTop
             )
         if self.selected_rows:
             # Restore selection.
-            self.table.selectionMode()
+            old_selection_mode = self.table.selectionMode()
             self.table.setSelectionMode(
                 QtWidgets.QAbstractItemView.SelectionMode.MultiSelection
             )
@@ -1028,10 +973,7 @@ class BrowseCardsDlg(
         criterion = DefaultCriterion(self.component_manager)
         self.card_type_tree_wdgt.checked_to_criterion(criterion)
         filter = ""
-        for (
-            card_type_id,
-            fact_view_id,
-        ) in criterion.deactivated_card_type_fact_view_ids:
+        for card_type_id, fact_view_id in criterion.deactivated_card_type_fact_view_ids:
             filter += """not (cards.fact_view_id='%s' and
                 cards.card_type_id='%s') and """ % (
                 fact_view_id,
@@ -1072,9 +1014,7 @@ class BrowseCardsDlg(
             # Construct most optimal query.
             if len(active__card_ids) > len(all__card_ids) / 2:
                 filter += (
-                    "_id not in ("
-                    + ",".join(all__card_ids - active__card_ids)
-                    + ")"
+                    "_id not in (" + ",".join(all__card_ids - active__card_ids) + ")"
                 )
             else:
                 filter += "_id in (" + ",".join(active__card_ids) + ")"
@@ -1115,12 +1055,8 @@ class BrowseCardsDlg(
 
     def _store_state(self):
         self.config()["browse_cards_dlg_state"] = self.saveGeometry()
-        self.config()[
-            "browse_cards_dlg_splitter_1_state"
-        ] = self.splitter_1.saveState()
-        self.config()[
-            "browse_cards_dlg_splitter_2_state"
-        ] = self.splitter_2.saveState()
+        self.config()["browse_cards_dlg_splitter_1_state"] = self.splitter_1.saveState()
+        self.config()["browse_cards_dlg_splitter_2_state"] = self.splitter_2.saveState()
         # Make sure we start unsorted again next time.
         if not self.config()["start_card_browser_sorted"]:
             self.table.horizontalHeader().setSortIndicator(

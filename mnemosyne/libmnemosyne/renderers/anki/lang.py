@@ -2,10 +2,10 @@
 # Copyright: Damien Elmes <anki@ichi2.net>
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import gettext
 import os
-import re
 import sys
+import re
+import gettext
 import threading
 
 langs = [
@@ -94,9 +94,7 @@ def langDir():
 
 
 def setLang(lang, local=True):
-    trans = gettext.translation(
-        "anki", langDir(), languages=[lang], fallback=True
-    )
+    trans = gettext.translation("anki", langDir(), languages=[lang], fallback=True)
     if local:
         threadLocal.currentLang = lang
         threadLocal.currentTranslation = trans

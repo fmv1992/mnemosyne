@@ -5,13 +5,12 @@
 import os
 import sys
 
-from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.utils import expand_path
+from mnemosyne.libmnemosyne.component import Component
 
 
 class Upgrade1(Component):
-
     """Upgrade from 1.x to 2.x."""
 
     def run(self):  # pragma: no cover
@@ -36,9 +35,7 @@ class Upgrade1(Component):
         if (
             exists(old_data_dir)
             and exists(config_file)
-            and not exists(
-                join(old_data_dir, "DIRECTORY_NO_LONGER_USED_BY_MNEMOSYNE2")
-            )
+            and not exists(join(old_data_dir, "DIRECTORY_NO_LONGER_USED_BY_MNEMOSYNE2"))
         ):
             self.upgrade_from_old_data_dir(old_data_dir)
 
@@ -64,10 +61,7 @@ class Upgrade1(Component):
                     new_files = sorted(os.listdir(backup_dir))
                     assert old_files == new_files
                     self.main_widget().show_information(
-                        _(
-                            "Your old 1.x files are now stored here:\n\n"
-                            + backup_dir
-                        )
+                        _("Your old 1.x files are now stored here:\n\n" + backup_dir)
                     )
                 else:
                     self.main_widget().show_error(
@@ -81,9 +75,7 @@ class Upgrade1(Component):
     def upgrade_from_old_data_dir(self, old_data_dir):
         join = os.path.join
         # Warn people that this directory is no longer used.
-        open(
-            join(old_data_dir, "DIRECTORY_NO_LONGER_USED_BY_MNEMOSYNE2"), "w"
-        ).close()
+        open(join(old_data_dir, "DIRECTORY_NO_LONGER_USED_BY_MNEMOSYNE2"), "w").close()
         # Read old configuration.
         old_config = {}
         config_file = open(join(old_data_dir, "config"), "rb")
@@ -107,9 +99,7 @@ class Upgrade1(Component):
                 )
         if "left_align" in old_config and old_config["left_align"]:
             for card_type in self.card_types():
-                self.config().set_card_type_property(
-                    "alignment", "left", card_type
-                )
+                self.config().set_card_type_property("alignment", "left", card_type)
         # Migrate latex settings.
         setting_for_file = {
             "dvipng": "dvipng",
@@ -145,7 +135,7 @@ class Upgrade1(Component):
                 "history",
             ]
             and not name.endswith(".mem")
-            and not name is None
+            and name is not None
         ]
         self.main_widget().set_progress_text(_("Copying files from 1.x..."))
         # By copying over the history folder and log.txt, we also completely
@@ -157,9 +147,7 @@ class Upgrade1(Component):
                 join(old_data_dir, "history"), join(new_data_dir, "history")
             )
         self.main_widget().increase_progress(1)
-        shutil.copyfile(
-            join(old_data_dir, "log.txt"), join(new_data_dir, "log.txt")
-        )
+        shutil.copyfile(join(old_data_dir, "log.txt"), join(new_data_dir, "log.txt"))
         self.main_widget().increase_progress(1)
         # We copy all the other files to the media directory. In this way,
         # if there are media files that are not explicitly referenced in the
@@ -168,9 +156,7 @@ class Upgrade1(Component):
         for name in names:
             if os.path.isdir(join(old_data_dir, name)):
                 try:
-                    shutil.copytree(
-                        join(old_data_dir, name), join(new_media_dir, name)
-                    )
+                    shutil.copytree(join(old_data_dir, name), join(new_media_dir, name))
                 except OSError as e:
                     # https://bugs.launchpad.net/mnemosyne-proj/+bug/1210435
                     import errno
@@ -181,9 +167,7 @@ class Upgrade1(Component):
                         "Skipping copying of %s because it already exists."
                     ) % (name,)
             else:
-                shutil.copyfile(
-                    join(old_data_dir, name), join(new_media_dir, name)
-                )
+                shutil.copyfile(join(old_data_dir, name), join(new_media_dir, name))
             self.main_widget().increase_progress(1)
         # Upgrade database.
         old_database = expand_path("default.mem", old_data_dir)
@@ -195,9 +179,7 @@ class Upgrade1(Component):
         info = _("Upgrade from Mnemosyne 1.x complete!") + "\n\n"
         info += _("Mnemosyne 2.x now stores its data here:") + "\n\n"
         info += self.config().data_dir + "\n"
-        if (
-            self.config().config_dir != self.config().data_dir
-        ):  # pragma: no cover
+        if self.config().config_dir != self.config().data_dir:  # pragma: no cover
             # Only happens on Linux, outside of the test suite.
             info += self.config().config_dir
         self.main_widget().show_information(info)

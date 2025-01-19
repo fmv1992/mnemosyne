@@ -20,8 +20,7 @@ class MyGrades(PlotStatisticsPage):
             self.y.append(
                 self.database()
                 .con.execute(
-                    "select count() from cards where grade=? and active=1",
-                    (grade,),
+                    "select count() from cards where grade=? and active=1", (grade,)
                 )
                 .fetchone()[0]
             )
@@ -42,18 +41,13 @@ class PieChartWdgt(PlotStatisticsWdgt):
         # Pie charts look better on a square canvas.
         self.axes.set_aspect("equal")
         labels = ["Unseen" if self.page.y[0] > 0 else ""] + [
-            "Grade %d" % (g - 1) if self.page.y[g] > 0 else ""
-            for g in range(1, 7)
+            "Grade %d" % (g - 1) if self.page.y[g] > 0 else "" for g in range(1, 7)
         ]
         colors = ["w", "r", "m", "y", "g", "c", "b"]
         # Only print percentage on wedges > 5%.
         autopct = lambda x: "%1.1f%%" % x if x > 5 else ""
         self.axes.pie(
-            self.page.y,
-            labels=labels,
-            colors=colors,
-            shadow=True,
-            autopct=autopct,
+            self.page.y, labels=labels, colors=colors, shadow=True, autopct=autopct
         )
         self.axes.set_title("Number of cards")
 

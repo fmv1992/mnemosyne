@@ -5,17 +5,14 @@
 import os
 import re
 
-from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
-    MediaPreprocessor,
-)
 from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.file_format import FileFormat
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
 
 re0 = re.compile(r"&#(.+?);", re.DOTALL | re.IGNORECASE)
 
 
 class Tsv(FileFormat, MediaPreprocessor):
-
     """Question and answers on a single line, separated by tabs.
     Or, for three-sided cards: foreign word, pronunciation, meaning,
     separated by tabs.

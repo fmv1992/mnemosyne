@@ -4,7 +4,6 @@
 
 
 class ComponentManager(object):
-
     """Manages the different components. Typically, instances of the different
     components are stored, as opposed to classes. In such a way, the component
     manager stores all the state of the user. Exceptions are widgets other
@@ -68,10 +67,7 @@ class ComponentManager(object):
         elif component.component_type == "render_chain":
             del self.render_chain_with_id[component.id]
 
-    def add_gui_to_component(
-        self, component_name, gui_component, in_front=False
-    ):
-
+    def add_gui_to_component(self, component_name, gui_component, in_front=False):
         """Typical use case for this is when a plugin has a GUI component
         which obviously does not live inside libmnemosyne, and which needs to
         be added at a later stage.
@@ -88,7 +84,6 @@ class ComponentManager(object):
                             component.gui_components.append(gui_component)
 
     def all(self, comp_type, used_for=None):
-
         """For components for which there can be many active at once."""
 
         # If 'used_for' is not a class, we can just retrieve it.
@@ -139,7 +134,6 @@ class ComponentManager(object):
                 return []
 
     def current(self, comp_type, used_for=None):
-
         """For components for which there can be only one active at any
         time.
 
@@ -163,7 +157,6 @@ class ComponentManager(object):
         self.card_type_with_id = {}
 
     def debug(self, msg):
-
         """Log a debugging message if debugging is enabled."""
 
         if self.debug_file:
@@ -179,7 +172,6 @@ _component_managers = {}
 
 
 def clear_component_managers():
-
     """Used for the testsuite to prevent multiple component managers hanging
     around.
 

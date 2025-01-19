@@ -5,11 +5,12 @@
 import os
 import sqlite3
 
-from mnemosyne.libmnemosyne.utils import copy
 from openSM2sync.log_entry import EventTypes
+from mnemosyne.libmnemosyne.utils import copy
 
 
 class MnemosyneFormat(object):
+
     def __init__(self, database):
         self.database = database
 
@@ -29,9 +30,7 @@ class MnemosyneFormat(object):
         # Delete old reps if needed.
         if not interested_in_old_reps:
             con = sqlite3.connect(self.tmp_name)
-            con.execute(
-                "delete from log where event_type=?", (EventTypes.REPETITION,)
-            )
+            con.execute("delete from log where event_type=?", (EventTypes.REPETITION,))
             con.commit()
             con.execute("vacuum")
             con.close()

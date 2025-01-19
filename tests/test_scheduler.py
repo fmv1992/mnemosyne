@@ -2,12 +2,11 @@
 # test_scheduler.py <Peter.Bienstman@UGent.be>
 #
 
-import calendar
-import datetime
 import os
 import sys
 import time
-
+import datetime
+import calendar
 from mnemosyne_test import MnemosyneTest
 
 HOUR = 60 * 60  # Seconds in an hour.
@@ -15,6 +14,7 @@ DAY = 24 * HOUR  # Seconds in a day.
 
 
 class TestScheduler(MnemosyneTest):
+
     def test_midnight_UTC(self):
         if sys.platform == "win32":
             return  # no time.tzset
@@ -545,31 +545,19 @@ class TestScheduler(MnemosyneTest):
         assert sch.next_rep_to_interval_string(next_rep, now) == "today"
 
         next_rep = sch.midnight_UTC(now - DAY)
-        assert (
-            sch.next_rep_to_interval_string(next_rep, now) == "1 day overdue"
-        )
+        assert sch.next_rep_to_interval_string(next_rep, now) == "1 day overdue"
 
         next_rep = sch.midnight_UTC(now - 2 * DAY)
-        assert (
-            sch.next_rep_to_interval_string(next_rep, now) == "2 days overdue"
-        )
+        assert sch.next_rep_to_interval_string(next_rep, now) == "2 days overdue"
 
         next_rep = sch.midnight_UTC(now - 32 * DAY)
-        assert (
-            sch.next_rep_to_interval_string(next_rep, now) == "1 month overdue"
-        )
+        assert sch.next_rep_to_interval_string(next_rep, now) == "1 month overdue"
 
         next_rep = sch.midnight_UTC(now - 64 * DAY)
-        assert (
-            sch.next_rep_to_interval_string(next_rep, now)
-            == "2 months overdue"
-        )
+        assert sch.next_rep_to_interval_string(next_rep, now) == "2 months overdue"
 
         next_rep = sch.midnight_UTC(now - 366 * DAY)
-        assert (
-            sch.next_rep_to_interval_string(next_rep, now)
-            == "1.0 years overdue"
-        )
+        assert sch.next_rep_to_interval_string(next_rep, now) == "1.0 years overdue"
 
     def test_last_rep_to_interval_string(self):
         if sys.platform == "win32":
@@ -586,8 +574,7 @@ class TestScheduler(MnemosyneTest):
         last_rep = now + datetime.timedelta(0)
         assert (
             sch.last_rep_to_interval_string(
-                calendar.timegm(last_rep.timetuple()),
-                calendar.timegm(now.timetuple()),
+                calendar.timegm(last_rep.timetuple()), calendar.timegm(now.timetuple())
             )
             == "today"
         )
@@ -595,8 +582,7 @@ class TestScheduler(MnemosyneTest):
         last_rep = now - datetime.timedelta(1)
         assert (
             sch.last_rep_to_interval_string(
-                calendar.timegm(last_rep.timetuple()),
-                calendar.timegm(now.timetuple()),
+                calendar.timegm(last_rep.timetuple()), calendar.timegm(now.timetuple())
             )
             == "yesterday"
         )
@@ -604,8 +590,7 @@ class TestScheduler(MnemosyneTest):
         last_rep = now - datetime.timedelta(2)
         assert (
             sch.last_rep_to_interval_string(
-                calendar.timegm(last_rep.timetuple()),
-                calendar.timegm(now.timetuple()),
+                calendar.timegm(last_rep.timetuple()), calendar.timegm(now.timetuple())
             )
             == "2 days ago"
         )
@@ -613,8 +598,7 @@ class TestScheduler(MnemosyneTest):
         last_rep = now - datetime.timedelta(32)
         assert (
             sch.last_rep_to_interval_string(
-                calendar.timegm(last_rep.timetuple()),
-                calendar.timegm(now.timetuple()),
+                calendar.timegm(last_rep.timetuple()), calendar.timegm(now.timetuple())
             )
             == "1 month ago"
         )
@@ -622,8 +606,7 @@ class TestScheduler(MnemosyneTest):
         last_rep = now - datetime.timedelta(64)
         assert (
             sch.last_rep_to_interval_string(
-                calendar.timegm(last_rep.timetuple()),
-                calendar.timegm(now.timetuple()),
+                calendar.timegm(last_rep.timetuple()), calendar.timegm(now.timetuple())
             )
             == "2 months ago"
         )
@@ -631,8 +614,7 @@ class TestScheduler(MnemosyneTest):
         last_rep = now - datetime.timedelta(365)
         assert (
             sch.last_rep_to_interval_string(
-                calendar.timegm(last_rep.timetuple()),
-                calendar.timegm(now.timetuple()),
+                calendar.timegm(last_rep.timetuple()), calendar.timegm(now.timetuple())
             )
             == "1.0 years ago"
         )
@@ -644,27 +626,19 @@ class TestScheduler(MnemosyneTest):
         os.environ["TZ"] = "Australia/Sydney"
         time.tzset()
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 14, 5, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "today"
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 15, 2, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "today"
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 14, 2, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 14, 2, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "yesterday"
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 13, 5, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 13, 5, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "yesterday"
 
@@ -675,27 +649,19 @@ class TestScheduler(MnemosyneTest):
         os.environ["TZ"] = "America/Los_Angeles"
         time.tzset()
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 14, 5, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "today"
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 15, 2, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "today"
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 14, 2, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 14, 2, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "yesterday"
 
-        last_rep = time.mktime(
-            datetime.datetime(2012, 1, 13, 5, 0, 0).timetuple()
-        )
+        last_rep = time.mktime(datetime.datetime(2012, 1, 13, 5, 0, 0).timetuple())
         now = time.mktime(datetime.datetime(2012, 1, 14, 4, 0, 0).timetuple())
         assert sch.last_rep_to_interval_string(last_rep, now) == "yesterday"
 
@@ -710,14 +676,8 @@ class TestScheduler(MnemosyneTest):
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
 
-        self.scheduler()._card_ids_in_queue = [
-            card_0._id,
-            card_1._id,
-            card_1._id,
-        ]
-        assert (
-            self.scheduler().is_prefetch_allowed(card_to_grade=card_0) == False
-        )
+        self.scheduler()._card_ids_in_queue = [card_0._id, card_1._id, card_1._id]
+        assert self.scheduler().is_prefetch_allowed(card_to_grade=card_0) == False
 
     def test_prefetch_2(self):
         fact_data = {"f": "question1", "b": "answer1"}
@@ -730,11 +690,7 @@ class TestScheduler(MnemosyneTest):
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
 
-        self.scheduler()._card_ids_in_queue = [
-            card_0._id,
-            card_1._id,
-            card_0._id,
-        ]
+        self.scheduler()._card_ids_in_queue = [card_0._id, card_1._id, card_0._id]
         self.review_controller().show_new_question()
         self.review_controller().show_answer()
         self.review_controller().grade_answer(0)

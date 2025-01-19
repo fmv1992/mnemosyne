@@ -5,15 +5,16 @@
 import os
 import re
 
-from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import copy, expand_path
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.utils import expand_path, copy
 
 re_src = re.compile(r"""src=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 re_sound = re.compile(r"""<sound src=\".+?\">""", re.DOTALL | re.IGNORECASE)
 
 
 class MediaPreprocessor(Component):
+
     def __init__(self, component_manager):
         Component.__init__(self, component_manager)
         self.warned_about_missing_media = False
@@ -32,8 +33,7 @@ class MediaPreprocessor(Component):
         for fact_key in fact_data:
             for match in re_sound.finditer(fact_data[fact_key]):
                 fact_data[fact_key] = fact_data[fact_key].replace(
-                    match.group(),
-                    match.group().replace("<sound src", "<audio src"),
+                    match.group(), match.group().replace("<sound src", "<audio src")
                 )
         # Copy files to media directory, creating subdirectories as we go.
         # For missing media, we change the tag to scr_missing, which makes it
@@ -44,9 +44,7 @@ class MediaPreprocessor(Component):
                 filename = match.group(1)
                 if (
                     not os.path.exists(filename)
-                    and not os.path.exists(
-                        expand_path(filename, self.import_dir)
-                    )
+                    and not os.path.exists(expand_path(filename, self.import_dir))
                     and not os.path.exists(
                         expand_path(filename, self.database().media_dir())
                     )

@@ -17,7 +17,6 @@ class FileFormat(Component):
     export_possible = False
 
     def do_import(self, filename, extra_tag_name=None):
-
         """Make sure fileformats call this implementation first."""
 
         self.import_dir = os.path.dirname(os.path.abspath(filename))

@@ -2,11 +2,11 @@
 # both_ways.py <Peter.Bienstman@gmail.com>
 #
 
+from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.card import Card
 from mnemosyne.libmnemosyne.card_type import CardType
-from mnemosyne.libmnemosyne.card_type_converter import CardTypeConverter
 from mnemosyne.libmnemosyne.fact_view import FactView
-from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.card_type_converter import CardTypeConverter
 
 
 class BothWays(CardType):
@@ -46,9 +46,7 @@ class FrontToBackToBothWays(CardTypeConverter):
         # Update front-to-back view to corresponding view in new type.
         cards[0].fact_view = new_card_type.fact_views[0]
         # Create back-to-front view.
-        new_card = Card(
-            new_card_type, cards[0].fact, new_card_type.fact_views[1]
-        )
+        new_card = Card(new_card_type, cards[0].fact, new_card_type.fact_views[1])
         new_cards, edited_cards, deleted_cards = [new_card], [cards[0]], []
         return new_cards, edited_cards, deleted_cards
 

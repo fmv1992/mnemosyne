@@ -4,11 +4,12 @@
 
 import socket
 
-from mnemosyne.libmnemosyne.component import Component
-from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import traceback_string
-from mnemosyne.web_server.web_server import WebServer
 from PyQt6 import QtCore
+
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.web_server.web_server import WebServer
+from mnemosyne.libmnemosyne.component import Component
+from mnemosyne.libmnemosyne.utils import traceback_string
 
 # The following is some thread synchronisation machinery to ensure that
 # either the web server thread or the main thread is doing database
@@ -21,7 +22,6 @@ database_released = QtCore.QWaitCondition()
 
 
 class ServerThread(QtCore.QThread, WebServer):
-
     """When a review request comes in, the main thread will release the
     database connection, which will be recreated in the server thread. After
     the review is finished, the server thread will release the database
@@ -194,9 +194,7 @@ class QtWebServer(Component, QtCore.QObject):
                     self.main_widget().show_error(
                         _("Unable to start web server.")
                         + " "
-                        + _(
-                            "You don't have the permission to use the requested port."
-                        )
+                        + _("You don't have the permission to use the requested port.")
                     )
                     self.thread = None
                     return
@@ -204,9 +202,7 @@ class QtWebServer(Component, QtCore.QObject):
                     raise e
             self.thread.review_started_signal.connect(self.unload_database)
             self.thread.review_ended_signal.connect(self.load_database)
-            self.thread.information_signal.connect(
-                self.threaded_show_information
-            )
+            self.thread.information_signal.connect(self.threaded_show_information)
             self.thread.error_signal.connect(self.threaded_show_error)
             self.thread.question_signal.connect(self.threaded_show_question)
             self.thread.set_progress_text_signal.connect(
@@ -252,7 +248,7 @@ class QtWebServer(Component, QtCore.QObject):
         mutex.lock()
         try:
             self.database().load(self.config()["last_database"])
-        except Exception as e:  # Database locked in server thread.
+        except Exception:  # Database locked in server thread.
             database_released.wait(mutex)
             self.database().load(self.config()["last_database"])
         self.log().loaded_database()

@@ -10,7 +10,6 @@ colour_re = re.compile(r"color:.+?;")
 
 
 class HtmlCssCardBrowser(HtmlCss):
-
     """Renders the question or the answer as html to be used in the card
     browser. The idea is to display everything as much as possible on a
     single line which fits with the rest of the table, so we only respect
@@ -32,10 +31,7 @@ class HtmlCssCardBrowser(HtmlCss):
         ) in card_type.fact_key_format_proxies().items():
             css += ".%s { " % true_fact_key
             # Font colours.
-            if (
-                "force_text_colour" in render_args
-                and render_args["force_text_colour"]
-            ):
+            if "force_text_colour" in render_args and render_args["force_text_colour"]:
                 colour = render_args["force_text_colour"]
             else:
                 colour = self.config().card_type_property(
@@ -51,64 +47,19 @@ class HtmlCssCardBrowser(HtmlCss):
             if font_string:
                 style = ""
                 if font_string.count(",") == 9:
-                    family, size, x, x, w, i, u, s, x, x = font_string.split(
-                        ","
-                    )
+                    family, size, x, x, w, i, u, s, x, x = font_string.split(",")
                 elif font_string.count(",") == 10:
-                    (
-                        family,
-                        size,
-                        x,
-                        x,
-                        w,
-                        i,
-                        u,
-                        s,
-                        x,
-                        x,
-                        x,
-                    ) = font_string.split(",")
+                    family, size, x, x, w, i, u, s, x, x, x = font_string.split(",")
                 elif font_string.count(",") == 15:
-                    (
-                        family,
-                        size,
-                        x,
-                        x,
-                        w,
-                        i,
-                        u,
-                        s,
-                        x,
-                        x,
-                        x,
-                        x,
-                        x,
-                        x,
-                        x,
-                        style,
-                    ) = font_string.split(",")
+                    family, size, x, x, w, i, u, s, x, x, x, x, x, x, x, style = (
+                        font_string.split(",")
+                    )
                 else:
                     # Segoe UI,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular
                     # Segoe UI,26,-1,5,700,1,1,1,0,0,0,0,0,0,0,1,Bold Italic
-                    (
-                        family,
-                        size,
-                        x,
-                        x,
-                        w,
-                        i,
-                        u,
-                        s,
-                        x,
-                        x,
-                        x,
-                        x,
-                        x,
-                        x,
-                        x,
-                        x,
-                        style,
-                    ) = font_string.split(",")
+                    family, size, x, x, w, i, u, s, x, x, x, x, x, x, x, x, style = (
+                        font_string.split(",")
+                    )
                 css += 'font-family: "%s"; ' % family
                 if w == "25":
                     css += "font-weight: light; "
@@ -130,10 +81,7 @@ class HtmlCssCardBrowser(HtmlCss):
         for fact_key in fact_keys:
             if fact_key in fact_data and fact_data[fact_key]:
                 fact_data_fact_key = fact_data[fact_key].replace("\n", " / ")
-                html += '<span class="%s">%s</span> / ' % (
-                    fact_key,
-                    fact_data_fact_key,
-                )
+                html += '<span class="%s">%s</span> / ' % (fact_key, fact_data_fact_key)
         return html[:-2]
 
     def render(self, fact_data, fact_keys, card_type, **render_args):

@@ -3,14 +3,15 @@
 #
 
 import os
+from PyQt6 import QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.dialogs import ExportDialog
 from mnemosyne.pyqt_ui.ui_export_dlg import Ui_ExportDlg
-from PyQt6 import QtWidgets
+from mnemosyne.libmnemosyne.ui_components.dialogs import ExportDialog
 
 
 class ExportDlg(QtWidgets.QDialog, ExportDialog, Ui_ExportDlg):
+
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)

@@ -4,13 +4,12 @@
 
 import re
 
-from mnemosyne.libmnemosyne.card_types.M_sided import MSided
 from mnemosyne.libmnemosyne.renderer import Renderer
+from mnemosyne.libmnemosyne.card_types.M_sided import MSided
 from mnemosyne.libmnemosyne.renderers.anki.template import render as _render
 
 
 class AnkiRenderer(Renderer):
-
     """Renders the question or the answer using the Anki syntax."""
 
     used_for = MSided
@@ -30,10 +29,7 @@ class AnkiRenderer(Renderer):
         fields["c%d" % (extra_data["ord"] + 1)] = "1"
         # Determine template.
         if render_args["render_QA"] == "Q":
-            if (
-                render_chain in ["plain_text", "card_browser"]
-                and extra_data["bqfmt"]
-            ):
+            if render_chain in ["plain_text", "card_browser"] and extra_data["bqfmt"]:
                 template = extra_data["bqfmt"]
             else:
                 template = extra_data["qfmt"]
@@ -46,18 +42,13 @@ class AnkiRenderer(Renderer):
                 "<%cloze:", "<%%cq:%d:" % (extra_data["ord"] + 1)
             )
         else:
-            if (
-                render_chain in ["plain_text", "card_browser"]
-                and extra_data["bafmt"]
-            ):
+            if render_chain in ["plain_text", "card_browser"] and extra_data["bafmt"]:
                 template = extra_data["bafmt"]
             else:
                 template = extra_data["afmt"]
             # If possible, strip the question part from the template, so that
             # we can display Q and A in a separate window.
-            if self.config()[
-                "QA_split"
-            ] != "single_window" or render_chain in [
+            if self.config()["QA_split"] != "single_window" or render_chain in [
                 "plain_text",
                 "card_browser",
             ]:
@@ -65,9 +56,7 @@ class AnkiRenderer(Renderer):
                     template = template.split("<hr id=answer>", 1)[1].strip()
             # Deal with clozes.
             template = re.sub(
-                "{{(.*?)cloze:",
-                r"{{\1ca-%d:" % (extra_data["ord"] + 1),
-                template,
+                "{{(.*?)cloze:", r"{{\1ca-%d:" % (extra_data["ord"] + 1), template
             )
             template = template.replace(
                 "<%cloze:", "<%%ca:%d:" % (extra_data["ord"] + 1)
@@ -90,23 +79,9 @@ class AnkiRenderer(Renderer):
             )
             if font_string:
                 if font_string.count(",") == 10:
-                    (
-                        family,
-                        size,
-                        x,
-                        x,
-                        w,
-                        i,
-                        u,
-                        s,
-                        x,
-                        x,
-                        x,
-                    ) = font_string.split(",")
+                    family, size, x, x, w, i, u, s, x, x, x = font_string.split(",")
                 else:
-                    family, size, x, x, w, i, u, s, x, x = font_string.split(
-                        ","
-                    )
+                    family, size, x, x, w, i, u, s, x, x = font_string.split(",")
                 style += "font-family: '%s'; " % family
                 style += "font-size: %spt; " % size
                 if w == "25":

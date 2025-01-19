@@ -1,7 +1,6 @@
+from .template import Template
 import os.path
 import re
-
-from .template import Template
 
 
 class View:

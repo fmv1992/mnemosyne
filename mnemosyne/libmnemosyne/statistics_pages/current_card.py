@@ -36,14 +36,10 @@ class CurrentCard(HtmlStatisticsPage):
             self.html += _("Lapses") + ": %d<br>" % card.lapses
             self.html += _(
                 "Last repetition"
-            ) + ": %s<br>" % self.scheduler().last_rep_to_interval_string(
-                card.last_rep
-            )
+            ) + ": %s<br>" % self.scheduler().last_rep_to_interval_string(card.last_rep)
             self.html += _(
                 "Next repetition"
-            ) + ": %s<br>" % self.scheduler().next_rep_to_interval_string(
-                card.next_rep
-            )
+            ) + ": %s<br>" % self.scheduler().next_rep_to_interval_string(card.next_rep)
             self.html += _(
                 "Average thinking time (secs)"
             ) + ": %d<br>" % self.database().average_thinking_time(card)

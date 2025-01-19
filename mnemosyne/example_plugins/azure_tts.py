@@ -8,8 +8,8 @@
 import os
 
 from mnemosyne.libmnemosyne.plugin import Plugin
-from mnemosyne.libmnemosyne.pronouncer import Pronouncer
 from mnemosyne.libmnemosyne.utils import expand_path
+from mnemosyne.libmnemosyne.pronouncer import Pronouncer
 
 
 class AzurePronouncer(Pronouncer):
@@ -19,11 +19,11 @@ class AzurePronouncer(Pronouncer):
     popup_menu_text = "Insert Azure text-to-speech..."
 
     def download_tmp_audio_file(self, card_type, foreign_text):
-
         """Returns a temporary filename with the audio."""
 
-        import azure.cognitiveservices.speech as speechsdk
         from pydub import AudioSegment
+
+        import azure.cognitiveservices.speech as speechsdk
 
         speech_config = speechsdk.SpeechConfig(
             subscription=os.environ.get("COGNITIVE_SERVICE_KEY"),
@@ -33,13 +33,9 @@ class AzurePronouncer(Pronouncer):
             speechsdk.SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm
         )
 
-        language_id = self.config().card_type_property(
-            "sublanguage_id", card_type
-        )
+        language_id = self.config().card_type_property("sublanguage_id", card_type)
         if not language_id:
-            language_id = self.config().card_type_property(
-                "language_id", card_type
-            )
+            language_id = self.config().card_type_property("language_id", card_type)
 
         # https://azure.microsoft.com/en-gb/products/cognitive-services/text-to-speech/#features
 
@@ -64,24 +60,13 @@ class AzurePronouncer(Pronouncer):
             print("Speech synthesized for text [{}]".format(foreign_text))
         elif result.reason == speechsdk.ResultReason.Canceled:
             cancellation_details = result.cancellation_details
-            print(
-                "Speech synthesis canceled: {}".format(
-                    cancellation_details.reason
-                )
-            )
-            if (
-                cancellation_details.reason
-                == speechsdk.CancellationReason.Error
-            ):
+            print("Speech synthesis canceled: {}".format(cancellation_details.reason))
+            if cancellation_details.reason == speechsdk.CancellationReason.Error:
                 if cancellation_details.error_details:
                     print(
-                        "Error details: {}".format(
-                            cancellation_details.error_details
-                        )
+                        "Error details: {}".format(cancellation_details.error_details)
                     )
-                    print(
-                        "Did you set the speech resource key and region values?"
-                    )
+                    print("Did you set the speech resource key and region values?")
             return
 
         filename_wav = expand_path(
@@ -103,9 +88,7 @@ class AzureTTSPlugin(Plugin):
     description = "Add Azure text-to-speech."
     components = [AzurePronouncer]
     gui_for_component = {
-        "AzurePronouncer": [
-            ("mnemosyne.pyqt_ui.pronouncer_dlg", "PronouncerDlg")
-        ]
+        "AzurePronouncer": [("mnemosyne.pyqt_ui.pronouncer_dlg", "PronouncerDlg")]
     }
     supported_API_level = 3
 

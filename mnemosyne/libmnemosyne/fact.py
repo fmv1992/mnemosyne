@@ -2,11 +2,10 @@
 # fact.py <Peter.Bienstman@gmail.com>
 #
 
-from mnemosyne.libmnemosyne.utils import CompareOnId, rand_uuid
+from mnemosyne.libmnemosyne.utils import rand_uuid, CompareOnId
 
 
 class Fact(CompareOnId):
-
     """Basic unit of information from which several cards can be derived.
 
     The fields are stored in a dictionary called 'data', and can be get and

@@ -5,28 +5,7 @@
 import json
 
 try:
-    from mnemosyne.android_python.mnemosyne_android import (
-        config_get,
-        config_save,
-        config_set,
-        controller_do_db_maintenance,
-        controller_heartbeat,
-        controller_reset_study_mode,
-        controller_set_study_mode_with_id,
-        controller_show_activate_cards_dialog_post,
-        controller_show_activate_cards_dialog_pre,
-        controller_show_sync_dialog_post,
-        controller_show_sync_dialog_pre,
-        controller_star_current_card,
-        controller_sync,
-        database_release_connection,
-        database_set_criterion_with_name,
-        pause_mnemosyne,
-        review_controller_grade_answer,
-        review_controller_show_answer,
-        start_mnemosyne,
-        stop_mnemosyne,
-    )
+    from mnemosyne.android_python.mnemosyne_android import *
 except Exception:
     import traceback
 

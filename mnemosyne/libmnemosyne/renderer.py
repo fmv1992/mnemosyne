@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Renderer(Component):
-
     """Assembles a sequence of 'fact_keys' which are keys in a dictionary
     'fact_data' to a certain format, e.g. a html page, or a purely text based
     format.
@@ -27,15 +26,15 @@ class Renderer(Component):
     used_for = None  # Used for all card types.
 
     def update(self, card_type):
-
         """Update renderer information for given card type. Some information
         (e.g. css style sheets) is typically cached, and this function is
         used to signal that the cache should be rebuilt.
 
         """
 
-    def render(self, fact_data, fact_keys, card_type, **render_args):
+        pass
 
+    def render(self, fact_data, fact_keys, card_type, **render_args):
         """Assembles a sequence of 'fact_keys' which are keys in a dictionary
         'fact_data'.
 

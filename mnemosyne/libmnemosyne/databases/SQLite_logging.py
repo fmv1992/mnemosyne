@@ -2,20 +2,19 @@
 # SQLite_logging.py <Peter.Bienstman@gmail.com>
 #
 
-import datetime
 import os
-import string
 import time
+import string
+import datetime
 
-from mnemosyne.libmnemosyne.gui_translator import _
 from openSM2sync.log_entry import EventTypes
+from mnemosyne.libmnemosyne.gui_translator import _
 
 HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
 
 
 class SQLiteLogging(object):
-
     """Code to be injected into the SQLite database class through inheritance,
     so that SQLite.py does not becomes too large.
 
@@ -45,12 +44,7 @@ class SQLiteLogging(object):
         )
 
     def log_loaded_database(
-        self,
-        timestamp,
-        machine_id,
-        scheduled_count,
-        non_memorised_count,
-        active_count,
+        self, timestamp, machine_id, scheduled_count, non_memorised_count, active_count
     ):
         self.con.execute(
             """insert into log(event_type, timestamp, object_id, acq_reps,
@@ -66,12 +60,7 @@ class SQLiteLogging(object):
         )
 
     def log_saved_database(
-        self,
-        timestamp,
-        machine_id,
-        scheduled_count,
-        non_memorised_count,
-        active_count,
+        self, timestamp, machine_id, scheduled_count, non_memorised_count, active_count
     ):
         self.con.execute(
             """insert into log(event_type, timestamp, object_id, acq_reps,
@@ -87,7 +76,6 @@ class SQLiteLogging(object):
         )
 
     def log_future_schedule(self):
-
         """Write data to the logs to allow us to retrieve the scheduled count
         in case the user the user does not run Mnemosyne on that day.
 
@@ -101,9 +89,7 @@ class SQLiteLogging(object):
         scheduled_count = 0
         for n in range(1, 8):
             timestamp += DAY
-            scheduled_count += (
-                self.scheduler().card_count_scheduled_n_days_from_now(n)
-            )
+            scheduled_count += self.scheduler().card_count_scheduled_n_days_from_now(n)
             self.con.execute(
                 """insert into log(event_type, timestamp,
                 object_id, acq_reps,ret_reps, lapses) values(?,?,?,?,?,?)""",
@@ -307,8 +293,7 @@ class SQLiteLogging(object):
         logname = os.path.join(self.config().data_dir, "log.txt")
         logfile = open(logname, "a")
         sql_res = self.con.execute(
-            "select _last_log_id from partnerships where partner=?",
-            ("log.txt",),
+            "select _last_log_id from partnerships where partner=?", ("log.txt",)
         ).fetchone()
         last_index = int(sql_res[0])
         index = 0
@@ -322,19 +307,13 @@ class SQLiteLogging(object):
         ):
             index = int(cursor[0])
             event_type = cursor[1]
-            timestamp = time.strftime(
-                "%Y-%m-%d %H:%M:%S", time.localtime(cursor[2])
-            )
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(cursor[2]))
             if event_type == EventTypes.STARTED_PROGRAM:
                 print(
-                    "%s : Program started : %s" % (timestamp, cursor[3]),
-                    file=logfile,
+                    "%s : Program started : %s" % (timestamp, cursor[3]), file=logfile
                 )
             elif event_type == EventTypes.STARTED_SCHEDULER:
-                print(
-                    "%s : Scheduler : %s" % (timestamp, cursor[3]),
-                    file=logfile,
-                )
+                print("%s : Scheduler : %s" % (timestamp, cursor[3]), file=logfile)
             elif event_type == EventTypes.LOADED_DATABASE:
                 print(
                     "%s : Loaded database %d %d %d"
@@ -350,15 +329,9 @@ class SQLiteLogging(object):
             elif event_type == EventTypes.ADDED_CARD:
                 # Use dummy grade and interval, We log the first repetition
                 # separately anyhow.
-                print(
-                    "%s : New item %s -1 -1" % (timestamp, cursor[3]),
-                    file=logfile,
-                )
+                print("%s : New item %s -1 -1" % (timestamp, cursor[3]), file=logfile)
             elif event_type == EventTypes.DELETED_CARD:
-                print(
-                    "%s : Deleted item %s" % (timestamp, cursor[3]),
-                    file=logfile,
-                )
+                print("%s : Deleted item %s" % (timestamp, cursor[3]), file=logfile)
             elif event_type == EventTypes.REPETITION:
                 new_interval = int(cursor[14] - cursor[2])
                 print(
@@ -391,7 +364,6 @@ class SQLiteLogging(object):
             )
 
     def skip_science_log(self):
-
         """Bring forward the _last_log_id for the log.txt partnership, e.g.
         because some other machine took care of uploading these logs.
 
@@ -440,9 +412,7 @@ class SQLiteLogging(object):
         return sql_res[0], sql_res[1]
 
     def change_card_id(self, card, new_id):
-        self.con.execute(
-            "update cards set id=? where _id=?", (new_id, card._id)
-        )
+        self.con.execute("update cards set id=? where _id=?", (new_id, card._id))
 
     def update_card_after_log_import(self, id, creation_time, offset):
         sql_res = self.con.execute(
@@ -458,13 +428,7 @@ class SQLiteLogging(object):
             """update cards set creation_time=?,
             modification_time=?, acq_reps=?, acq_reps_since_lapse=?
             where _id=?""",
-            (
-                creation_time,
-                creation_time,
-                acq_reps,
-                acq_reps_since_lapse,
-                sql_res[0],
-            ),
+            (creation_time, creation_time, acq_reps, acq_reps_since_lapse, sql_res[0]),
         )
 
     def remove_card_log_entries_since(self, index):
@@ -478,7 +442,6 @@ class SQLiteLogging(object):
         )
 
     def add_missing_added_card_log_entries(self, id_set):
-
         """Make sure all ids in 'id_set' have a card creation log entry."""
 
         for id in id_set - set(
@@ -491,7 +454,6 @@ class SQLiteLogging(object):
             self.log_added_card(int(time.time()), id)
 
     def merge_logs_from_other_database(self, filename, insertion_log_index):
-
         """This function will delete all logs in the database after
         'insertion_log_index' and merge all logs from 'filename'.
 
@@ -522,7 +484,6 @@ class SQLiteLogging(object):
         w.close_progress()
 
     def archive_old_logs(self):
-
         """This puts all the data of old reviews in a separate file, which
         is no longer backed up. All clients do this independently, and when
         doing an initial sync, all these archive files are sent across so as

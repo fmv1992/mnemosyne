@@ -2,16 +2,14 @@
 # xml_format.py <Peter.Bienstman@gmail.com>
 #
 
-from xml.etree import cElementTree
 from xml.sax import saxutils
-
+from xml.etree import cElementTree
 from openSM2sync.log_entry import LogEntry
 
 PROTOCOL_VERSION = "openSM2sync 1.0   "
 
 
 class XMLFormat(object):
-
     """Class handling the conversion from data to XML streams and vice versa.
 
     Example of typical XML for log entries:
@@ -38,10 +36,7 @@ class XMLFormat(object):
         for key, value in list(info.items()):
             if key.lower() == "partners":
                 if value:
-                    repr_info += "%s=%s " % (
-                        key,
-                        saxutils.quoteattr(",".join(value)),
-                    )
+                    repr_info += "%s=%s " % (key, saxutils.quoteattr(",".join(value)))
             else:
                 if type(value) != str and type(value) != str:
                     value = repr(value)
@@ -125,7 +120,6 @@ class XMLFormat(object):
         return "</openSM2sync>\n"
 
     def repr_log_entry(self, log_entry):
-
         """Converts LogEntry to XML.
 
         For efficiency reasons we require tag names and attribute values to be
@@ -156,7 +150,6 @@ class XMLFormat(object):
         return xml
 
     def parse_log_entries(self, xml):
-
         """Do incremental parsing of the XML stream.
 
         See http://effbot.org/zone/element-iterparse.htm
@@ -174,7 +167,7 @@ class XMLFormat(object):
                     if key in self.int_keys:
                         value = int(value)
                     elif key in self.float_keys:
-                        float(value)
+                        values = float(value)
                     log_entry[key] = value
                 for child in element:
                     if child.tag.startswith("___"):  # Escaped number.

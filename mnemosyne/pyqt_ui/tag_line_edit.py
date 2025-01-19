@@ -2,8 +2,8 @@
 # tag_line_edit.py Emilian Mihalache <emihalac@gmail.com>
 #
 
-from mnemosyne.pyqt_ui.tag_completer import TagCompleter
 from PyQt6 import QtCore, QtWidgets
+from mnemosyne.pyqt_ui.tag_completer import TagCompleter
 
 
 class TagLineEdit(QtWidgets.QLineEdit):
@@ -56,10 +56,8 @@ class TagLineEdit(QtWidgets.QLineEdit):
             + old_text[cursor_position:]
         )
         self.setText(new_text)
-        previous_comma_index + len(self.last_highlight_)
-        self.setCursorPosition(
-            previous_comma_index + len(self.last_highlight_) + 1
-        )
+        new_cursor_index = previous_comma_index + len(self.last_highlight_)
+        self.setCursorPosition(previous_comma_index + len(self.last_highlight_) + 1)
 
     def refresh_completion_model(self, new_model):
         self.custom_completer_.refresh_completion_model(new_model)

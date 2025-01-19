@@ -2,19 +2,20 @@
 # web_server.py <Peter.Bienstman@gmail.com>
 #
 
-import cgi
-import http.client
 import os
-import threading
+import cgi
 import time
 import urllib
+import http.client
+import threading
 
 from mnemosyne.libmnemosyne import Mnemosyne
-from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.utils import localhost_IP
+from mnemosyne.libmnemosyne.component import Component
 
 
 class ReleaseDatabaseAfterTimeout(threading.Thread):
+
     def __init__(self, port):
         threading.Thread.__init__(self)
         self.port = port
@@ -28,11 +29,10 @@ class ReleaseDatabaseAfterTimeout(threading.Thread):
             time.sleep(1)
         con = http.client.HTTPConnection("localhost", self.port)
         con.request("GET", "/release_database")
-        con.getresponse()
+        response = con.getresponse()
 
 
 class StopServerAfterTimeout(threading.Thread):
-
     """Stop server after a certain timeout, so that it has
     enough time to serve the final page.
 
@@ -48,6 +48,7 @@ class StopServerAfterTimeout(threading.Thread):
 
 
 class WebServer(Component):
+
     def __init__(self, port, data_dir, config_dir, filename, **kwds):
         if "client_on_same_machine_as_server" in kwds:
             self.client_on_same_machine_as_server = kwds[
@@ -112,10 +113,7 @@ class WebServer(Component):
             ("mnemosyne.libmnemosyne.ui_components.main_widget", "MainWidget")
         )
         self.mnemosyne.components.append(
-            (
-                "mnemosyne.web_server.web_server_render_chain",
-                "WebServerRenderChain",
-            )
+            ("mnemosyne.web_server.web_server_render_chain", "WebServerRenderChain")
         )
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne.web_server.review_wdgt", "ReviewWdgt")
@@ -144,9 +142,7 @@ class WebServer(Component):
         )
         self.mnemosyne.controller().reset_study_mode()
         self.is_mnemosyne_loaded = True
-        self.release_database_after_timeout = ReleaseDatabaseAfterTimeout(
-            self.port
-        )
+        self.release_database_after_timeout = ReleaseDatabaseAfterTimeout(self.port)
         self.release_database_after_timeout.start()
 
     def unload_mnemosyne(self):
@@ -258,7 +254,6 @@ class WebServer(Component):
 
 
 class WebServerThread(threading.Thread, WebServer):
-
     """Basic threading implementation of the sync server, suitable for text-
     based UIs. A GUI-based client will want to override several functions
     in Server and ServerThread in view of the interaction between multiple
@@ -266,12 +261,8 @@ class WebServerThread(threading.Thread, WebServer):
 
     """
 
-    def __init__(
-        self, component_manager, client_on_same_machine_as_server=False
-    ):
-        self.client_on_same_machine_as_server = (
-            client_on_same_machine_as_server
-        )
+    def __init__(self, component_manager, client_on_same_machine_as_server=False):
+        self.client_on_same_machine_as_server = client_on_same_machine_as_server
         threading.Thread.__init__(self)
         self.config = component_manager.current("config")
         WebServer.__init__(
@@ -286,9 +277,7 @@ class WebServerThread(threading.Thread, WebServer):
 
     def run(self):
         self.activate()
-        if (
-            not self.client_on_same_machine_as_server
-        ):  # Could fail if we are offline.
+        if not self.client_on_same_machine_as_server:  # Could fail if we are offline.
             print(
                 (
                     "Web server listening on http://"

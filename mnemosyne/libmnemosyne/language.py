@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Language(Component):
-
     """Interface class describing the functions to be implemented by the
     actual language classes.
 

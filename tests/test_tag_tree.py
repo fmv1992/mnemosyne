@@ -2,11 +2,12 @@
 # test_tag_tree.py <Peter.Bienstman@UGent.be>
 #
 
-from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
 from mnemosyne_test import MnemosyneTest
+from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion
 
 
 class TestTagTree(MnemosyneTest):
+
     def test_1(self):
         fact_data = {"f": "question", "b": "answer"}
         card_type = self.card_type_with_id("1")

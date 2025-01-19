@@ -12,10 +12,10 @@ try:
 except ImportError:
     from md5 import md5
 
-from mnemosyne.libmnemosyne.filter import Filter
-from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.hook import Hook
 from mnemosyne.libmnemosyne.utils import copy
+from mnemosyne.libmnemosyne.gui_translator import _
+from mnemosyne.libmnemosyne.filter import Filter
 
 if sys.platform == "darwin":
     sys.path.append("/usr/local/bin")
@@ -52,7 +52,6 @@ class Latex(Filter):
         return md5(hash_input.encode("utf-8")).hexdigest() + ".png"
 
     def create_latex_img_file(self, latex_command):
-
         """Creates png file from a latex command if needed. Returns path name
         relative to the media dir, to be stored in the media database (hence
         with the linux path name convention). Also returns a boolean saying
@@ -84,9 +83,7 @@ class Latex(Filter):
                 f.close()
                 in_file = "tmp.tex"
                 self._call_cmd(
-                    self.config()["latex"] + [in_file],
-                    "latex_out.txt",
-                    in_file,
+                    self.config()["latex"] + [in_file], "latex_out.txt", in_file
                 )
                 self._call_cmd(self.config()["dvipng"], "dvipng_out.txt")
                 if not os.path.exists("tmp1.png"):
@@ -109,10 +106,7 @@ class Latex(Filter):
         except sp.TimeoutExpired:
             print("Command timed out: `%s`" % " ".join(cmd))
         except sp.CalledProcessError as err:
-            print(
-                "Command `%s` failed with rc=%i"
-                % (" ".join(cmd), err.returncode)
-            )
+            print("Command `%s` failed with rc=%i" % (" ".join(cmd), err.returncode))
             with open(out_file, "r") as f:
                 print("Command output:")
                 print(f.read())
@@ -122,7 +116,6 @@ class Latex(Filter):
                     print(f.read())
 
     def process_latex_img_tag(self, latex_command):
-
         """Transform the latex tags to image tags."""
 
         img_file = self.create_latex_img_file(latex_command)
@@ -139,7 +132,6 @@ class Latex(Filter):
         return '<img src="' + img_file + '" align=middle>'
 
     def run(self, text, card, fact_key, **render_args):
-
         """The actual filter code called on the question or answer text."""
 
         # Process <latex>...</latex> tags.
@@ -155,9 +147,7 @@ class Latex(Filter):
             img_tag = self.process_latex_img_tag(
                 "\\begin{displaymath}" + match.group(1) + "\\end{displaymath}"
             )
-            text = text.replace(
-                match.group(), "<center>" + img_tag + "</center>"
-            )
+            text = text.replace(match.group(), "<center>" + img_tag + "</center>")
         return text
 
 
@@ -175,9 +165,7 @@ class CheckForUpdatedLatexFiles(Hook):
     def is_working(self):
         try:
             p = sp.check_output(
-                self.config()["latex"] + ["-version"],
-                stderr=sp.STDOUT,
-                timeout=5,
+                self.config()["latex"] + ["-version"], stderr=sp.STDOUT, timeout=5
             )
             return True
         except (
@@ -211,16 +199,12 @@ class LatexFilenamesFromData(Hook):
             filenames.add(self.latex.create_latex_img_file(match.group(1)))
         # Process <$>...</$> (equation) tags.
         for match in re2.finditer(data):
-            filenames.add(
-                self.latex.create_latex_img_file("$" + match.group(1) + "$")
-            )
+            filenames.add(self.latex.create_latex_img_file("$" + match.group(1) + "$"))
         # Process <$$>...</$$> (displaymath) tags.
         for match in re3.finditer(data):
             filenames.add(
                 self.latex.create_latex_img_file(
-                    "\\begin{displaymath}"
-                    + match.group(1)
-                    + "\\end{displaymath}"
+                    "\\begin{displaymath}" + match.group(1) + "\\end{displaymath}"
                 )
             )
         # Check if there were Latex problems.
@@ -246,7 +230,6 @@ class DeleteUnusedLatexFiles(Hook):
 
 
 class PreprocessClozeLatex(Hook):
-
     """Make sure we escape /left[ and /right]."""
 
     used_for = "preprocess_cloze"
@@ -258,22 +241,27 @@ class PreprocessClozeLatex(Hook):
 
 
 class PostprocessQAClozeLatex(Hook):
-
     """Make sure we add latex tags to the answer of cloze cards."""
 
     used_for = "postprocess_q_a_cloze"
 
     def run(self, question, answer):
         # Sentence card type, recognition.
-        if not "[" in question or not "]" in question:
+        if "[" not in question or "]" not in question:
             return question, answer
         left, rest = question.split("[", 1)
         hint, right = rest.split("]", 1)
-        question = question.replace("_LEFT_BRACKET_", "\\left[",).replace(
+        question = question.replace(
+            "_LEFT_BRACKET_",
+            "\\left[",
+        ).replace(
             "_RIGHT_BRACKET_",
             "\\right]",
         )
-        answer = answer.replace("_LEFT_BRACKET_", "\\left[",).replace(
+        answer = answer.replace(
+            "_LEFT_BRACKET_",
+            "\\left[",
+        ).replace(
             "_RIGHT_BRACKET_",
             "\\right]",
         )
@@ -281,23 +269,23 @@ class PostprocessQAClozeLatex(Hook):
         # add extra tags.
         if (
             "<latex>" in left
-            and not "</latex>" in left
+            and "</latex>" not in left
             and "</latex>" in right
-            and not "<latex>" in right
+            and "<latex>" not in right
         ):
             answer = "<latex>" + answer + "</latex>"
         elif (
             "<$>" in left
-            and not "</$>" in left
+            and "</$>" not in left
             and "</$>" in right
-            and not "<$>" in right
+            and "<$>" not in right
         ):
             answer = "<$>" + answer + "</$>"
         elif (
             "<$$>" in left
-            and not "</$$>" in left
+            and "</$$>" not in left
             and "</$$>" in right
-            and not "<$$>" in right
+            and "<$$>" not in right
         ):
             answer = "<$$>" + answer + "</$$>"
         return question, answer

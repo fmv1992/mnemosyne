@@ -5,24 +5,24 @@
 import os
 import sys
 
+from mnemosyne_test import MnemosyneTest
 from mnemosyne.libmnemosyne import Mnemosyne
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne_test import MnemosyneTest
 
 answer = None
 
 
 class Widget(MainWidget):
+
     def show_question(self, question, option0, option1, option2):
         return answer
 
 
 class TestSentence(MnemosyneTest):
+
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(
-            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
-        )
+        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -41,9 +41,7 @@ class TestSentence(MnemosyneTest):
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(
-            os.path.abspath("dot_test"), automatic_upgrades=False
-        )
+        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
         self.review_controller().reset()
 
         from mnemosyne.libmnemosyne.card_types.sentence import SentencePlugin
@@ -82,11 +80,7 @@ class TestSentence(MnemosyneTest):
         fact = cards[0].fact
         fact_data = {"f": "[La casa es grande]"}
         self.controller().edit_card_and_sisters(
-            cards[0],
-            fact_data,
-            card_type,
-            new_tag_names=["default"],
-            correspondence={},
+            cards[0], fact_data, card_type, new_tag_names=["default"], correspondence={}
         )
         cards = self.database().cards_from_fact(fact)
         assert len(cards) == 2
@@ -100,11 +94,7 @@ class TestSentence(MnemosyneTest):
         fact = cards[0].fact
         fact_data = {"f": "[La casa] es grande"}
         self.controller().edit_card_and_sisters(
-            cards[0],
-            fact_data,
-            card_type,
-            new_tag_names=["default"],
-            correspondence={},
+            cards[0], fact_data, card_type, new_tag_names=["default"], correspondence={}
         )
         cards = self.database().cards_from_fact(fact)
         assert len(cards) == 2
@@ -118,11 +108,7 @@ class TestSentence(MnemosyneTest):
         fact = cards[0].fact
         fact_data = {"f": "[La casa] [es] [grande]"}
         self.controller().edit_card_and_sisters(
-            cards[0],
-            fact_data,
-            card_type,
-            new_tag_names=["default"],
-            correspondence={},
+            cards[0], fact_data, card_type, new_tag_names=["default"], correspondence={}
         )
         cards = self.database().cards_from_fact(fact)
         assert len(cards) == 4

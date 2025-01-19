@@ -7,6 +7,7 @@ from mnemosyne.libmnemosyne.plugin import Plugin
 
 
 class AlignImgTop(Filter):
+
     def run(self, text, card, fact_key, **render_args):
         return text.replace("<img", '<img align="top"')
 
@@ -20,9 +21,7 @@ class AlignImgTopPlugin(Plugin):
 
     def activate(self):
         Plugin.activate(self)
-        self.render_chain("default").register_filter(
-            AlignImgTop, in_front=False
-        )
+        self.render_chain("default").register_filter(AlignImgTop, in_front=False)
         # Other chain you might want to add to is e.g. "card_browser".
 
     def deactivate(self):

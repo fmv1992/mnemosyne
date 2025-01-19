@@ -4,10 +4,12 @@
 
 import _main_widget
 import _review_widget
+
 from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
 
 
 class ReviewWdgt(ReviewWidget):
+
     def redraw_now(self):
         pass
 
@@ -82,11 +84,9 @@ class ReviewWdgt(ReviewWidget):
         pass
 
     def update_status_bar_counters(self):
-        (
-            scheduled_count,
-            non_memorised_count,
-            active_count,
-        ) = self.review_controller().counters()
+        scheduled_count, non_memorised_count, active_count = (
+            self.review_controller().counters()
+        )
         counters = "Sch.: %d Not mem.: %d Act.: %d" % (
             scheduled_count,
             non_memorised_count,

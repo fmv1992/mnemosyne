@@ -36,7 +36,6 @@ if sys.platform == "win32":
 from optparse import OptionParser
 
 from mnemosyne.libmnemosyne import Mnemosyne
-from mnemosyne.libmnemosyne.utils import MnemosyneError
 
 # Parse options.
 parser = OptionParser()
@@ -100,7 +99,6 @@ def heartbeat_server():
 
 def start_heartbeat():
     global start_heartbeat, heartbeat_server
-    from threading import Timer
     heartbeat_server()
     heartbeat_thread = Timer(60 * 60, start_heartbeat)
     heartbeat_thread.daemon = True
@@ -146,7 +144,6 @@ os.environ["QT_SCALE_FACTOR_ROUNDING_POLICY"] = "PassThrough"
 if options.qt_scale_factor:
     os.environ["QT_SCALE_FACTOR"] = options.qt_scale_factor
 
-from PyQt6 import QtWebEngineWidgets  # Needs to happen first.
 from PyQt6 import QtCore, QtGui
 from PyQt6.QtWidgets import QApplication
 

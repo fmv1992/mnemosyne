@@ -2,11 +2,12 @@
 # completion_combo_box.py: Emilian Mihalache <emihalac@gmail.com>
 #
 
-from mnemosyne.pyqt_ui.tag_line_edit import TagLineEdit
 from PyQt6 import QtWidgets
+from mnemosyne.pyqt_ui.tag_line_edit import TagLineEdit
 
 
 class CompletionComboBox(QtWidgets.QComboBox):
+
     def __init__(self, parent=None):
         super(CompletionComboBox, self).__init__(parent)
 
