@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.ui_component import UiComponent
 
 
 class ReviewWidget(UiComponent):
-    
     """Describes the interface that the review widget needs to implement
     in order to be used by the review controller.
 
@@ -23,72 +22,69 @@ class ReviewWidget(UiComponent):
     """
 
     component_type = "review_widget"
-        
+
     def set_question_box_visible(self, is_visible):
         pass
-        
+
     def set_answer_box_visible(self, is_visible):
         pass
-        
+
     def set_question_label(self, text):
         pass
-        
+
     def set_question(self, text):
         pass
-        
+
     def set_answer(self, text):
         pass
-    
+
     def reveal_question(self):
         pass
-        
+
     def reveal_answer(self):
         pass
-    
-    def clear_question(self): 
+
+    def clear_question(self):
         pass
-        
-    def clear_answer(self): 
+
+    def clear_answer(self):
         pass
-        
-    def update_show_button(self, text, is_default, is_enabled): 
+
+    def update_show_button(self, text, is_default, is_enabled):
         pass
 
     def set_grades_enabled(self, is_enabled):
-
         """Enable whole grade area, including title."""
-        
-        pass
-    
-    def set_grade_enabled(self, grade, is_enabled):
 
-        """Enable just a single grade button."""
-        
         pass
-    
+
+    def set_grade_enabled(self, grade, is_enabled):
+        """Enable just a single grade button."""
+
+        pass
+
     def set_default_grade(self, grade):
         pass
-        
-    def set_grades_title(self, text): 
+
+    def set_grades_title(self, text):
         pass
-            
-    def set_grade_text(self, grade, text): 
+
+    def set_grade_text(self, grade, text):
         pass
-            
-    def set_grade_tooltip(self, grade, text): 
+
+    def set_grade_tooltip(self, grade, text):
         pass
 
     def update_status_bar_counters(self):
         pass
-    
+
     def play_media(self, filename, start=None, stop=None):
-        pass    
-    
+        pass
+
     def stop_media(self):
         pass
 
     def redraw_now(self):
-
         """Tell the widget that now would be a good time to redraw
         immediately. Some toolkits queue redraw events until there is no more
         processing going on, but this defeats libmnemosyne's optimisation of

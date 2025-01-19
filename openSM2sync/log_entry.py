@@ -2,8 +2,8 @@
 # log_entry.py <Peter.Bienstman@gmail.com>
 #
 
-class EventTypes(object):
 
+class EventTypes(object):
     """Codes to identify event types."""
 
     # Relevant for all clients.
@@ -50,8 +50,8 @@ class EventTypes(object):
     EDITED_SETTING = 28
     WARNED_TOO_MANY_CARDS = 29
 
-class LogEntry(dict):
 
+class LogEntry(dict):
     """A dictionary consisting of (key, value) pairs to sync.
 
     General keys:

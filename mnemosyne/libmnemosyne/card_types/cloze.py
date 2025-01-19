@@ -14,7 +14,6 @@ cloze_re = re.compile(r"\[(.+?)\]", re.DOTALL)
 
 
 class Cloze(CardType):
-
     """CardType to do cloze deletion on a string, e.g. "The political parties in
     the US are the [democrats] and the [republicans]." would give the following
     cards:
@@ -57,7 +56,6 @@ class Cloze(CardType):
         return bool(cloze_re.search(text))
 
     def q_a_from_cloze(self, text, index):
-
         """Auxiliary function used by other card types to return question
         and answer for the cloze with a given index in a text which can have
         the following form:
@@ -79,18 +77,16 @@ class Cloze(CardType):
             cursor = text.find("[", cursor)
             if cursor == -1:
                 break
-            cloze = text[cursor + 1:text.find("]", cursor)]
+            cloze = text[cursor + 1 : text.find("]", cursor)]
             if ":" in cloze:
                 cloze_without_hint, hint = cloze.split(":", 1)
             else:
                 cloze_without_hint, hint = cloze, "..."
             if current_index == index:
-                question = question.replace(\
-                    "[" + cloze + "]", "[" + hint + "]", 1)
+                question = question.replace("[" + cloze + "]", "[" + hint + "]", 1)
                 answer = cloze_without_hint
             else:
-                question = question.replace(\
-                    "[" + cloze + "]", cloze_without_hint, 1)
+                question = question.replace("[" + cloze + "]", cloze_without_hint, 1)
             cursor += 1
             current_index += 1
         for f in self.component_manager.all("hook", "postprocess_q_a_cloze"):
@@ -98,8 +94,9 @@ class Cloze(CardType):
         return question, answer
 
     def fact_data(self, card):
-        question, answer = self.q_a_from_cloze\
-            (card.fact["text"], card.extra_data["index"])
+        question, answer = self.q_a_from_cloze(
+            card.fact["text"], card.extra_data["index"]
+        )
         return {"f": question, "b": answer}
 
     def create_sister_cards(self, fact):
@@ -114,9 +111,7 @@ class Cloze(CardType):
             cards.append(card)
         return cards
 
-    def _edit_clozes(self, fact, new_fact_data,
-                    cloze_fact_key, cloze_fact_view):
-
+    def _edit_clozes(self, fact, new_fact_data, cloze_fact_key, cloze_fact_view):
         """Auxiliary function used by other card types to when editing clozes.
         Should take into account that not all fact views are cloze-based.
 
@@ -158,16 +153,17 @@ class Cloze(CardType):
         return new_cards, edited_cards, deleted_cards
 
     def edit_fact(self, fact, new_fact_data):
-        return self._edit_clozes(fact, new_fact_data,
-            "text", self.fact_views[0])
+        return self._edit_clozes(fact, new_fact_data, "text", self.fact_views[0])
 
 
 class ClozePlugin(Plugin):
 
     name = _("Cloze deletion")
-    description = _("""A card type blanking out certain fragments in a text.\n
+    description = _(
+        """A card type blanking out certain fragments in a text.\n
 E.g., the text \"The capital of [France] is [Paris]\", will give cards with questions \"The capital of France is [...].\" and \"The capital of [...] is Paris\".\n
 Editing the text will automatically update all sister cards.\n\nYou can also specify hints, e.g. [cloze:hint] will show
- [hint] in the question as opposed to [...].""")
+ [hint] in the question as opposed to [...]."""
+    )
     components = [Cloze]
     supported_API_level = 3

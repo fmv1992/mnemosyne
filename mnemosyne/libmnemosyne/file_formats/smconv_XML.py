@@ -2,22 +2,19 @@
 #  smconv_XML.py <Felix.Engel@fcenet.de>, <Peter.Bienstman@gmail.com>
 #
 
-import os
 import math
 import time
 from xml.etree import cElementTree
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor \
-    import MediaPreprocessor
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
 
-HOUR = 60 * 60 # Seconds in an hour.
-DAY = 24 * HOUR # Seconds in a day.
+HOUR = 60 * 60  # Seconds in an hour.
+DAY = 24 * HOUR  # Seconds in a day.
 
 
 class Smconv_XML(FileFormat, MediaPreprocessor):
-
     """Import the xml file created by the smconv.pl script to Mnemosyne.
     smconv.pl is available at http://smconvpl.sourceforge.net and reads
     SuperMemo for Palm databases and exports them to XML.
@@ -57,8 +54,11 @@ class Smconv_XML(FileFormat, MediaPreprocessor):
             w.show_error(_("Unable to parse file:") + str(e))
             return
         card_type = self.card_type_with_id("1")
-        tag_names = [tag_name.strip() for \
-            tag_name in extra_tag_names.split(",") if tag_name.strip()]
+        tag_names = [
+            tag_name.strip()
+            for tag_name in extra_tag_names.split(",")
+            if tag_name.strip()
+        ]
         for element in tree.find("cards").findall("card"):
             category = element.attrib["category"]
             commit = not (element.attrib["commit"] == "0")
@@ -107,19 +107,34 @@ class Smconv_XML(FileFormat, MediaPreprocessor):
             # Construct card.
             fact_data = {"f": question, "b": answer}
             self.preprocess_media(fact_data, tag_names)
-            card = self.controller().create_new_cards(fact_data, card_type,
-                grade=grade, tag_names=tag_names + [category],
-                check_for_duplicates=False, save=False)[0]
+            card = self.controller().create_new_cards(
+                fact_data,
+                card_type,
+                grade=grade,
+                tag_names=tag_names + [category],
+                check_for_duplicates=False,
+                save=False,
+            )[0]
             if _("MISSING_MEDIA") in tag_names:
                 tag_names.remove(_("MISSING_MEDIA"))
             if card_other is not None:
-                card.creation_time = int(time.mktime(time.strptime(\
-                    card_other.attrib["datecreate"], "%Y-%m-%d")))
-                card.modification_time = int(time.mktime(time.strptime(\
-                    card_other.attrib["datecommit"], "%Y-%m-%d")))
-                card.next_rep = self.scheduler().midnight_UTC(int(time.mktime(\
-                    time.strptime(card_other.attrib["datenexttest"],
-                    "%Y-%m-%d"))))
+                card.creation_time = int(
+                    time.mktime(
+                        time.strptime(card_other.attrib["datecreate"], "%Y-%m-%d")
+                    )
+                )
+                card.modification_time = int(
+                    time.mktime(
+                        time.strptime(card_other.attrib["datecommit"], "%Y-%m-%d")
+                    )
+                )
+                card.next_rep = self.scheduler().midnight_UTC(
+                    int(
+                        time.mktime(
+                            time.strptime(card_other.attrib["datenexttest"], "%Y-%m-%d")
+                        )
+                    )
+                )
                 card.last_rep = card.next_rep - interval
                 card.lapses = int(card_other.attrib["lapses"])
                 # Try to fill acquisiton reps and retention reps.

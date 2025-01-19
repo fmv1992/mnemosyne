@@ -3,10 +3,12 @@
 #
 
 import json
+
 try:
     from mnemosyne.android_python.mnemosyne_android import *
-except Exception as e:
+except Exception:
     import traceback
+
     traceback.print_exc()
 
 
@@ -18,22 +20,26 @@ def router(args):
     try:
         values = json.loads(args)
         print("router called with", values)
-        function = routes[values.get('function')]
+        function = routes[values.get("function")]
         res = function(values)
         status = "ok"
-    except Exception as e:
+    except Exception:
         import io
         import traceback
+
         a = io.StringIO()
         traceback.print_exc(file=a)
         stack_trace = a.getvalue()
         print(stack_trace)
         res = stack_trace
         status = "fail"
-    return json.dumps({
-        'status': status,
-        'result': res,
-    })
+    return json.dumps(
+        {
+            "status": status,
+            "result": res,
+        }
+    )
+
 
 routes = {
     "start_mnemosyne": start_mnemosyne,
@@ -55,5 +61,5 @@ routes = {
     "controller_reset_study_mode": controller_reset_study_mode,
     "controller_do_db_maintenance": controller_do_db_maintenance,
     "database_set_criterion_with_name": database_set_criterion_with_name,
-    "database_release_connection": database_release_connection
+    "database_release_connection": database_release_connection,
 }

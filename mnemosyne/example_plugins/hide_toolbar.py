@@ -2,7 +2,6 @@
 # hide_toolbar.py <Peter.Bienstman@gmail.com>
 #
 
-from PyQt6 import QtCore, QtGui
 
 from mnemosyne.libmnemosyne.plugin import Plugin
 
@@ -28,5 +27,5 @@ class HideToolbarPlugin(Plugin):
 # Register plugin.
 
 from mnemosyne.libmnemosyne.plugin import register_user_plugin
-register_user_plugin(HideToolbarPlugin)
 
+register_user_plugin(HideToolbarPlugin)

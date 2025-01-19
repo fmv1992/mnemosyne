@@ -12,14 +12,16 @@ from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 # directly from 'object' with supporting a correct super().__init__
 # call.
 
+
 class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
 
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
         # Qt designer does not allow setting multiple shortcuts per action.
-        self.actionDeleteCurrentCard.setShortcuts\
-            ([QtCore.Qt.Key.Key_Delete, QtCore.Qt.Key.Key_Backspace])
+        self.actionDeleteCurrentCard.setShortcuts(
+            [QtCore.Qt.Key.Key_Delete, QtCore.Qt.Key.Key_Backspace]
+        )
         self.status_bar_widgets = []
         self.progress_bar = None
         self.progress_bar_update_interval = 1
@@ -39,8 +41,10 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         pass
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key.Key_Q and \
-            event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
+        if (
+            event.key() == QtCore.Qt.Key.Key_Q
+            and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
+        ):
             self.close()
         else:
             QtWidgets.QMainWindow.keyPressEvent(self, event)
@@ -56,7 +60,7 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
             self.restoreGeometry(state)
         # Dynamically fill study mode menu.
         study_modes = [x for x in self.component_manager.all("study_mode")]
-        study_modes.sort(key=lambda x:x.menu_weight)
+        study_modes.sort(key=lambda x: x.menu_weight)
         study_mode_group = QtGui.QActionGroup(self)
         self.study_mode_for_action = {}
         for study_mode in study_modes:
@@ -88,15 +92,16 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
 
     def top_window(self):
         for widget in QtWidgets.QApplication.topLevelWidgets():
-            if not widget.__class__.__name__.startswith("Q") and \
-                widget.__class__.__name__ != "MainWdgt" and \
-                widget.isVisible() == True:
-                    return widget
+            if (
+                not widget.__class__.__name__.startswith("Q")
+                and widget.__class__.__name__ != "MainWdgt"
+                and widget.isVisible() == True
+            ):
+                return widget
         return self
 
     def show_information(self, text):
-        QtWidgets.QMessageBox.information(self.top_window(), _("Mnemosyne"),
-            text)
+        QtWidgets.QMessageBox.information(self.top_window(), _("Mnemosyne"), text)
 
     def show_question(self, text, option0, option1, option2):
         dialog = QtWidgets.QMessageBox(self.top_window())
@@ -106,7 +111,9 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         button0 = dialog.addButton(option0, QtWidgets.QMessageBox.ButtonRole.ActionRole)
         button1 = dialog.addButton(option1, QtWidgets.QMessageBox.ButtonRole.ActionRole)
         if option2:
-            button2 = dialog.addButton(option2, QtWidgets.QMessageBox.ButtonRole.ActionRole)
+            button2 = dialog.addButton(
+                option2, QtWidgets.QMessageBox.ButtonRole.ActionRole
+            )
         dialog.exec()
         if dialog.clickedButton() == button0:
             result = 0
@@ -127,13 +134,11 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         return QtWidgets.QApplication.font().pointSize()
 
     def get_filename_to_open(self, path, filter, caption=""):
-        filename, _ = QtWidgets.QFileDialog.\
-            getOpenFileName(self, caption, path, filter)
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, caption, path, filter)
         return filename
 
     def get_filename_to_save(self, path, filter, caption=""):
-        filename, _ = QtWidgets.QFileDialog.\
-            getSaveFileName(self, caption, path, filter)
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, caption, path, filter)
         return filename
 
     def set_status_bar_message(self, text):
@@ -145,12 +150,16 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
             self.progress_bar = None
         if not self.progress_bar:
             self.progress_bar = QtWidgets.QProgressDialog(self.top_window())
-            self.progress_bar.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
-            self.progress_bar.setWindowFlags(QtCore.Qt.WindowType.Dialog \
-                | QtCore.Qt.WindowType.CustomizeWindowHint \
-                | QtCore.Qt.WindowType.WindowTitleHint \
-                & ~ QtCore.Qt.WindowType.WindowCloseButtonHint \
-                & ~ QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
+            self.progress_bar.setAttribute(
+                QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True
+            )
+            self.progress_bar.setWindowFlags(
+                QtCore.Qt.WindowType.Dialog
+                | QtCore.Qt.WindowType.CustomizeWindowHint
+                | QtCore.Qt.WindowType.WindowTitleHint
+                & ~QtCore.Qt.WindowType.WindowCloseButtonHint
+                & ~QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+            )
             self.progress_bar.setWindowTitle(_("Mnemosyne"))
             self.progress_bar.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
             self.progress_bar.setCancelButton(None)
@@ -180,8 +189,10 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         # integer values in the range, so we need to check and store the last
         # shown and the current value here.
         self.progress_bar_current_value = value
-        if value - self.progress_bar_last_shown_value >= \
-               self.progress_bar_update_interval:
+        if (
+            value - self.progress_bar_last_shown_value
+            >= self.progress_bar_update_interval
+        ):
             self.progress_bar.setValue(value)
             self.progress_bar_last_shown_value = value
             # This automatically processes events too. Calling processEvents

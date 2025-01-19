@@ -7,7 +7,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Database(Component):
-
     """Interface class describing the functions to be implemented by the
     actual database classes.
 
@@ -28,19 +27,16 @@ class Database(Component):
         self.unload()
 
     def path(self):
-
         """Returns full path of the database."""
 
         raise NotImplementedError
 
     def data_dir(self):
-
         """Returns directory of the database."""
 
         raise NotImplementedError
 
     def name(self):
-
         """Returns name of the database, without parent paths, but with
         extensions.
 
@@ -49,7 +45,6 @@ class Database(Component):
         raise NotImplementedError
 
     def display_name(self):
-
         """Returns bare name of the database, without parent paths and
         without extension.
 
@@ -60,7 +55,6 @@ class Database(Component):
     # File operations.
 
     def release_connection(self):
-
         """Release the connection, so that it may be recreated in a separate
         thread.
 
@@ -247,13 +241,11 @@ class Database(Component):
     # Queries.
 
     def cards_from_fact(self, fact):
-
         """Return a list of the cards deriving from a fact."""
 
         raise NotImplementedError
 
     def duplicates_for_fact(self, fact, card_type):
-
         """Return facts with same 'card_type.unique_fact_keys' data as 'fact'."""
 
         raise NotImplementedError
@@ -295,8 +287,9 @@ class Database(Component):
     def set_scheduler_data(self, scheduler_data):
         raise NotImplementedError
 
-    def cards_with_scheduler_data(self, scheduler_data, sort_key="", limit=-1,
-                                  max_ret_reps=-1):
+    def cards_with_scheduler_data(
+        self, scheduler_data, sort_key="", limit=-1, max_ret_reps=-1
+    ):
         raise NotImplementedError
 
     def scheduler_data_count(self, scheduler_data, max_ret_reps=-1):
@@ -306,15 +299,13 @@ class Database(Component):
     # Extra queries for language analysis.
     #
 
-    def known_recognition_questions_count_from_card_types_ids(\
-        self, card_type_ids):
+    def known_recognition_questions_count_from_card_types_ids(self, card_type_ids):
         raise NotImplementedError
 
     def known_recognition_questions_from_card_types_ids(self, card_type_ids):
         raise NotImplementedError
 
     def sorted_card_types(self):
-
         """Sorts card types so that all the built-in card types appear first,
         in the order determined by their id, and then all the user card types
         appear alphabetically.
@@ -326,9 +317,9 @@ class Database(Component):
 
         for card_type in self.card_types():
             if self.is_user_card_type(card_type):
-                user_card_types.append(card_type);
+                user_card_types.append(card_type)
             else:
-                result.append(card_type);
+                result.append(card_type)
 
         result.sort(key=lambda x: x.id)
         user_card_types.sort(key=lambda x: x.name.lower())
@@ -338,9 +329,7 @@ class Database(Component):
         return result
 
 
-
 class DatabaseMaintenance(Component):
-
     """This component performs automatic database maintenance (like
     archiving of old logs) and can be run from the UI or automatically from
     the controller.
@@ -358,4 +347,3 @@ class DatabaseMaintenance(Component):
         self.database().archive_old_logs()
         self.database().defragment()
         self.main_widget().close_progress()
-

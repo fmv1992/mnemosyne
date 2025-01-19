@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class Filter(Component):
-
     """Code which operates on a string and filters it to achieve extra
     functionality, e.g. converting relative paths to absolute paths.
 
@@ -16,7 +15,7 @@ class Filter(Component):
     The filters are executed in the order they are listed in the RenderChain.
     If you really need to make sure that your filter runs before the
     rest, set 'in_front=True' as argument in 'render_chain.register_filter'.
-    
+
     """
 
     component_type = "filter"

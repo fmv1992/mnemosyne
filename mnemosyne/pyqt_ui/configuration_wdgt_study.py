@@ -2,19 +2,24 @@
 # configuration_wdgt_study.py <Peter.Bienstman@gmail.com>
 #
 
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.ui_components.configuration_widget import \
-     ConfigurationWidget
-from mnemosyne.pyqt_ui.ui_configuration_wdgt_study import \
-     Ui_ConfigurationWdgtStudy
-from mnemosyne.libmnemosyne.schedulers.cramming import RANDOM, \
-    EARLIEST_FIRST, LATEST_FIRST, MOST_LAPSES_FIRST
+from mnemosyne.libmnemosyne.ui_components.configuration_widget import (
+    ConfigurationWidget,
+)
+from mnemosyne.pyqt_ui.ui_configuration_wdgt_study import Ui_ConfigurationWdgtStudy
+from mnemosyne.libmnemosyne.schedulers.cramming import (
+    RANDOM,
+    EARLIEST_FIRST,
+    LATEST_FIRST,
+    MOST_LAPSES_FIRST,
+)
 
 
-class ConfigurationWdgtStudy(QtWidgets.QWidget, ConfigurationWidget,
-    Ui_ConfigurationWdgtStudy):
+class ConfigurationWdgtStudy(
+    QtWidgets.QWidget, ConfigurationWidget, Ui_ConfigurationWdgtStudy
+):
 
     name = _("Study")
 
@@ -25,8 +30,7 @@ class ConfigurationWdgtStudy(QtWidgets.QWidget, ConfigurationWidget,
             self.scheduled_cards.setCurrentIndex(1)
         else:
             self.scheduled_cards.setCurrentIndex(0)
-        self.non_memorised_cards.setValue(self.config()\
-            ["non_memorised_cards_in_hand"])
+        self.non_memorised_cards.setValue(self.config()["non_memorised_cards_in_hand"])
         if self.config()["randomise_new_cards"] == True:
             self.new_cards.setCurrentIndex(1)
         else:
@@ -39,18 +43,21 @@ class ConfigurationWdgtStudy(QtWidgets.QWidget, ConfigurationWidget,
             self.order.setCurrentIndex(2)
         elif self.config()["cramming_order"] == MOST_LAPSES_FIRST:
             self.order.setCurrentIndex(3)
-        self.max_ret_reps_for_recent_cards.setValue(self.config()\
-            ["max_ret_reps_for_recent_cards"])
-        self.max_ret_reps_since_lapse.setValue(self.config()\
-            ["max_ret_reps_since_lapse"])
+        self.max_ret_reps_for_recent_cards.setValue(
+            self.config()["max_ret_reps_for_recent_cards"]
+        )
+        self.max_ret_reps_since_lapse.setValue(
+            self.config()["max_ret_reps_since_lapse"]
+        )
         if self.config()["cramming_store_state"] == True:
             self.store_state.setCheckState(QtCore.Qt.CheckState.Checked)
         else:
             self.store_state.setCheckState(QtCore.Qt.CheckState.Unchecked)
 
     def reset_to_defaults(self):
-        answer = self.main_widget().show_question(\
-            _("Reset current tab to defaults?"), _("&Yes"), _("&No"), "")
+        answer = self.main_widget().show_question(
+            _("Reset current tab to defaults?"), _("&Yes"), _("&No"), ""
+        )
         if answer == 1:
             return
         self.scheduled_cards.setCurrentIndex(0)
@@ -66,8 +73,7 @@ class ConfigurationWdgtStudy(QtWidgets.QWidget, ConfigurationWidget,
             self.config()["randomise_scheduled_cards"] = True
         else:
             self.config()["randomise_scheduled_cards"] = False
-        self.config()["non_memorised_cards_in_hand"] = \
-            self.non_memorised_cards.value()
+        self.config()["non_memorised_cards_in_hand"] = self.non_memorised_cards.value()
         if self.new_cards.currentIndex() == 1:
             self.config()["randomise_new_cards"] = True
         else:
@@ -80,13 +86,13 @@ class ConfigurationWdgtStudy(QtWidgets.QWidget, ConfigurationWidget,
             self.config()["cramming_order"] = LATEST_FIRST
         elif self.order.currentIndex() == 3:
             self.config()["cramming_order"] = MOST_LAPSES_FIRST
-        self.config()["max_ret_reps_for_recent_cards"] = \
-            self.max_ret_reps_for_recent_cards.value()
-        self.config()["max_ret_reps_since_lapse"] = \
-            self.max_ret_reps_since_lapse.value()
+        self.config()[
+            "max_ret_reps_for_recent_cards"
+        ] = self.max_ret_reps_for_recent_cards.value()
+        self.config()[
+            "max_ret_reps_since_lapse"
+        ] = self.max_ret_reps_since_lapse.value()
         if self.store_state.checkState() == QtCore.Qt.CheckState.Checked:
             self.config()["cramming_store_state"] = True
         else:
             self.config()["cramming_store_state"] = False
-
-

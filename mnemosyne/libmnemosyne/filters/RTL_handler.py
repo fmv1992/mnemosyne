@@ -8,7 +8,6 @@ from mnemosyne.libmnemosyne.filter import Filter
 
 
 class RTLHandler(Filter):
-
     """Handle RTL for Arabic and Hebrew text, such that e.g. punctuation
     comes out alright.
 
@@ -45,12 +44,19 @@ class RTLHandler(Filter):
         # TODO: seems to have been fixed in current versions of web toolkit?
         if text[0] == "[" and text[1] in string.ascii_letters and "]" in text:
             part1, part2 = text.split("]", 1)
-            return "<span dir=\"rtl\">" + part2 + "</span>" + \
-                   "<span dir=\"ltr\"> " + part1 + "]</span>"
+            return (
+                '<span dir="rtl">'
+                + part2
+                + "</span>"
+                + '<span dir="ltr"> '
+                + part1
+                + "]</span>"
+            )
 
         # If we start with latin, we'll keep the paragraph ordering as ltr.
-        if text[0] in string.ascii_letters or \
-           (len(text) >= 2 and text[1] in string.ascii_letters):
+        if text[0] in string.ascii_letters or (
+            len(text) >= 2 and text[1] in string.ascii_letters
+        ):
             return text
         # Otherwise, make everything RTL.
-        return "<span dir=\"rtl\">" + text + "</span>"
+        return '<span dir="rtl">' + text + "</span>"

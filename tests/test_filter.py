@@ -16,10 +16,14 @@ from mnemosyne.libmnemosyne.filters.expand_paths import ExpandPaths
 from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
 from mnemosyne.libmnemosyne.filters.latex import CheckForUpdatedLatexFiles, Latex
 
-side_effects = [FileNotFoundError, sp.TimeoutExpired(cmd='foo', timeout=5),
-                sp.CalledProcessError(cmd='foo', returncode=1)]
+side_effects = [
+    FileNotFoundError,
+    sp.TimeoutExpired(cmd="foo", timeout=5),
+    sp.CalledProcessError(cmd="foo", returncode=1),
+]
 check_output_mock = mock.Mock(side_effect=side_effects)
 check_call_mock = mock.Mock(side_effect=side_effects)
+
 
 class TestFilter(MnemosyneTest):
 
@@ -49,35 +53,36 @@ class TestFilter(MnemosyneTest):
         self.config()["media_autoplay"] = True
         self.config()["media_controls"] = True
 
-        assert f.run("""<video src="b">""", None, None) == \
-              """<video src="b" autoplay=1 controls=1>"""
+        assert (
+            f.run("""<video src="b">""", None, None)
+            == """<video src="b" autoplay=1 controls=1>"""
+        )
 
         self.config()["media_autoplay"] = False
         self.config()["media_controls"] = True
 
-        assert f.run("""<video src="b">""", None, None) == \
-              """<video src="b" controls=1>"""
+        assert (
+            f.run("""<video src="b">""", None, None) == """<video src="b" controls=1>"""
+        )
 
     def test_escape_to_html(self):
 
-         f = EscapeToHtml(self.mnemosyne.component_manager)
+        f = EscapeToHtml(self.mnemosyne.component_manager)
 
-         assert f.run("a\nb", None, None) == "a<br>b"
-         assert f.run("<latex>a\nb<\latex>", None, None) == "<latex>a\nb<\latex>"
-         
+        assert f.run("a\nb", None, None) == "a<br>b"
+        assert f.run("<latex>a\nb<\latex>", None, None) == "<latex>a\nb<\latex>"
+
     def test_expand_paths(self):
 
         f = ExpandPaths(self.mnemosyne.component_manager)
-         
-        assert "media" not in \
-               f.run("""data=trainingData, method=\"rpart\"""", None, None)
-        assert "media" in \
-               f.run("""data=\"rpart\"""", None, None)
-        assert "media" in \
-               f.run("""data= \"rpart\"""", None, None)        
-        assert "media" not in \
-               f.run("""Application data = \"rpart\"""", None, None) 
-        
+
+        assert "media" not in f.run(
+            """data=trainingData, method=\"rpart\"""", None, None
+        )
+        assert "media" in f.run("""data=\"rpart\"""", None, None)
+        assert "media" in f.run("""data= \"rpart\"""", None, None)
+        assert "media" not in f.run("""Application data = \"rpart\"""", None, None)
+
     def test_RTL_handler(self):
 
         f = RTLHandler(self.mnemosyne.component_manager)
@@ -86,11 +91,10 @@ class TestFilter(MnemosyneTest):
         f.run(chr(0x0491), None, None)
         f.run("[a]" + chr(0x0491), None, None)
 
-
-    @mock.patch('mnemosyne.libmnemosyne.filters.latex.sp.check_output',
-                check_output_mock)
-    @mock.patch('mnemosyne.libmnemosyne.filters.latex.sp.check_call',
-                check_call_mock)
+    @mock.patch(
+        "mnemosyne.libmnemosyne.filters.latex.sp.check_output", check_output_mock
+    )
+    @mock.patch("mnemosyne.libmnemosyne.filters.latex.sp.check_call", check_call_mock)
     def test_latex_exceptions(self):
         for _ in side_effects:
             f = CheckForUpdatedLatexFiles(self.mnemosyne.component_manager)
@@ -98,5 +102,4 @@ class TestFilter(MnemosyneTest):
 
             f = Latex(self.mnemosyne.component_manager)
             # Should not raise an exception
-            f._call_cmd(['dummy', 'cmd'],
-                        'dot_test/default.db_media/latex_out.txt')
+            f._call_cmd(["dummy", "cmd"], "dot_test/default.db_media/latex_out.txt")

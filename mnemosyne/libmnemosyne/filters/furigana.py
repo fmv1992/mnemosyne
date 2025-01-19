@@ -6,6 +6,7 @@ import re
 
 from mnemosyne.libmnemosyne.filter import Filter
 
+
 class Furigana(Filter):
 
     ruby_re = r"([\u4E00-\u9FFF]+)\[([\u3040-\u309F]+)\]"

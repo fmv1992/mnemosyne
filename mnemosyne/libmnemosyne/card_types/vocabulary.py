@@ -15,10 +15,12 @@ class Vocabulary(CardType):
     name = _("Vocabulary")
 
     # List and name the keys.
-    fact_keys_and_names = [("f", _("Foreign word or phrase")),
-                           ("p_1", _("Pronunciation")),
-                           ("m_1", _("Meaning")),
-                           ("n", _("Notes"))]
+    fact_keys_and_names = [
+        ("f", _("Foreign word or phrase")),
+        ("p_1", _("Pronunciation")),
+        ("m_1", _("Meaning")),
+        ("n", _("Notes")),
+    ]
 
     # Recognition.
     v1 = FactView(_("Recognition"), "3.1")
@@ -34,13 +36,14 @@ class Vocabulary(CardType):
     unique_fact_keys = ["f"]
     required_fact_keys = ["f", "m_1"]
 
+
 from mnemosyne.libmnemosyne.card_types.front_to_back import FrontToBack
 from mnemosyne.libmnemosyne.card_types.both_ways import BothWays
 
+
 class FrontToBackToVocabulary(CardTypeConverter):
 
-    used_for = CardTypeConverter.card_type_converter_key\
-        (FrontToBack, Vocabulary)
+    used_for = CardTypeConverter.card_type_converter_key(FrontToBack, Vocabulary)
 
     def convert(self, cards, old_card_type, new_card_type, correspondence):
         # Update front-to-back view to corresponding view in new type.
@@ -50,19 +53,16 @@ class FrontToBackToVocabulary(CardTypeConverter):
             cards[0].fact_view = new_card_type.fact_views[0]
         # Create back-to-front view.
         if "f" in correspondence and correspondence["f"] == "m_1":
-            new_card = Card(new_card_type, cards[0].fact,
-                new_card_type.fact_views[0])
+            new_card = Card(new_card_type, cards[0].fact, new_card_type.fact_views[0])
         else:
-            new_card = Card(new_card_type, cards[0].fact,
-                new_card_type.fact_views[1])
+            new_card = Card(new_card_type, cards[0].fact, new_card_type.fact_views[1])
         new_cards, edited_cards, deleted_cards = [new_card], [cards[0]], []
         return new_cards, edited_cards, deleted_cards
 
 
 class BothWaysToVocabulary(CardTypeConverter):
 
-    used_for = CardTypeConverter.card_type_converter_key\
-        (BothWays, Vocabulary)
+    used_for = CardTypeConverter.card_type_converter_key(BothWays, Vocabulary)
 
     def convert(self, cards, old_card_type, new_card_type, correspondence):
         for card in cards:
@@ -82,8 +82,7 @@ class BothWaysToVocabulary(CardTypeConverter):
 
 class VocabularyToFrontToBack(CardTypeConverter):
 
-    used_for = CardTypeConverter.card_type_converter_key\
-        (Vocabulary, FrontToBack)
+    used_for = CardTypeConverter.card_type_converter_key(Vocabulary, FrontToBack)
 
     def convert(self, cards, old_card_type, new_card_type, correspondence):
         new_cards, edited_cards, deleted_cards = [], [], []
@@ -107,8 +106,7 @@ class VocabularyToFrontToBack(CardTypeConverter):
 
 class VocabularyToBothWays(CardTypeConverter):
 
-    used_for = CardTypeConverter.card_type_converter_key\
-        (Vocabulary, BothWays)
+    used_for = CardTypeConverter.card_type_converter_key(Vocabulary, BothWays)
 
     def convert(self, cards, old_card_type, new_card_type, correspondence):
         for card in cards:

@@ -2,10 +2,9 @@
 # test_util_functions.py - Mike Appleby <mike@peacecorps.org.cv>
 #
 
-import os
-import shutil
 
 from mnemosyne.libmnemosyne.utils import *
+
 
 class TestUtilFunctions(object):
 
@@ -46,13 +45,15 @@ class TestUtilFunctions(object):
 
     def test_contract_windows(self):
         assert contract_path("C:\\a\\b", "C:\\a") == "b"
-        #assert contract_path("C:\\a\\b", "c:\\a") == "b"
+        # assert contract_path("C:\\a\\b", "c:\\a") == "b"
 
     def test_mangle(self):
-        for name in [mangle("1aa"), mangle("a!@#$% ^&*(){}{a"),
-                     mangle("a\xac\\u1234\\u20ac\\U00008000")]:
-            C = type(name, (self.__class__, ),
-                 {"name": 1})
+        for name in [
+            mangle("1aa"),
+            mangle("a!@#$% ^&*(){}{a"),
+            mangle("a\xac\\u1234\\u20ac\\U00008000"),
+        ]:
+            C = type(name, (self.__class__,), {"name": 1})
 
     def test_copy(self):
         assert copy_file_to_dir("/home/joe/test.py", "/home/joe") == "test.py"
@@ -65,5 +66,3 @@ class TestUtilFunctions(object):
 
     def test_filesystem(self):
         is_filesystem_case_insensitive()
-
-

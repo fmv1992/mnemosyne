@@ -15,7 +15,6 @@ DAY = 24 * HOUR  # Seconds in a day.
 
 
 class SM2Mnemosyne(Scheduler):
-
     """Scheduler based on http://www.supermemo.com/english/ol/sm2.htm.
     Note that all intervals are in seconds, since time is stored as
     integer POSIX timestamps.
@@ -36,7 +35,6 @@ class SM2Mnemosyne(Scheduler):
     _warned_about_too_many_cards = False
 
     def true_scheduled_interval(self, card):
-
         """Since 'next_rep' is always midnight UTC for retention reps, we need
         to take timezone and 'day_starts_at' into account to calculate the
         true scheduled interval when we are doing the actual repetition.
@@ -50,8 +48,7 @@ class SM2Mnemosyne(Scheduler):
         interval = card.next_rep - card.last_rep
         if card.grade < 2:
             if abs(interval) > 1e-10:
-                self.main_widget().show_error(\
-                    "Internal error: interval not zero.")
+                self.main_widget().show_error("Internal error: interval not zero.")
             return interval
         interval += self.config()["day_starts_at"] * HOUR
         if time.localtime(time.time()).tm_isdst and time.daylight:
@@ -61,7 +58,6 @@ class SM2Mnemosyne(Scheduler):
         return int(interval)
 
     def reset(self, new_only=False):
-
         """'_card_ids_in_queue' contains the _ids of the cards making up the
         queue.
 
@@ -94,7 +90,6 @@ class SM2Mnemosyne(Scheduler):
             self.stage = 3
 
     def set_initial_grade(self, cards, grade):
-
         """Sets the initial grades for a set of sister cards, making sure
         their next repetitions do no fall on the same day.
 
@@ -115,18 +110,18 @@ class SM2Mnemosyne(Scheduler):
             card.last_rep = last_rep
             card.next_rep = next_rep
             next_rep += DAY
-            self.log().repetition(card, scheduled_interval=0,
-                actual_interval=0, thinking_time=0)
+            self.log().repetition(
+                card, scheduled_interval=0, actual_interval=0, thinking_time=0
+            )
 
     def calculate_initial_interval(self, grade):
-
         """The first repetition is treated specially, and gives longer
         intervals, to allow for the fact that the user may have seen this
         card before.
 
         """
 
-        return (0, 0, 1*DAY, 3*DAY, 4*DAY, 7*DAY) [grade]
+        return (0, 0, 1 * DAY, 3 * DAY, 4 * DAY, 7 * DAY)[grade]
 
     def calculate_interval_noise(self, interval):
         if interval == 0:
@@ -140,7 +135,6 @@ class SM2Mnemosyne(Scheduler):
         return int(noise)
 
     def avoid_sister_cards(self, card):
-
         """Change card.next_rep to make sure that the card is not scheduled
         on the same day as a sister card.
 
@@ -148,8 +142,9 @@ class SM2Mnemosyne(Scheduler):
 
         """
 
-        while self.database().sister_card_count_scheduled_between\
-            (card, card.next_rep, card.next_rep + DAY):
+        while self.database().sister_card_count_scheduled_between(
+            card, card.next_rep, card.next_rep + DAY
+        ):
             card.next_rep += DAY
 
     def rebuild_queue(self, learn_ahead=False):
@@ -171,15 +166,19 @@ class SM2Mnemosyne(Scheduler):
         if self.stage == 1:
             if self.config()["shown_backlog_help"] == False:
                 if db.scheduled_count(self.adjusted_now() - DAY) != 0:
-                    self.main_widget().show_information(\
-_("You appear to have missed some reviews. Don't worry too much about this backlog, and do as many cards as you feel comfortable with to catch up each day. Mnemosyne will automatically reschedule your cards such that the most urgent ones are shown first."))
+                    self.main_widget().show_information(
+                        _(
+                            "You appear to have missed some reviews. Don't worry too much about this backlog, and do as many cards as you feel comfortable with to catch up each day. Mnemosyne will automatically reschedule your cards such that the most urgent ones are shown first."
+                        )
+                    )
                     self.config()["shown_backlog_help"] = True
             if self.config()["randomise_scheduled_cards"] == True:
                 sort_key = "random"
             else:
                 sort_key = "interval"
-            for _card_id, _fact_id in db.cards_due_for_ret_rep(\
-                self.adjusted_now(), sort_key=sort_key, limit=50):
+            for _card_id, _fact_id in db.cards_due_for_ret_rep(
+                self.adjusted_now(), sort_key=sort_key, limit=50
+            ):
                 self._card_ids_in_queue.append(_card_id)
                 self._fact_ids_in_queue.append(_fact_id)
             if len(self._card_ids_in_queue):
@@ -194,8 +193,9 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         limit = self.config()["non_memorised_cards_in_hand"]
         non_memorised_in_queue = 0
         if self.stage == 2:
-            for _card_id, _fact_id in db.cards_to_relearn(grade=1,
-                sort_key="-interval"):
+            for _card_id, _fact_id in db.cards_to_relearn(
+                grade=1, sort_key="-interval"
+            ):
                 if _fact_id not in self._fact_ids_in_queue:
                     if non_memorised_in_queue < limit:
                         self._card_ids_in_queue.append(_card_id)
@@ -203,8 +203,9 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
                         non_memorised_in_queue += 1
                     if non_memorised_in_queue == limit:
                         break
-            for _card_id, _fact_id in db.cards_to_relearn(grade=0,
-                sort_key="-interval"):
+            for _card_id, _fact_id in db.cards_to_relearn(
+                grade=0, sort_key="-interval"
+            ):
                 if _fact_id not in self._fact_ids_in_queue:
                     if non_memorised_in_queue < limit:
                         self._card_ids_in_queue.append(_card_id)
@@ -267,10 +268,13 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
                 sort_key = ""
             # Preferentially keep away from sister cards for as long as
             # possible.
-            for _card_id, _fact_id in db.cards_unseen(\
-                    sort_key=sort_key, limit=min(limit, 50)):
-                if _fact_id not in self._fact_ids_in_queue \
-                    and _fact_id not in self._fact_ids_memorised:
+            for _card_id, _fact_id in db.cards_unseen(
+                sort_key=sort_key, limit=min(limit, 50)
+            ):
+                if (
+                    _fact_id not in self._fact_ids_in_queue
+                    and _fact_id not in self._fact_ids_memorised
+                ):
                     self._card_ids_in_queue.append(_card_id)
                     self._fact_ids_in_queue.append(_fact_id)
                     non_memorised_in_queue += 1
@@ -282,8 +286,9 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
                         return
             # If our hand is not full enough, start pulling in sister cards.
             if non_memorised_in_queue < limit:
-                for _card_id, _fact_id in db.cards_unseen(\
-                        sort_key=sort_key, limit=min(limit, 50)):
+                for _card_id, _fact_id in db.cards_unseen(
+                    sort_key=sort_key, limit=min(limit, 50)
+                ):
                     if _fact_id not in self._fact_ids_in_queue:
                         self._card_ids_in_queue.append(_card_id)
                         self._fact_ids_in_queue.append(_fact_id)
@@ -312,8 +317,9 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
             else:
                 self.stage = 3
             return
-        for _card_id, _fact_id in db.cards_learn_ahead(self.adjusted_now(),
-            sort_key="next_rep", limit=50):
+        for _card_id, _fact_id in db.cards_learn_ahead(
+            self.adjusted_now(), sort_key="next_rep", limit=50
+        ):
             self._card_ids_in_queue.append(_card_id)
         # Relearn cards which we got wrong during learn ahead.
         self.stage = 2
@@ -352,7 +358,6 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         return db.card(_card_id, is_id_internal=True)
 
     def is_prefetch_allowed(self, card_to_grade):
-
         """Can we display a new card before having processed the grading of
         the previous one?
 
@@ -361,15 +366,13 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         # The grading of a card which previously had grade 0 will remove the
         # second copy from the queue in 'grade_answer', so we can't prefetch
         # if that second copy happens to be the one coming up.
-        if self._card_ids_in_queue and \
-            card_to_grade._id == self._card_ids_in_queue[0]:
+        if self._card_ids_in_queue and card_to_grade._id == self._card_ids_in_queue[0]:
             return False
         # Make sure there are enough cards left to find one which is not a
         # duplicate.
         return len(self._card_ids_in_queue) >= 3
 
     def interval_multiplication_factor(self, card, interval):
-
         """Allow plugin to easily scale the scheduled interval."""
 
         return 1.0
@@ -385,13 +388,14 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         # original in the GUI intact.
         if dry_run:
             import copy
+
             card = copy.copy(card)
         # Determine whether we learned on time or not (only relevant for
         # grades 2 or higher).
-        if self.adjusted_now() - DAY >= card.next_rep: # Already due yesterday.
+        if self.adjusted_now() - DAY >= card.next_rep:  # Already due yesterday.
             timing = "LATE"
         else:
-            if self.adjusted_now() < card.next_rep: # Not due today.
+            if self.adjusted_now() < card.next_rep:  # Not due today.
                 timing = "EARLY"
             else:
                 timing = "ON TIME"
@@ -402,7 +406,7 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         # pulling a sister card from the 'unseen' pile.
         if not dry_run and card.grade < 2 and new_grade >= 2:
             self._fact_ids_memorised.append(card.fact._id)
-        if card.grade == -1: # Unseen card.
+        if card.grade == -1:  # Unseen card.
             actual_interval = 0
         else:
             actual_interval = int(self.stopwatch().start_time) - card.last_rep
@@ -418,30 +422,30 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
             card.acq_reps_since_lapse += 1
             new_interval = 0
         elif card.grade in [0, 1] and new_grade in [2, 3, 4, 5]:
-             # In the acquisition phase and moving to the retention phase.
-             card.acq_reps += 1
-             card.acq_reps_since_lapse += 1
-             if new_grade == 2:
-                 new_interval = DAY
-             elif new_grade == 3:
-                 new_interval = random.choice([1, 1, 2]) * DAY
-             elif new_grade == 4:
-                 new_interval = random.choice([1, 2, 2]) * DAY
-             elif new_grade == 5:
-                 new_interval = 2 * DAY
-             # Make sure the second copy of a grade 0 card doesn't show
-             # up again.
-             if not dry_run and card.grade == 0:
-                 if card._id in self._card_ids_in_queue:
-                     self._card_ids_in_queue.remove(card._id)
+            # In the acquisition phase and moving to the retention phase.
+            card.acq_reps += 1
+            card.acq_reps_since_lapse += 1
+            if new_grade == 2:
+                new_interval = DAY
+            elif new_grade == 3:
+                new_interval = random.choice([1, 1, 2]) * DAY
+            elif new_grade == 4:
+                new_interval = random.choice([1, 2, 2]) * DAY
+            elif new_grade == 5:
+                new_interval = 2 * DAY
+            # Make sure the second copy of a grade 0 card doesn't show
+            # up again.
+            if not dry_run and card.grade == 0:
+                if card._id in self._card_ids_in_queue:
+                    self._card_ids_in_queue.remove(card._id)
         elif card.grade in [2, 3, 4, 5] and new_grade in [0, 1]:
-             # In the retention phase and dropping back to the
-             # acquisition phase.
-             card.ret_reps += 1
-             card.lapses += 1
-             card.acq_reps_since_lapse = 0
-             card.ret_reps_since_lapse = 0
-             new_interval = 0
+            # In the retention phase and dropping back to the
+            # acquisition phase.
+            card.ret_reps += 1
+            card.lapses += 1
+            card.acq_reps_since_lapse = 0
+            card.ret_reps_since_lapse = 0
+            new_interval = 0
         elif card.grade in [2, 3, 4, 5] and new_grade in [2, 3, 4, 5]:
             # In the retention phase and staying there.
             card.ret_reps += 1
@@ -490,7 +494,7 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         # Optional: limit interval:
         if self.config()["max_scheduled_interval_days"]:
             if new_interval > self.config()["max_scheduled_interval_days"] * DAY:
-                new_interval = self.config()["max_scheduled_interval_days"] * DAY    
+                new_interval = self.config()["max_scheduled_interval_days"] * DAY
         # When doing a dry run, stop here and return the scheduled interval.
         if dry_run:
             return new_interval
@@ -513,8 +517,12 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         for f in self.component_manager.all("hook", "after_repetition"):
             f.run(card)
         # Create log entry.
-        self.log().repetition(card, scheduled_interval, actual_interval,
-            thinking_time=self.stopwatch().time())
+        self.log().repetition(
+            card,
+            scheduled_interval,
+            actual_interval,
+            thinking_time=self.stopwatch().time(),
+        )
         return new_interval
 
     def scheduled_count(self):
@@ -527,7 +535,6 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
         return self.database().active_count()
 
     def card_count_scheduled_n_days_from_now(self, n):
-
         """Yesterday: n=-1, today: n=0, tomorrow: n=1, ... .
 
         Is not implemented in the database, because this could need internal
@@ -536,8 +543,9 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
 
         if n > 0:
             now = self.adjusted_now()
-            return self.database().card_count_scheduled_between\
-                    (now + (n - 1) * DAY, now + n * DAY)
+            return self.database().card_count_scheduled_between(
+                now + (n - 1) * DAY, now + n * DAY
+            )
         else:
             return self.database().card_count_scheduled_n_days_ago(-n)
 
@@ -552,21 +560,31 @@ _("You appear to have missed some reviews. Don't worry too much about this backl
 
         start_of_day, end_of_day = self._today_start_and_end_timestamp()
 
-        forgotten_fact_ids = [_fact_id for _fact_id in db.fact_ids_forgotten_and_learned_today(start_of_day, end_of_day)]
-        new_fact_ids = [_fact_id for _fact_id in db.fact_ids_newly_learned_today(start_of_day, end_of_day)]
+        forgotten_fact_ids = [
+            _fact_id
+            for _fact_id in db.fact_ids_forgotten_and_learned_today(
+                start_of_day, end_of_day
+            )
+        ]
+        new_fact_ids = [
+            _fact_id
+            for _fact_id in db.fact_ids_newly_learned_today(start_of_day, end_of_day)
+        ]
 
         return new_fact_ids + forgotten_fact_ids
 
     def _warn_too_many_cards(self):
-        """Shows a warning if there are already 15 new or failed cards memorized.
-
-        """
+        """Shows a warning if there are already 15 new or failed cards memorized."""
         # only alert if it is exactly 15, do be obtrusive
-        if (len(self._fact_ids_memorised) == 15 and
-                not self._warned_about_too_many_cards):
+        if (
+            len(self._fact_ids_memorised) == 15
+            and not self._warned_about_too_many_cards
+        ):
             self.main_widget().show_information(
-                ("You've memorised 15 new or failed cards.") + " " +
-                ("If you do this for many days, you could get a big workload later."))
+                ("You've memorised 15 new or failed cards.")
+                + " "
+                + ("If you do this for many days, you could get a big workload later.")
+            )
             self._warned_about_too_many_cards = True
             # log the event, so we won't show an alert more than once a day
             self.log().warn_too_many_cards()

@@ -1,10 +1,8 @@
-
 #
 # mnemosyne1_mem.py <Peter.Bienstman@gmail.com>
 #
 
 import os
-import re
 import sys
 import time
 import pickle
@@ -13,8 +11,7 @@ from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.utils import MnemosyneError
 from mnemosyne.libmnemosyne.file_format import FileFormat
 from mnemosyne.libmnemosyne.file_formats.mnemosyne1 import Mnemosyne1
-from mnemosyne.libmnemosyne.file_formats.science_log_parser \
-     import ScienceLogParser
+from mnemosyne.libmnemosyne.file_formats.science_log_parser import ScienceLogParser
 
 
 class Mnemosyne1Mem(FileFormat, Mnemosyne1):
@@ -45,8 +42,7 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
         self.import_logs(filename)
         # Force an ADDED_CARD log entry for those cards that did not figure in
         # the txt logs, e.g. due to missing or corrupt logs.
-        db.add_missing_added_card_log_entries(
-            set(item.id for item in self.items))
+        db.add_missing_added_card_log_entries(set(item.id for item in self.items))
         # In 2.x, repetition events are used to update a card's last_rep and
         # next_rep during sync. In 1.x, there was no such information, and
         # calculating it from the logs will fail if they are incomplete.
@@ -61,8 +57,7 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
 
     def read_items_from_mnemosyne1_mem(self, filename):
         sys.modules["mnemosyne.core"] = object()
-        sys.modules["mnemosyne.core.mnemosyne_core"] \
-            = Mnemosyne1.MnemosyneCore()
+        sys.modules["mnemosyne.core.mnemosyne_core"] = Mnemosyne1.MnemosyneCore()
         # For importing Python 2 pickles, we run into this bug:
         # http://bugs.python.org/issue22005
         # Workaround is opening this file using 'bytes' encoding, but
@@ -70,8 +65,9 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
         try:
             memfile = open(filename, "rb")
             header = memfile.readline()
-            self.starttime, self.categories, self.items \
-                = pickle.load(memfile, encoding="bytes")
+            self.starttime, self.categories, self.items = pickle.load(
+                memfile, encoding="bytes"
+            )
             self.starttime = self.starttime.__dict__[b"time"]
             for category in self.categories:
                 category.name = category.__dict__[b"name"]
@@ -94,10 +90,8 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
                 item.acq_reps = item.__dict__[b"acq_reps"]
                 item.ret_reps = item.__dict__[b"ret_reps"]
                 item.lapses = item.__dict__[b"lapses"]
-                item.acq_reps_since_lapse = \
-                    item.__dict__[b"acq_reps_since_lapse"]
-                item.ret_reps_since_lapse = \
-                    item.__dict__[b"ret_reps_since_lapse"]
+                item.acq_reps_since_lapse = item.__dict__[b"acq_reps_since_lapse"]
+                item.ret_reps_since_lapse = item.__dict__[b"ret_reps_since_lapse"]
                 del item.__dict__[b"id"]
                 del item.__dict__[b"cat"]
                 del item.__dict__[b"q"]
@@ -112,11 +106,12 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
                 del item.__dict__[b"lapses"]
                 del item.__dict__[b"acq_reps_since_lapse"]
                 del item.__dict__[b"ret_reps_since_lapse"]
-        except (FileNotFoundError, PermissionError) as e:
+        except (FileNotFoundError, PermissionError):
             self.main_widget().show_error(_("Unable to open file."))
             raise MnemosyneError
-        except Exception as e:
+        except Exception:
             import traceback
+
             self.main_widget().show_error(traceback.format_exc())
             raise MnemosyneError
 
@@ -137,8 +132,11 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
         db.dump_to_science_log()
         # Manage database indexes.
         db.before_1x_log_import()
-        filenames = [os.path.join(log_dir, logname) for logname in \
-            sorted(os.listdir(log_dir)) if logname.endswith(".bz2")]
+        filenames = [
+            os.path.join(log_dir, logname)
+            for logname in sorted(os.listdir(log_dir))
+            if logname.endswith(".bz2")
+        ]
         # log.txt can also contain data we need to import, especially on the
         # initial upgrade from 1.x. 'ids_to_parse' will make sure we only pick
         # up the relevant events. (If we do the importing after having used
@@ -147,9 +145,11 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
         filenames.append(os.path.join(os.path.dirname(filename), "log.txt"))
         w.set_progress_range(len(filenames))
         ignored_files = []
-        parser = ScienceLogParser(self.database(),
+        parser = ScienceLogParser(
+            self.database(),
             ids_to_parse=self.items_by_id,
-            machine_id=self.config().machine_id())
+            machine_id=self.config().machine_id(),
+        )
         for filename in filenames:
             try:
                 parser.parse(filename)
@@ -157,8 +157,9 @@ class Mnemosyne1Mem(FileFormat, Mnemosyne1):
                 ignored_files.append(filename)
             w.increase_progress(1)
         if ignored_files:
-            w.show_information(_("Ignoring unparsable files:<br/>") +\
-                '<br/>'.join(ignored_files))
+            w.show_information(
+                _("Ignoring unparsable files:<br/>") + "<br/>".join(ignored_files)
+            )
         # Manage database indexes.
         db.after_1x_log_import()
         db.skip_science_log()

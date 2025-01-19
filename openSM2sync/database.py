@@ -2,8 +2,8 @@
 # database.py <Peter.Bienstman@gmail.com>
 #
 
-class Database(object):
 
+class Database(object):
     """Interface that needs to be implemented by the database object used in the
     Client and the Server.
 
@@ -98,14 +98,11 @@ class Database(object):
     version = "Database version string"
 
     def path(self):
-
         """Returns full path of the database."""
 
         raise NotImplementedError
 
-
     def name(self):
-
         """Returns bare name of the database, without parent paths and
         suffixes.
 
@@ -176,8 +173,7 @@ class Database(object):
     def update_last_log_index_synced_for(self, partner):
         raise NotImplementedError
 
-    def number_of_log_entries_to_sync_for(self, partner,
-            interested_in_old_reps=True):
+    def number_of_log_entries_to_sync_for(self, partner, interested_in_old_reps=True):
         raise NotImplementedError
 
     def number_of_log_entries(self, interested_in_old_reps=True):
@@ -202,7 +198,6 @@ class Database(object):
         raise NotImplementedError
 
     def generate_log_entries_for_settings(self):
-
         """Needed after binary initial upload/download of the database, to
         ensure that the side effects to config get applied.
 

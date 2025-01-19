@@ -21,16 +21,18 @@ class Schedule(PlotStatisticsPage):
     LAST_6_MONTHS = 9
     LAST_YEAR = 10
 
-    variants = [(NEXT_WEEK, _("Next week (active cards only)")),
-                (NEXT_MONTH, _("Next month (active cards only)")),
-                (NEXT_3_MONTHS, _("Next 3 months (active cards only)")),
-                (NEXT_6_MONTHS, _("Next 6 months (active cards only)")),
-                (NEXT_YEAR, _("Next year (active cards only)")),
-                (LAST_WEEK, _("Last week (all cards)")),
-                (LAST_MONTH, _("Last month (all cards)")),
-                (LAST_3_MONTHS, _("Last 3 months (all cards)")),
-                (LAST_6_MONTHS, _("Last 6 months (all cards)")),
-                (LAST_YEAR, _("Last year (all cards)"))]
+    variants = [
+        (NEXT_WEEK, _("Next week (active cards only)")),
+        (NEXT_MONTH, _("Next month (active cards only)")),
+        (NEXT_3_MONTHS, _("Next 3 months (active cards only)")),
+        (NEXT_6_MONTHS, _("Next 6 months (active cards only)")),
+        (NEXT_YEAR, _("Next year (active cards only)")),
+        (LAST_WEEK, _("Last week (all cards)")),
+        (LAST_MONTH, _("Last month (all cards)")),
+        (LAST_3_MONTHS, _("Last 3 months (all cards)")),
+        (LAST_6_MONTHS, _("Last 6 months (all cards)")),
+        (LAST_YEAR, _("Last year (all cards)")),
+    ]
 
     def prepare_statistics(self, variant):
         if variant == self.NEXT_WEEK:
@@ -60,8 +62,6 @@ class Schedule(PlotStatisticsPage):
         self.main_widget().set_progress_update_interval(3)
         self.y = []
         for day in self.x:
-            self.y.append(\
-                self.scheduler().card_count_scheduled_n_days_from_now(n=day))
+            self.y.append(self.scheduler().card_count_scheduled_n_days_from_now(n=day))
             self.main_widget().increase_progress(1)
         self.main_widget().close_progress()
-

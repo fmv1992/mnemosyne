@@ -13,7 +13,7 @@ class DefaultCriterionApplier(CriterionApplier):
     def split_set(self, _set, chunk_size):
         lst = list(_set)
         # Note that [1,2,3][2:666] = [3]
-        return [lst[i:i+chunk_size] for i in range(0, len(lst), chunk_size)]
+        return [lst[i : i + chunk_size] for i in range(0, len(lst), chunk_size)]
 
     def set_activity_for_tags_with__id(self, _tag_ids, active):
         if len(_tag_ids) == 0:
@@ -40,14 +40,12 @@ class DefaultCriterionApplier(CriterionApplier):
             db.con.execute("update cards set active=0")
             # Turn on active tags. Limit to 500 at a time to deal with
             # SQLite limitations.
-            for chunked__tag_ids in self.split_set(\
-                    criterion._tag_ids_active, 500):
+            for chunked__tag_ids in self.split_set(criterion._tag_ids_active, 500):
                 self.set_activity_for_tags_with__id(chunked__tag_ids, active=1)
         # Turn off inactive card types and views.
         command = "update cards set active=0 where "
         args = []
-        for card_type_id, fact_view_id in \
-                criterion.deactivated_card_type_fact_view_ids:
+        for card_type_id, fact_view_id in criterion.deactivated_card_type_fact_view_ids:
             command += "(cards.fact_view_id=? and cards.card_type_id=?)"
             command += " or "
             args.append(fact_view_id)
@@ -57,6 +55,5 @@ class DefaultCriterionApplier(CriterionApplier):
             db.con.execute(command, args)
         # Turn off forbidden tags. Limit to 500 at a time to deal with
         # SQLite limitations.
-        for chunked__tag_ids in self.split_set(\
-                criterion._tag_ids_forbidden, 500):
+        for chunked__tag_ids in self.split_set(criterion._tag_ids_forbidden, 500):
             self.set_activity_for_tags_with__id(chunked__tag_ids, active=0)

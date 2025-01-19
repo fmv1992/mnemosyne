@@ -10,11 +10,10 @@ import time
 
 from mnemosyne.libmnemosyne.utils import traceback_string
 
-DAY = 24 * 60 * 60 # Seconds in a day.
+DAY = 24 * 60 * 60  # Seconds in a day.
 
 
 class ScienceLogParser(object):
-
     """Parse the txt logs and write the info it contains to a database
     object.
 
@@ -104,15 +103,35 @@ class ScienceLogParser(object):
 
     """
 
-    versions_1_x_phase_1 = ["0.1", "0.9", "0.9.1", "0.9.2", "0.9.3", "0.9.4",
-                            "0.9.5","0.9.6","0.9.7"]
+    versions_1_x_phase_1 = [
+        "0.1",
+        "0.9",
+        "0.9.1",
+        "0.9.2",
+        "0.9.3",
+        "0.9.4",
+        "0.9.5",
+        "0.9.6",
+        "0.9.7",
+    ]
 
-    versions_1_x_phase_2 = ["0.9.8", "0.9.8.1", "0.9.9", "0.9.10", "1.0",
-                            "1.0.1", "1.0.1.1", "1.0.2", "1.1", "1.1.1", "1.2",
-                            "1.2.1", "1.2.2"]
+    versions_1_x_phase_2 = [
+        "0.9.8",
+        "0.9.8.1",
+        "0.9.9",
+        "0.9.10",
+        "1.0",
+        "1.0.1",
+        "1.0.1.1",
+        "1.0.2",
+        "1.1",
+        "1.1.1",
+        "1.2",
+        "1.2.1",
+        "1.2.2",
+    ]
 
     def __init__(self, database, ids_to_parse=None, machine_id=""):
-
         """Only convertings ids in 'ids_to_parse' makes it possible to reliably
         import different mem files (which all share the same log files).
         For efficiency reasons, 'ids_to_parse' is best a dictionary.
@@ -122,7 +141,7 @@ class ScienceLogParser(object):
         self.database = database
         self.ids_to_parse = ids_to_parse
         self.machine_id = machine_id
-        self.version_number = "1.2.2" # Default guess for missing logs.
+        self.version_number = "1.2.2"  # Default guess for missing logs.
 
     def parse(self, filename):
         # Open file.
@@ -131,8 +150,9 @@ class ScienceLogParser(object):
             if before_extension.count("_") == 1:
                 self.user_id, self.log_number = before_extension.split("_")
             else:
-                self.user_id, self.machine_id, self.log_number = \
-                    before_extension.split("_")
+                self.user_id, self.machine_id, self.log_number = before_extension.split(
+                    "_"
+                )
             self.log_number = int(self.log_number)
         if os.path.getsize(filename) == 0:
             return
@@ -146,7 +166,7 @@ class ScienceLogParser(object):
         # when the card was graded, not when it was presented to the user.)
         self.timestamp = None
         self.previous_timestamp = None
-        self.lower_timestamp_limit = 1121021345 # 2005-07-10 21:49:05.
+        self.lower_timestamp_limit = 1121021345  # 2005-07-10 21:49:05.
         self.upper_timestamp_limit = time.time()
         for line in self.logfile:
             line = line.decode("utf-8")
@@ -155,17 +175,17 @@ class ScienceLogParser(object):
             try:
                 self._parse_line(line)
             except:
-                print("Ignoring error in file '%s' while parsing line:\n%s" %
-                    (filename, line))
+                print(
+                    "Ignoring error in file '%s' while parsing line:\n%s"
+                    % (filename, line)
+                )
                 print(traceback_string())
                 sys.stdout.flush()
 
     def _parse_line(self, line):
         parts = line.rstrip().rsplit(" : ")
-        self.timestamp = int(time.mktime(time.strptime(parts[0],
-                                         "%Y-%m-%d %H:%M:%S")))
-        if not self.lower_timestamp_limit < self.timestamp < \
-               self.upper_timestamp_limit:
+        self.timestamp = int(time.mktime(time.strptime(parts[0], "%Y-%m-%d %H:%M:%S")))
+        if not self.lower_timestamp_limit < self.timestamp < self.upper_timestamp_limit:
             raise TypeError("Ignoring impossible date %s" % parts[0])
         if parts[1].startswith("Program started"):
             # Parse version string. They typically look like:
@@ -180,11 +200,14 @@ class ScienceLogParser(object):
             scheduler_name = parts[2]
             self.database.log_started_scheduler(self.timestamp, scheduler_name)
         elif parts[1].startswith("Loaded database"):
-            Loaded, database, scheduled, non_memorised, active = \
-                parts[1].split(" ")
-            self.database.log_loaded_database(self.timestamp,
-                self.machine_id, int(scheduled), int(non_memorised),
-                int(active))
+            Loaded, database, scheduled, non_memorised, active = parts[1].split(" ")
+            self.database.log_loaded_database(
+                self.timestamp,
+                self.machine_id,
+                int(scheduled),
+                int(non_memorised),
+                int(active),
+            )
         elif parts[1].startswith("New item"):
             self._parse_new_item(parts[1])
         elif parts[1].startswith("Imported item"):
@@ -194,11 +217,14 @@ class ScienceLogParser(object):
         elif parts[1].startswith("R "):
             self._parse_repetition(parts[1])
         elif parts[1].startswith("Saved database"):
-            Saved, database, scheduled, non_memorised, active = \
-                parts[1].split(" ")
-            self.database.log_saved_database(self.timestamp,
-                self.machine_id, int(scheduled), int(non_memorised),
-                int(active))
+            Saved, database, scheduled, non_memorised, active = parts[1].split(" ")
+            self.database.log_saved_database(
+                self.timestamp,
+                self.machine_id,
+                int(scheduled),
+                int(non_memorised),
+                int(active),
+            )
         elif parts[1].startswith("Program stopped"):
             self.database.log_stopped_program(self.timestamp)
         self.previous_timestamp = self.timestamp
@@ -216,18 +242,32 @@ class ScienceLogParser(object):
         self.database.log_added_card(self.timestamp, id)
         self.database.set_offset_last_rep(id, offset, last_rep=0)
         self.database.update_card_after_log_import(id, self.timestamp, offset)
-        if grade >= 2 and self.version_number in \
-           self.versions_1_x_phase_1 + self.versions_1_x_phase_2:
-            self.database.log_repetition(self.timestamp, id, grade,
-                easiness=2.5, acq_reps=1, ret_reps=0, lapses=0,
-                acq_reps_since_lapse=1, ret_reps_since_lapse=0,
-                scheduled_interval=0, actual_interval=0, thinking_time=0,
+        if (
+            grade >= 2
+            and self.version_number
+            in self.versions_1_x_phase_1 + self.versions_1_x_phase_2
+        ):
+            self.database.log_repetition(
+                self.timestamp,
+                id,
+                grade,
+                easiness=2.5,
+                acq_reps=1,
+                ret_reps=0,
+                lapses=0,
+                acq_reps_since_lapse=1,
+                ret_reps_since_lapse=0,
+                scheduled_interval=0,
+                actual_interval=0,
+                thinking_time=0,
                 next_rep=self.timestamp + int(new_interval),
-                scheduler_data=0)
+                scheduler_data=0,
+            )
 
     def _parse_imported_item(self, imported_item_chunk):
-        Imported, item, id, grade, ret_reps, last_rep, next_rep, interval \
-            = imported_item_chunk.split(" ")
+        Imported, item, id, grade, ret_reps, last_rep, next_rep, interval = (
+            imported_item_chunk.split(" ")
+        )
         if self.ids_to_parse and id not in self.ids_to_parse:
             return
         # Check if we've seen this card before. If so, we are restoring from a
@@ -239,8 +279,7 @@ class ScienceLogParser(object):
             last_rep = 0
             self.database.log_added_card(self.timestamp, id)
             self.database.set_offset_last_rep(id, offset, last_rep)
-            self.database.update_card_after_log_import(id, self.timestamp,
-                                                       offset)
+            self.database.update_card_after_log_import(id, self.timestamp, offset)
 
     def _parse_deleted_item(self, deleted_item_chunk):
         Deleted, item, id = deleted_item_chunk.split(" ")
@@ -262,8 +301,9 @@ class ScienceLogParser(object):
             return
         grade = int(grade)
         easiness = float(easiness)
-        acq_reps, ret_reps, lapses, acq_reps_since_lapse, \
-            ret_reps_since_lapse = blocks[1].split(" ")
+        acq_reps, ret_reps, lapses, acq_reps_since_lapse, ret_reps_since_lapse = blocks[
+            1
+        ].split(" ")
         acq_reps, ret_reps = int(acq_reps), int(ret_reps)
         lapses = int(lapses)
         acq_reps_since_lapse = int(acq_reps_since_lapse)
@@ -275,8 +315,7 @@ class ScienceLogParser(object):
         new_interval = int(float(new_interval)) + int(noise)
         thinking_time = round(float(blocks[4]))
         # Deal with interval data for pre 2.0 logs.
-        if self.version_number in \
-          self.versions_1_x_phase_1 + self.versions_1_x_phase_2:
+        if self.version_number in self.versions_1_x_phase_1 + self.versions_1_x_phase_2:
             try:
                 # Calculate 'actual_interval' and update 'last_rep'.
                 # (Note: 'last_rep' is the time the card was graded, not when
@@ -293,8 +332,7 @@ class ScienceLogParser(object):
                 actual_interval = 0
                 self.database.log_added_card(self.timestamp, id)
                 self.database.set_offset_last_rep(id, offset, last_rep=0)
-                self.database.update_card_after_log_import\
-                (id, self.timestamp, offset)
+                self.database.update_card_after_log_import(id, self.timestamp, offset)
             # Convert days to seconds.
             scheduled_interval *= DAY
             new_interval *= DAY
@@ -303,10 +341,19 @@ class ScienceLogParser(object):
             if lapses == 0:
                 acq_reps_since_lapse += offset
         # Log repetititon.
-        self.database.log_repetition(self.timestamp, id, grade, easiness,
-            acq_reps, ret_reps, lapses, acq_reps_since_lapse,
-            ret_reps_since_lapse, scheduled_interval, actual_interval,
-            thinking_time, next_rep=self.timestamp + new_interval,
-            scheduler_data=0)
-
-
+        self.database.log_repetition(
+            self.timestamp,
+            id,
+            grade,
+            easiness,
+            acq_reps,
+            ret_reps,
+            lapses,
+            acq_reps_since_lapse,
+            ret_reps_since_lapse,
+            scheduled_interval,
+            actual_interval,
+            thinking_time,
+            next_rep=self.timestamp + new_interval,
+            scheduler_data=0,
+        )

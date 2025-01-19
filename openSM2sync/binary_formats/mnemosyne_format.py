@@ -4,7 +4,6 @@
 
 import os
 import sqlite3
-import tempfile
 
 from openSM2sync.log_entry import EventTypes
 from mnemosyne.libmnemosyne.utils import copy
@@ -16,27 +15,30 @@ class MnemosyneFormat(object):
         self.database = database
 
     def supports(self, program_name, program_version, database_version):
-        return program_name.lower() == "mnemosyne" and \
-            database_version == self.database.version
+        return (
+            program_name.lower() == "mnemosyne"
+            and database_version == self.database.version
+        )
 
     def binary_filename(self, store_pregenerated_data, interested_in_old_reps):
         self.database.release_connection()
         # Copy the database to a temporary file.
-        self.tmp_name = os.path.join(os.path.dirname(self.database._path),
-            "__FORSTREAMING__.db")
+        self.tmp_name = os.path.join(
+            os.path.dirname(self.database._path), "__FORSTREAMING__.db"
+        )
         copy(self.database._path, self.tmp_name)
         # Delete old reps if needed.
         if not interested_in_old_reps:
             con = sqlite3.connect(self.tmp_name)
-            con.execute("delete from log where event_type=?",
-                (EventTypes.REPETITION, ))
+            con.execute("delete from log where event_type=?", (EventTypes.REPETITION,))
             con.commit()
             con.execute("vacuum")
             con.close()
         # Delete pregerated data if needed.
         if not store_pregenerated_data:
             con = sqlite3.connect(self.tmp_name)
-            con.executescript("""
+            con.executescript(
+                """
             begin;
             drop index i_cards;
             create table cards_new(
@@ -70,7 +72,8 @@ class MnemosyneFormat(object):
             create index i_cards on cards (id);
             commit;
             vacuum;
-            """)
+            """
+            )
             con.close()
         return self.tmp_name
 

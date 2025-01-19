@@ -2,9 +2,8 @@
 # text_format.py <Peter.Bienstman@gmail.com>
 #
 
-              
+
 class TextFormat(object):
-    
     """Class handling the conversion from log entries and other data to
     text streams and vice versa.
 

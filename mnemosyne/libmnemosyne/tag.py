@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.utils import rand_uuid, CompareOnId
 
 
 class Tag(CompareOnId):
-
     """The tag name is the full name, including all levels of the hierarchy
     separated by ::.
 
@@ -26,4 +25,3 @@ class Tag(CompareOnId):
         self._id = None
         self.name = name
         self.extra_data = {}
-

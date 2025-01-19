@@ -3,7 +3,7 @@
 #
 
 import os
-from PyQt6 import QtGui, QtCore, QtWidgets
+from PyQt6 import QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.pyqt_ui.ui_export_dlg import Ui_ExportDlg
@@ -45,8 +45,9 @@ class ExportDlg(QtWidgets.QDialog, ExportDialog, Ui_ExportDlg):
 
     def browse(self):
         export_dir = self.config()["export_dir"]
-        filename = self.main_widget().get_filename_to_save(export_dir,
-            _(self.format().filename_filter))
+        filename = self.main_widget().get_filename_to_save(
+            export_dir, _(self.format().filename_filter)
+        )
         self.filename_box.setText(filename)
         if filename:
             self.config()["export_dir"] = os.path.dirname(filename)

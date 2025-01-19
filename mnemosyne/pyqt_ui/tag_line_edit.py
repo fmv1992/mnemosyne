@@ -5,11 +5,12 @@
 from PyQt6 import QtCore, QtWidgets
 from mnemosyne.pyqt_ui.tag_completer import TagCompleter
 
+
 class TagLineEdit(QtWidgets.QLineEdit):
 
     completion_prefix_changed = QtCore.pyqtSignal(str)
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(TagLineEdit, self).__init__(parent)
 
         # Stored because when we get the 'activated' signal,
@@ -28,12 +29,13 @@ class TagLineEdit(QtWidgets.QLineEdit):
         self.custom_completer_.setWidget(self)
 
         self.textEdited.connect(self.self_text_changed)
-        self.completion_prefix_changed.connect( \
-            self.custom_completer_.handle_prefix_change)
-        self.custom_completer_.activated[str].connect( \
-            self.fill_in_completion)
-        self.custom_completer_.highlighted[str].connect( \
-            self.handle_completer_highlight_)
+        self.completion_prefix_changed.connect(
+            self.custom_completer_.handle_prefix_change
+        )
+        self.custom_completer_.activated[str].connect(self.fill_in_completion)
+        self.custom_completer_.highlighted[str].connect(
+            self.handle_completer_highlight_
+        )
 
     def handle_completer_highlight_(self, text):
         self.last_highlight_ = text
@@ -46,9 +48,13 @@ class TagLineEdit(QtWidgets.QLineEdit):
         old_text = self.text()
         cursor_position = self.last_cursor_position_
         previous_comma_index = old_text[:cursor_position].rfind(",") + 1
-        
-        new_text = old_text[:previous_comma_index] + self.last_highlight_ + "," + \
-            old_text[cursor_position:]
+
+        new_text = (
+            old_text[:previous_comma_index]
+            + self.last_highlight_
+            + ","
+            + old_text[cursor_position:]
+        )
         self.setText(new_text)
         new_cursor_index = previous_comma_index + len(self.last_highlight_)
         self.setCursorPosition(previous_comma_index + len(self.last_highlight_) + 1)
@@ -57,10 +63,9 @@ class TagLineEdit(QtWidgets.QLineEdit):
         self.custom_completer_.refresh_completion_model(new_model)
 
     def self_text_changed(self, new_text):
-        self.completion_prefix_changed.emit( \
-            self.last_tag_prefix(new_text))
+        self.completion_prefix_changed.emit(self.last_tag_prefix(new_text))
 
     def last_tag_prefix(self, text):
         cursor_position = self.cursorPosition()
         last_relevant_comma_index = text[0:cursor_position].rfind(",")
-        return text[last_relevant_comma_index + 1:cursor_position].strip()
+        return text[last_relevant_comma_index + 1 : cursor_position].strip()

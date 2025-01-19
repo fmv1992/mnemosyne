@@ -2,11 +2,10 @@
 # qpushbutton2.py <Peter.Bienstman@gmail.com>
 #
 
-from PyQt6 import QtGui, QtWidgets
+from PyQt6 import QtWidgets
 
 
 class QPushButton2(QtWidgets.QPushButton):
-
     """QPushButton which throws away key repeats."""
 
     def keyPressEvent(self, event):

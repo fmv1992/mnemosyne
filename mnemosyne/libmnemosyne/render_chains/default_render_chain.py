@@ -11,12 +11,12 @@ from mnemosyne.libmnemosyne.filters.html5_audio import Html5Audio
 from mnemosyne.libmnemosyne.filters.html5_video import Html5Video
 from mnemosyne.libmnemosyne.filters.expand_paths import ExpandPaths
 from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
-from mnemosyne.libmnemosyne.filters.non_latin_font_size_increase import \
-     NonLatinFontSizeIncrease
+from mnemosyne.libmnemosyne.filters.non_latin_font_size_increase import (
+    NonLatinFontSizeIncrease,
+)
 
 
 class DefaultRenderChain(RenderChain):
-
     """Renders either the question or answer as a complete web page.
 
     The ExpandPaths and EscapeToHtml filter needs to run after the
@@ -26,7 +26,14 @@ class DefaultRenderChain(RenderChain):
 
     id = "default"
 
-    filters = [Latex, EscapeToHtml, ExpandPaths, Html5Audio, Html5Video,
-               RTLHandler, Furigana, NonLatinFontSizeIncrease]
+    filters = [
+        Latex,
+        EscapeToHtml,
+        ExpandPaths,
+        Html5Audio,
+        Html5Video,
+        RTLHandler,
+        Furigana,
+        NonLatinFontSizeIncrease,
+    ]
     renderers = [HtmlCss]
-

@@ -7,7 +7,6 @@ from mnemosyne.libmnemosyne.component import Component
 
 
 class TagTree(Component, dict):
-
     """Organises the tags in a hierarchical tree. By convention, hierarchical
     levels in tags are denoted by a :: separator.
 
@@ -52,10 +51,11 @@ class TagTree(Component, dict):
         for tag in tags:
             preprocessed_tag_name_for[tag] = tag.name
             for other_tag_name in tag_names:
-                if other_tag_name.startswith(tag.name + "::") \
-                    and other_tag_name != tag.name:
-                    preprocessed_tag_name_for[tag] = \
-                        tag.name + "::" + _("Untagged")
+                if (
+                    other_tag_name.startswith(tag.name + "::")
+                    and other_tag_name != tag.name
+                ):
+                    preprocessed_tag_name_for[tag] = tag.name + "::" + _("Untagged")
                     break
         # Build the actual tag tree.
         for tag in tags:
@@ -67,11 +67,12 @@ class TagTree(Component, dict):
                 if partial_tag:
                     partial_tag += "::"
                 partial_tag += node
-                if not partial_tag in self.display_name_for_node:
+                if partial_tag not in self.display_name_for_node:
                     self[parent].append(partial_tag)
                     self[partial_tag] = []
-                    self.display_name_for_node[partial_tag] = \
-                        node.replace("::" + _("Untagged"), "")
+                    self.display_name_for_node[partial_tag] = node.replace(
+                        "::" + _("Untagged"), ""
+                    )
                 parent = partial_tag
         if "__UNTAGGED__" in self.display_name_for_node:
             self.display_name_for_node["__UNTAGGED__"] = _("Untagged")
@@ -79,12 +80,11 @@ class TagTree(Component, dict):
     def _recount(self):
         for node in dict(self):
             if node == "__ALL__":
-                self.card_count_for_node[node] = \
-                    self.database().card_count()
+                self.card_count_for_node[node] = self.database().card_count()
             else:
-                self.card_count_for_node[node] = \
-                    self.database().card_count_for_tags(\
-                    self.tags_in_subtree(node), active_only=False)
+                self.card_count_for_node[node] = self.database().card_count_for_tags(
+                    self.tags_in_subtree(node), active_only=False
+                )
 
     def tags_in_subtree(self, node):
         tags = []
@@ -111,10 +111,11 @@ class TagTree(Component, dict):
 
     def rename_node(self, node, new_name):
         if "," in new_name:
-            self.main_widget().show_error(\
-                _("Cannot rename a single tag to multiple tags."))
+            self.main_widget().show_error(
+                _("Cannot rename a single tag to multiple tags.")
+            )
             return
-        if new_name == "__UNTAGGED__": # Forbidden.
+        if new_name == "__UNTAGGED__":  # Forbidden.
             new_name = "Untagged"
         for tag in self.tags_in_subtree(node):
             tag.name = tag.name.replace(node, new_name, 1)

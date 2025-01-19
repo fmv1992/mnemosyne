@@ -20,6 +20,7 @@ from mnemosyne.pyqt_ui.card_type_wdgt_generic import GenericCardTypeWdgt
 # card type), not a GenericCardTypeWidget, so we need to respecify the
 # component_type.
 
+
 class RedCardTypeWdgt(GenericCardTypeWdgt):
 
     component_type = "card_type_widget"
@@ -29,23 +30,25 @@ class RedCardTypeWdgt(GenericCardTypeWdgt):
         super().__init__(**kwds)
         for edit_box in self.edit_boxes:
             p = QtGui.QPalette()
-            p.setColor(QtGui.QPalette.ColorGroup.Active, QtGui.QPalette.ColorRole.Base, \
-                       QtGui.QColor("red"))
+            p.setColor(
+                QtGui.QPalette.ColorGroup.Active,
+                QtGui.QPalette.ColorRole.Base,
+                QtGui.QColor("red"),
+            )
             edit_box.setPalette(p)
 
 
 # Wrap it into a Plugin and then register the Plugin.
 
+
 class RedPlugin(Plugin):
-    
+
     name = "Red"
     description = "Red widget for front-to-back cards"
     components = [RedCardTypeWdgt]
     supported_API_level = 3
 
+
 from mnemosyne.libmnemosyne.plugin import register_user_plugin
+
 register_user_plugin(RedPlugin)
-
-
-
-

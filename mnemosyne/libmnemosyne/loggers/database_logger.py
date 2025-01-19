@@ -12,17 +12,24 @@ from mnemosyne.libmnemosyne.logger import Logger
 
 
 class DatabaseLogger(Logger):
-
     """Stores all the log events in the database."""
 
     def started_program(self, version_string=None):
         if version_string == None:
             ts = time.time()
             td = datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)
-            utc_offset = int((td.microseconds + \
-                (td.seconds + td.days * 24. * 3600) * 10**6) / 10**6 / 60 / 60)
-            version_string = "Mnemosyne %s %s %s TZ %s" % \
-                (mnemosyne.version.version, os.name, sys.platform, utc_offset)
+            utc_offset = int(
+                (td.microseconds + (td.seconds + td.days * 24.0 * 3600) * 10**6)
+                / 10**6
+                / 60
+                / 60
+            )
+            version_string = "Mnemosyne %s %s %s TZ %s" % (
+                mnemosyne.version.version,
+                os.name,
+                sys.platform,
+                utc_offset,
+            )
         self.database().log_started_program(self.timestamp, version_string)
 
     def stopped_program(self):
@@ -33,25 +40,47 @@ class DatabaseLogger(Logger):
             scheduler_name = self.scheduler().name
         self.database().log_started_scheduler(self.timestamp, scheduler_name)
 
-    def loaded_database(self, machine_id=None, scheduled_count=None,
-        non_memorised_count=None, active_count=None):
+    def loaded_database(
+        self,
+        machine_id=None,
+        scheduled_count=None,
+        non_memorised_count=None,
+        active_count=None,
+    ):
         if machine_id is None:
             machine_id = self.config().machine_id()
         if scheduled_count == None:
-            scheduled_count, non_memorised_count, active_count = \
+            scheduled_count, non_memorised_count, active_count = (
                 self.review_controller().counters()
-        self.database().log_loaded_database(self.timestamp, machine_id,
-            scheduled_count, non_memorised_count, active_count)
+            )
+        self.database().log_loaded_database(
+            self.timestamp,
+            machine_id,
+            scheduled_count,
+            non_memorised_count,
+            active_count,
+        )
 
-    def saved_database(self, machine_id=None, scheduled_count=None,
-        non_memorised_count=None, active_count=None):
+    def saved_database(
+        self,
+        machine_id=None,
+        scheduled_count=None,
+        non_memorised_count=None,
+        active_count=None,
+    ):
         if machine_id is None:
             machine_id = self.config().machine_id()
         if scheduled_count == None:
-            scheduled_count, non_memorised_count, active_count = \
+            scheduled_count, non_memorised_count, active_count = (
                 self.review_controller().counters()
-        self.database().log_saved_database(self.timestamp, machine_id,
-            scheduled_count, non_memorised_count, active_count)
+            )
+        self.database().log_saved_database(
+            self.timestamp,
+            machine_id,
+            scheduled_count,
+            non_memorised_count,
+            active_count,
+        )
 
     def future_schedule(self):
         self.database().log_future_schedule()
@@ -65,13 +94,23 @@ class DatabaseLogger(Logger):
     def deleted_card(self, card):
         self.database().log_deleted_card(self.timestamp, card.id)
 
-    def repetition(self, card, scheduled_interval, actual_interval,
-                   thinking_time):
-        self.database().log_repetition(self.timestamp, card.id, card.grade,
-            card.easiness, card.acq_reps, card.ret_reps, card.lapses,
-            card.acq_reps_since_lapse, card.ret_reps_since_lapse,
-            scheduled_interval, actual_interval, thinking_time,
-            card.next_rep, card.scheduler_data)
+    def repetition(self, card, scheduled_interval, actual_interval, thinking_time):
+        self.database().log_repetition(
+            self.timestamp,
+            card.id,
+            card.grade,
+            card.easiness,
+            card.acq_reps,
+            card.ret_reps,
+            card.lapses,
+            card.acq_reps_since_lapse,
+            card.ret_reps_since_lapse,
+            scheduled_interval,
+            actual_interval,
+            thinking_time,
+            card.next_rep,
+            card.scheduler_data,
+        )
 
     def added_tag(self, tag):
         self.database().log_added_tag(self.timestamp, tag.id)

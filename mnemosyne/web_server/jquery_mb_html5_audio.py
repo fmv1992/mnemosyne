@@ -3,20 +3,18 @@
 #
 
 import re
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.parse
+import urllib.error
 
 from mnemosyne.libmnemosyne.filter import Filter
 
-re_audio = re.compile(r"""<audio src=\"(.+?)\"(.*?)>""",
-    re.DOTALL | re.IGNORECASE)
-re_start = re.compile(r"""start=\"(.+?)\"""",
-    re.DOTALL | re.IGNORECASE)
-re_stop = re.compile(r"""stop=\"(.+?)\"""",
-    re.DOTALL | re.IGNORECASE)
+re_audio = re.compile(r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE)
+re_start = re.compile(r"""start=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
+re_stop = re.compile(r"""stop=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 
 
 class JQueryMbHtml5Audio(Filter):
-
     """Audio system based on
 
     http://pupunzi.open-lab.com/2013/03/13/making-html5-audio-actually-work-on-mobile/
@@ -56,20 +54,33 @@ class JQueryMbHtml5Audio(Filter):
                     snippet : {id: "snippet", start: %d, end: %d, loop: false},
                 }
             },
-            """ % (id, id, filename, start, stop)
-            play_command += """$.mbAudio.queue.add(""" + '\"' + id + '\"' + ""","snippet");"""
+            """ % (
+                id,
+                id,
+                filename,
+                start,
+                stop,
+            )
+            play_command += (
+                """$.mbAudio.queue.add(""" + '"' + id + '"' + ""","snippet");"""
+            )
             text = text.replace(match.group(0), "")
-        text = """
+        text = (
+            """
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script type="text/javascript" src="http://pupunzi.github.io/jquery.mb.audio/inc/jquery.mb.audio.js?_=8y338"></script>
 <script type="text/javascript">
 
         $.mbAudio.sounds = {
-""" + sound_files + """
+"""
+            + sound_files
+            + """
         };
 
 function loadPlayer() {
-""" + play_command + """
+"""
+            + play_command
+            + """
     }
 
 window.onload = function() {
@@ -77,5 +88,7 @@ window.onload = function() {
         }
 </script>
 
-<button onclick="loadPlayer()">Play</button>  """ + text
+<button onclick="loadPlayer()">Play</button>  """
+            + text
+        )
         return text

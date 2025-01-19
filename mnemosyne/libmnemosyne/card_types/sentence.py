@@ -16,7 +16,6 @@ cloze_re = re.compile(r"\[(.+?)\]", re.DOTALL)
 
 
 class Sentence(Cloze):
-
     """A card type using sentences to study foreign languages.
 
     Apart from simple recognition of the sentence, you can also add production
@@ -30,10 +29,12 @@ class Sentence(Cloze):
     name = _("Sentence")
 
     # List and name the keys.
-    fact_keys_and_names = [("f", _("Sentence")),
-                           ("p_1", _("Pronunciation")),
-                           ("m_1", _("Meaning")),
-                           ("n", _("Notes"))]
+    fact_keys_and_names = [
+        ("f", _("Sentence")),
+        ("p_1", _("Pronunciation")),
+        ("m_1", _("Meaning")),
+        ("n", _("Notes")),
+    ]
 
     # Recognition.
     v1 = FactView(_("Recognition"), "6.1")
@@ -43,7 +44,7 @@ class Sentence(Cloze):
     # Production.
     v2 = FactView(_("Production"), "6.2")
     v2.q_fact_keys = ["f"]  # Generated on the fly.
-    v2.a_fact_keys = ["a", "p_1", "m_1", "n"] # Generated on the fly.
+    v2.a_fact_keys = ["a", "p_1", "m_1", "n"]  # Generated on the fly.
 
     fact_views = [v1, v2]
     unique_fact_keys = ["f"]
@@ -61,12 +62,12 @@ class Sentence(Cloze):
         data = copy.copy(card.fact.data)
         # Recognition card.
         if card.fact_view == self.fact_views[0]:
-            question, answer = self.q_a_from_cloze\
-                (card.fact["f"], -1)
+            question, answer = self.q_a_from_cloze(card.fact["f"], -1)
         # Production card.
         else:
-            question, answer = self.q_a_from_cloze\
-                (card.fact["f"], card.extra_data["index"])
+            question, answer = self.q_a_from_cloze(
+                card.fact["f"], card.extra_data["index"]
+            )
             # Entire sentence clozed.
             if question.strip() == "[...]" and "m_1" in data:
                 question = data["m_1"]
@@ -85,14 +86,15 @@ class Sentence(Cloze):
         return cards
 
     def edit_fact(self, fact, new_fact_data):
-        return self._edit_clozes(fact, new_fact_data,
-            "f", self.fact_views[1])
+        return self._edit_clozes(fact, new_fact_data, "f", self.fact_views[1])
 
 
 class SentencePlugin(Plugin):
 
     name = _("Sentence")
-    description = _("""A card type using sentences to study foreign languages.\n
-Apart from simple recognition of the sentence, you can also add production cards using close deletion.\nE.g. if in the sentence field you write "La [casa:house] es [grande:big]", you'll get cards with questions like "La [house] es grande".""")
+    description = _(
+        """A card type using sentences to study foreign languages.\n
+Apart from simple recognition of the sentence, you can also add production cards using close deletion.\nE.g. if in the sentence field you write "La [casa:house] es [grande:big]", you'll get cards with questions like "La [house] es grande"."""
+    )
     components = [Sentence]
     supported_API_level = 3

@@ -3,18 +3,13 @@
 #
 
 import os
-import sys
-import time
-import codecs
 import zipfile
-import pickle
 
 from openSM2sync.log_entry import LogEntry
 from openSM2sync.log_entry import EventTypes
 from openSM2sync.text_formats.xml_format import XMLFormat
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.libmnemosyne.utils import MnemosyneError
 from mnemosyne.libmnemosyne.file_format import FileFormat
 
 
@@ -40,8 +35,7 @@ class Mnemosyne2Cards(FileFormat):
             return -1
         metadata_file = open("METADATA", "w", encoding="utf-8")
         for key, value in metadata.items():
-            print(key + ":" + value.strip().replace("\n", "<br>"),
-                  file=metadata_file)
+            print(key + ":" + value.strip().replace("\n", "<br>"), file=metadata_file)
         metadata_file.close()
         db = self.database()
         w = self.main_widget()
@@ -51,17 +45,19 @@ class Mnemosyne2Cards(FileFormat):
         else:
             w.set_progress_text(_("Exporting cards..."))
         active_objects = db.active_objects_to_export()
-        number_of_entries = len(active_objects["tags"]) + \
-            len(active_objects["fact_view_ids"]) + \
-            len(active_objects["card_type_ids"]) + \
-            len(active_objects["media_filenames"]) + \
-            len(active_objects["_card_ids"]) + \
-            len(active_objects["_fact_ids"])
+        number_of_entries = (
+            len(active_objects["tags"])
+            + len(active_objects["fact_view_ids"])
+            + len(active_objects["card_type_ids"])
+            + len(active_objects["media_filenames"])
+            + len(active_objects["_card_ids"])
+            + len(active_objects["_fact_ids"])
+        )
         xml_file = open("cards.xml", "w", encoding="utf-8")
         xml_format = XMLFormat()
         xml_file.write(xml_format.log_entries_header(number_of_entries))
         w.set_progress_range(number_of_entries)
-        w.set_progress_update_interval(number_of_entries/20)
+        w.set_progress_update_interval(number_of_entries / 20)
         for tag in active_objects["tags"]:
             log_entry = LogEntry()
             log_entry["type"] = EventTypes.ADDED_TAG
@@ -77,10 +73,8 @@ class Mnemosyne2Cards(FileFormat):
             log_entry["name"] = fact_view.name
             log_entry["q_fact_keys"] = repr(fact_view.q_fact_keys)
             log_entry["a_fact_keys"] = repr(fact_view.a_fact_keys)
-            log_entry["q_fact_key_decorators"] = \
-                repr(fact_view.q_fact_key_decorators)
-            log_entry["a_fact_key_decorators"] = \
-                repr(fact_view.a_fact_key_decorators)
+            log_entry["q_fact_key_decorators"] = repr(fact_view.q_fact_key_decorators)
+            log_entry["a_fact_key_decorators"] = repr(fact_view.a_fact_key_decorators)
             log_entry["a_on_top_of_q"] = repr(fact_view.a_on_top_of_q)
             log_entry["type_answer"] = repr(fact_view.type_answer)
             if fact_view.extra_data:
@@ -93,16 +87,13 @@ class Mnemosyne2Cards(FileFormat):
             log_entry["type"] = EventTypes.ADDED_CARD_TYPE
             log_entry["o_id"] = card_type.id
             log_entry["name"] = card_type.name
-            log_entry["fact_keys_and_names"] = \
-                repr(card_type.fact_keys_and_names)
-            log_entry["fact_views"] = repr([fact_view.id for fact_view \
-                in card_type.fact_views])
-            log_entry["unique_fact_keys"] = \
-                repr(card_type.unique_fact_keys)
-            log_entry["required_fact_keys"] = \
-                repr(card_type.required_fact_keys)
-            log_entry["keyboard_shortcuts"] = \
-                repr(card_type.keyboard_shortcuts)
+            log_entry["fact_keys_and_names"] = repr(card_type.fact_keys_and_names)
+            log_entry["fact_views"] = repr(
+                [fact_view.id for fact_view in card_type.fact_views]
+            )
+            log_entry["unique_fact_keys"] = repr(card_type.unique_fact_keys)
+            log_entry["required_fact_keys"] = repr(card_type.required_fact_keys)
+            log_entry["keyboard_shortcuts"] = repr(card_type.keyboard_shortcuts)
             if card_type.extra_data:
                 log_entry["extra"] = repr(card_type.extra_data)
             xml_file.write(xml_format.repr_log_entry(log_entry))
@@ -160,8 +151,9 @@ class Mnemosyne2Cards(FileFormat):
         xml_file.write(xml_format.log_entries_footer())
         xml_file.close()
         # Make archive (Zipfile requires a .zip extension).
-        zip_file = zipfile.ZipFile(filename + ".zip", "w",
-            compression=zipfile.ZIP_DEFLATED)
+        zip_file = zipfile.ZipFile(
+            filename + ".zip", "w", compression=zipfile.ZIP_DEFLATED
+        )
         zip_file.write("cards.xml")
         zip_file.write("METADATA")
         w.close_progress()
@@ -171,16 +163,15 @@ class Mnemosyne2Cards(FileFormat):
             w.set_progress_text(_("Bundling media files..."))
         number_of_media_files = len(active_objects["media_filenames"])
         w.set_progress_range(number_of_media_files)
-        w.set_progress_update_interval(number_of_media_files/100)
+        w.set_progress_update_interval(number_of_media_files / 100)
         for media_filename in active_objects["media_filenames"]:
-            full_path = os.path.normpath(\
-                os.path.join(self.database().media_dir(), media_filename))
+            full_path = os.path.normpath(
+                os.path.join(self.database().media_dir(), media_filename)
+            )
             if not os.path.exists(full_path):
-                self.main_widget().show_error(\
-                _("Missing filename: " + full_path))
+                self.main_widget().show_error(_("Missing filename: " + full_path))
                 continue
-            zip_file.write(full_path, media_filename,
-                compress_type=zipfile.ZIP_STORED)
+            zip_file.write(full_path, media_filename, compress_type=zipfile.ZIP_STORED)
             w.increase_progress(1)
         zip_file.close()
         if os.path.exists(filename):
@@ -196,8 +187,10 @@ class Mnemosyne2Cards(FileFormat):
         if not extra_tag_names:
             extra_tags = []
         else:
-            extra_tags = [self.database().get_or_create_tag_with_name(\
-                tag_name.strip()) for tag_name in extra_tag_names.split(",")]
+            extra_tags = [
+                self.database().get_or_create_tag_with_name(tag_name.strip())
+                for tag_name in extra_tag_names.split(",")
+            ]
         self.database().set_extra_tags_on_import(extra_tags)
         # Extract zipfile.
         w = self.main_widget()
@@ -205,26 +198,25 @@ class Mnemosyne2Cards(FileFormat):
         zip_file = zipfile.ZipFile(filename, "r")
         zip_file.extractall(self.database().media_dir())
         # Show metadata.
-        metadata_filename = os.path.join(\
-                self.database().media_dir(), "METADATA")
+        metadata_filename = os.path.join(self.database().media_dir(), "METADATA")
         if show_metadata:
             metadata = {}
             for line in open(metadata_filename, encoding="utf-8"):
                 key, value = line.split(":", 1)
                 metadata[key] = value.replace("<br>", "\n")
-            self.main_widget().show_export_metadata_dialog(\
-                metadata, read_only=True)
+            self.main_widget().show_export_metadata_dialog(metadata, read_only=True)
         # Parse XML.
         w.set_progress_text(_("Importing cards..."))
         self.database().card_types_to_instantiate_later = set()
         xml_filename = os.path.join(self.database().media_dir(), "cards.xml")
-        element_loop = XMLFormat().parse_log_entries(\
-            open(xml_filename, "r", encoding="utf-8"))
+        element_loop = XMLFormat().parse_log_entries(
+            open(xml_filename, "r", encoding="utf-8")
+        )
         number_of_entries = int(next(element_loop))
         if number_of_entries == 0:
             return
         w.set_progress_range(number_of_entries)
-        w.set_progress_update_interval(number_of_entries/20)
+        w.set_progress_update_interval(number_of_entries / 20)
         for log_entry in element_loop:
             self.database().apply_log_entry(log_entry, importing=True)
             w.increase_progress(1)
