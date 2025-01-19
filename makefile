@@ -37,7 +37,7 @@ format:
 	@# cp ./makefile /tmp
 	@# git checkout 99fca5c -- . || true
 	@# cp /tmp/makefile ./makefile
-	dos2unix **/*.py || true
+	find . -type f -iname '*.py' -print0 | parallel --no-run-if-empty --null --group --keep-order --jobs $$(nproc) --max-args 1 -- 'dos2unix {}'
 	pre-commit run ruff --all-files || true
 	@# pre-commit run black --all-files
 	black . --config pyproject.toml
