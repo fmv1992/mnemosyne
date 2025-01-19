@@ -18,11 +18,17 @@ for _card_id, _fact_id in mnemosyne.database().cards():
     new_fact_data = copy.copy(card.fact.data)
     for fact_key in card.fact.data:
         if find_string in card.fact[fact_key]:
-            new_fact_data[fact_key] = \
-                card.fact[fact_key].replace(find_string, replace_string)
+            new_fact_data[fact_key] = card.fact[fact_key].replace(
+                find_string, replace_string
+            )
             print((new_fact_data[fact_key]))
             changed = True
     if changed:
-        mnemosyne.controller().edit_card_and_sisters(card, new_fact_data,
-            card.card_type, [tag.name for tag in card.tags], {})
+        mnemosyne.controller().edit_card_and_sisters(
+            card,
+            new_fact_data,
+            card.card_type,
+            [tag.name for tag in card.tags],
+            {},
+        )
 mnemosyne.finalise()

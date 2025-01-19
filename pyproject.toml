@@ -8,7 +8,7 @@ packages = [{include = "mnemosyne"},
             {include = "openSM2sync"}]
 include = ["mnemosyne/pyqt_ui/ui_*", "makefile", "pixmaps/*",
     "tests/*", "mnemosyne/pyqt_ui/makefile"]
-exclude = ["mnemosyne/android", "mnemosyne/android_python", 
+exclude = ["mnemosyne/android", "mnemosyne/android_python",
     "mnemosyne/embedded_in_C", "mnemosyne/UDP_server"]
 
 [tool.poetry.dependencies]
@@ -38,3 +38,15 @@ script = "poetry-build.py"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+target-version = ['py37', 'py38', 'py39', 'py310']
+exclude = 'science_server/cgiupload.py'
+
+[tool.pytest]
+timeout = 0.1
+timeout_method = 'thread'
+
+[tool.pytest.ini_options]
+addopts = "--ignore=tests/test_sync.py"

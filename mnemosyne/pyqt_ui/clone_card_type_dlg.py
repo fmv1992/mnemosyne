@@ -14,10 +14,13 @@ class CloneCardTypeDlg(QtWidgets.QDialog, Component, Ui_CloneCardTypeDlg):
     def __init__(self, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() \
-            | QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
-        self.setWindowFlags(self.windowFlags() \
-            & ~ QtCore.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+        )
+        self.setWindowFlags(
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+        )
         self.sorted_card_types = []
         for card_type in self.database().sorted_card_types():
             if card_type.hidden_from_UI:
@@ -35,11 +38,11 @@ class CloneCardTypeDlg(QtWidgets.QDialog, Component, Ui_CloneCardTypeDlg):
             self.OK_button.setEnabled(True)
 
     def accept(self):
-        parent_instance = self.sorted_card_types[\
-            self.parent_type.currentIndex()]
+        parent_instance = self.sorted_card_types[
+            self.parent_type.currentIndex()
+        ]
         clone_name = self.name.text()
-        clone = self.controller().clone_card_type(\
-            parent_instance, clone_name)
+        clone = self.controller().clone_card_type(parent_instance, clone_name)
         if not clone:
             return
         QtWidgets.QDialog.accept(self)

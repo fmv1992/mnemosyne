@@ -9,7 +9,6 @@ from mnemosyne.libmnemosyne.renderer import Renderer
 
 
 class HtmlCss(Renderer):
-
     """Renders the question or the answer as a full webpage using tables.
     Tested on webkit-based browsers.
 
@@ -25,7 +24,7 @@ class HtmlCss(Renderer):
         Renderer.__init__(self, component_manager)
         # We cache the css creation to save some time, especially on mobile
         # devices.
-        self._css = {} # {card_type.id: render_args: css}
+        self._css = {}  # {card_type.id: render_args: css}
 
     def body_css(self, **render_args):
         css = "html, body { margin: 0px; height: 100%;  width: 100%;}\n"
@@ -37,8 +36,9 @@ class HtmlCss(Renderer):
         # Use a separate id such that user created tables are not affected.
         css = "table.mnem { height: " + self.table_height + "; width: 100%; "
         css += "border: 1px solid #8F8F8F; "
-        alignment = self.config().card_type_property(\
-            "alignment", card_type, default="center")
+        alignment = self.config().card_type_property(
+            "alignment", card_type, default="center"
+        )
         if alignment == "left":
             css += "margin-left: 0; margin-right: auto; "
         elif alignment == "right":
@@ -46,44 +46,87 @@ class HtmlCss(Renderer):
         else:
             css += "margin-left: auto; margin-right: auto; "
         # Background colours.
-        colour = self.config().card_type_property(\
-            "background_colour", card_type)
+        colour = self.config().card_type_property(
+            "background_colour", card_type
+        )
         if colour:
-            colour_string = ("%X" % colour)[2:] # Strip alpha.
+            colour_string = ("%X" % colour)[2:]  # Strip alpha.
             css += "background-color: #%s; " % colour_string
         css += "}\n"
         # Key tags.
-        for true_fact_key, proxy_fact_key in \
-            card_type.fact_key_format_proxies().items():
+        for (
+            true_fact_key,
+            proxy_fact_key,
+        ) in card_type.fact_key_format_proxies().items():
             css += "div.%s { " % true_fact_key
             # Set alignment within table cell.
-            alignment = self.config().card_type_property(\
-                "alignment", card_type, proxy_fact_key, default="center")
+            alignment = self.config().card_type_property(
+                "alignment", card_type, proxy_fact_key, default="center"
+            )
             css += "text-align: %s; " % alignment
             # Font colours.
-            colour = self.config().card_type_property(\
-                "font_colour", card_type, proxy_fact_key)
+            colour = self.config().card_type_property(
+                "font_colour", card_type, proxy_fact_key
+            )
             if colour:
-                colour_string = ("%X" % colour)[2:] # Strip alpha.
+                colour_string = ("%X" % colour)[2:]  # Strip alpha.
                 css += "color: #%s; " % colour_string
             # Font.
-            font_string = self.config().card_type_property(\
-                "font", card_type, proxy_fact_key)
+            font_string = self.config().card_type_property(
+                "font", card_type, proxy_fact_key
+            )
             if font_string:
                 style = ""
                 if font_string.count(",") == 9:
-                    family,size,x,x,w,i,u,s,x,x = font_string.split(",")
+                    family, size, x, x, w, i, u, s, x, x = font_string.split(
+                        ","
+                    )
                 elif font_string.count(",") == 10:
-                    family,size,x,x,w,i,u,s,x,x,x = font_string.split(",")
+                    family, size, x, x, w, i, u, s, x, x, x = (
+                        font_string.split(",")
+                    )
                 elif font_string.count(",") == 15:
-                    family,size,x,x,w,i,u,s,x,x,x,x,x,x,x,style \
-                        = font_string.split(",")    
+                    (
+                        family,
+                        size,
+                        x,
+                        x,
+                        w,
+                        i,
+                        u,
+                        s,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        style,
+                    ) = font_string.split(",")
                 else:
-                    #Segoe UI,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular
-                    #Segoe UI,26,-1,5,700,1,1,1,0,0,0,0,0,0,0,1,Bold Italic
-                    family,size,x,x,w,i,u,s,x,x,x,x,x,x,x,x,style \
-                        = font_string.split(",")
-                css += "font-family: \"%s\"; " % family
+                    # Segoe UI,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular
+                    # Segoe UI,26,-1,5,700,1,1,1,0,0,0,0,0,0,0,1,Bold Italic
+                    (
+                        family,
+                        size,
+                        x,
+                        x,
+                        w,
+                        i,
+                        u,
+                        s,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        style,
+                    ) = font_string.split(",")
+                css += 'font-family: "%s"; ' % family
                 css += "font-size: %spt; " % size
                 if w == "25":
                     css += "font-weight: light; "
@@ -103,14 +146,17 @@ class HtmlCss(Renderer):
     def update(self, card_type, **render_args):
         if card_type.id not in self._css:
             self._css[card_type.id] = {}
-        self._css[card_type.id][repr(sorted(render_args.items()))] =\
-            self.body_css(**render_args) + \
-            self.card_type_css(card_type, **render_args)
+        self._css[card_type.id][repr(sorted(render_args.items()))] = (
+            self.body_css(**render_args)
+            + self.card_type_css(card_type, **render_args)
+        )
 
     def css(self, card_type, **render_args):
         render_args_hash = repr(sorted(render_args.items()))
-        if not card_type.id in self._css or \
-           not render_args_hash in self._css[card_type.id]:
+        if (
+            not card_type.id in self._css
+            or not render_args_hash in self._css[card_type.id]
+        ):
             self.update(card_type, **render_args)
         return self._css[card_type.id][render_args_hash]
 
@@ -120,14 +166,21 @@ class HtmlCss(Renderer):
             if fact_key in fact_data and fact_data[fact_key]:
                 line = ""
                 if render_args.get("align_top", False):
-                    line +="<br>"
-                line += "<div id=\"%s\" class=\"%s\">%s</div>" % \
-                    (fact_key, fact_key, fact_data[fact_key])
+                    line += "<br>"
+                line += '<div id="%s" class="%s">%s</div>' % (
+                    fact_key,
+                    fact_key,
+                    fact_data[fact_key],
+                )
                 # Honour paragraph style also in user-created tables.
-                line = line.replace("<td>",
-                    "<td><div id=\"%s\" class=\"%s\">" % (fact_key, fact_key))
-                line = line.replace("<TD>",
-                    "<TD><div id=\"%s\" class=\"%s\">" % (fact_key, fact_key))
+                line = line.replace(
+                    "<td>",
+                    '<td><div id="%s" class="%s">' % (fact_key, fact_key),
+                )
+                line = line.replace(
+                    "<TD>",
+                    '<TD><div id="%s" class="%s">' % (fact_key, fact_key),
+                )
                 line = line.replace("</td>", "</div></td>")
                 line = line.replace("</TD>", "</div></TD>")
                 html += line
@@ -135,7 +188,7 @@ class HtmlCss(Renderer):
 
     def render(self, fact_data, fact_keys, card_type, **render_args):
         css = self.css(card_type)
-        valign = "valign=\"top\"" if render_args.get("align_top", False) else ""
+        valign = 'valign="top"' if render_args.get("align_top", False) else ""
         body = self.body(fact_data, fact_keys, card_type, **render_args)
         return """
         <!DOCTYPE html>
@@ -158,5 +211,8 @@ class HtmlCss(Renderer):
             </tr>
           </table>
         </body>
-        </html>""" % (css, valign, body)
-
+        </html>""" % (
+            css,
+            valign,
+            body,
+        )

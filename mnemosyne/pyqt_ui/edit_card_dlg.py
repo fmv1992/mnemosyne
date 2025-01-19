@@ -14,8 +14,9 @@ from mnemosyne.pyqt_ui.preview_cards_dlg import PreviewCardsDlg
 from mnemosyne.libmnemosyne.ui_components.dialogs import EditCardDialog
 
 
-class EditCardDlg(QtWidgets.QDialog, AddEditCards,
-                  EditCardDialog, Ui_EditCardDlg):
+class EditCardDlg(
+    QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDlg
+):
 
     page_up_down_signal = QtCore.pyqtSignal(int)
     UP = 0
@@ -33,8 +34,14 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
                 return False
         return False
 
-    def __init__(self, card, allow_cancel=True,
-                 started_from_card_browser=False, parent=None, **kwds):
+    def __init__(
+        self,
+        card,
+        allow_cancel=True,
+        started_from_card_browser=False,
+        parent=None,
+        **kwds,
+    ):
         super().__init__(**kwds)
         # Note: even though this is in essence an EditFactDlg, we don't use
         # 'fact' as argument, as 'fact' does not know anything about card
@@ -42,10 +49,13 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
         if parent is None:
             parent = self.main_widget()
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() \
-            | QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
-        self.setWindowFlags(self.windowFlags() \
-            & ~ QtCore.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+        )
+        self.setWindowFlags(
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+        )
         self.started_from_card_browser = started_from_card_browser
         self.before_apply_hook = None
         self.after_apply_hook = None
@@ -77,15 +87,16 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
     def set_new_card(self, card):
         # Called from card browser.
         self.card = card
-        self.card_types_widget.currentTextChanged[str].\
-            disconnect(self.card_type_changed)
+        self.card_types_widget.currentTextChanged[str].disconnect(
+            self.card_type_changed
+        )
         for i in range(self.card_types_widget.count()):
-            if self.card_types_widget.itemText(i) \
-                == _(card.card_type.name):
+            if self.card_types_widget.itemText(i) == _(card.card_type.name):
                 self.card_types_widget.setCurrentIndex(i)
                 break
-        self.card_types_widget.currentTextChanged[str].\
-            connect(self.card_type_changed)
+        self.card_types_widget.currentTextChanged[str].connect(
+            self.card_type_changed
+        )
         self.update_card_widget(keep_data_from_previous_widget=False)
         self.update_tags_combobox(self.card.tag_string())
 
@@ -99,26 +110,38 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
             event.ignore()
             self.reject()
         else:
-            self.main_widget().show_information(\
-                _("You are not allowed to cancel the merging."))
+            self.main_widget().show_information(
+                _("You are not allowed to cancel the merging.")
+            )
             event.ignore()
 
     def keyPressEvent(self, event):
         # Note: for the following to work reliably, there should be no
         # shortcuts defined in the ui file.
-        if event.key() == QtCore.Qt.Key.Key_Escape or (event.modifiers() in \
-            [QtCore.Qt.KeyboardModifier.ControlModifier, QtCore.Qt.KeyboardModifier.AltModifier] and \
-            event.key() == QtCore.Qt.Key.Key_E):
+        if event.key() == QtCore.Qt.Key.Key_Escape or (
+            event.modifiers()
+            in [
+                QtCore.Qt.KeyboardModifier.ControlModifier,
+                QtCore.Qt.KeyboardModifier.AltModifier,
+            ]
+            and event.key() == QtCore.Qt.Key.Key_E
+        ):
             if self.allow_cancel:
                 self.reject()
             else:
-                self.main_widget().show_information(\
-                    _("You are not allowed to cancel the merging."))
+                self.main_widget().show_information(
+                    _("You are not allowed to cancel the merging.")
+                )
                 event.ignore()
-        elif self.OK_button.isEnabled() and event.modifiers() in \
-            [QtCore.Qt.KeyboardModifier.ControlModifier, QtCore.Qt.KeyboardModifier.AltModifier]:
-            if event.key() in [QtCore.Qt.Key.Key_Enter, QtCore.Qt.Key.Key_Return,
-                QtCore.Qt.Key.Key_O]:
+        elif self.OK_button.isEnabled() and event.modifiers() in [
+            QtCore.Qt.KeyboardModifier.ControlModifier,
+            QtCore.Qt.KeyboardModifier.AltModifier,
+        ]:
+            if event.key() in [
+                QtCore.Qt.Key.Key_Enter,
+                QtCore.Qt.Key.Key_Return,
+                QtCore.Qt.Key.Key_O,
+            ]:
                 self.accept()
             elif event.key() == QtCore.Qt.Key.Key_P:
                 self.preview()
@@ -147,8 +170,10 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
         return False
 
     def is_changed(self):
-        if self.previous_card_type_name != \
-           self.card_types_widget.currentText():
+        if (
+            self.previous_card_type_name
+            != self.card_types_widget.currentText()
+        ):
             return True
         if self.previous_tags != self.tags.currentText():
             return True
@@ -168,31 +193,43 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
         if not self.is_changed():
             return 0  # OK.
         new_fact_data = self.card_type_widget.fact_data()
-        new_tag_names = [tag.strip() for tag in \
-            self.tags.currentText().split(',')]
+        new_tag_names = [
+            tag.strip() for tag in self.tags.currentText().split(",")
+        ]
         new_card_type_name = self.card_types_widget.currentText()
         new_card_type = self.card_type_by_name[new_card_type_name]
-        if new_fact_data == self.card.fact.data and \
-            ", ".join(new_tag_names) == self.card.tag_string() and \
-            new_card_type == self.card.card_type and self.allow_cancel == True:
-                # No need to update the dialog, except when we're merging
-                # a card when 'allow_cancel' is False.
-                QtWidgets.QDialog.reject(self)
-                return -1
+        if (
+            new_fact_data == self.card.fact.data
+            and ", ".join(new_tag_names) == self.card.tag_string()
+            and new_card_type == self.card.card_type
+            and self.allow_cancel == True
+        ):
+            # No need to update the dialog, except when we're merging
+            # a card when 'allow_cancel' is False.
+            QtWidgets.QDialog.reject(self)
+            return -1
         # If this is called from the card browser, call this hook to unload
         # the Qt database.
         if self.before_apply_hook:
             self.before_apply_hook()
-        status = self.controller().edit_card_and_sisters(self.card,
-            new_fact_data, new_card_type, new_tag_names, self.correspondence)
+        status = self.controller().edit_card_and_sisters(
+            self.card,
+            new_fact_data,
+            new_card_type,
+            new_tag_names,
+            self.correspondence,
+        )
         if self.after_apply_hook:
             self.after_apply_hook()
         return status  # 0 for OK.
 
     def preview(self):
         if self.number_of_anki_clozes_changed():
-            self.main_widget().show_error(_(\
-    "Changing the number of clozes in Anki cards is currently not supported."))
+            self.main_widget().show_error(
+                _(
+                    "Changing the number of clozes in Anki cards is currently not supported."
+                )
+            )
             return
         new_fact_data = self.card_type_widget.fact_data()
         new_card_type_name = self.card_types_widget.currentText()
@@ -210,14 +247,21 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
             fact = Fact(new_fact_data)
             cards = new_card_type.create_sister_cards(fact)
         tag_text = self.tags.currentText()
-        dlg = PreviewCardsDlg(cards, tag_text,
-            component_manager=self.component_manager, parent=self)
+        dlg = PreviewCardsDlg(
+            cards,
+            tag_text,
+            component_manager=self.component_manager,
+            parent=self,
+        )
         dlg.exec()
 
     def accept(self):
         if self.number_of_anki_clozes_changed():
-            self.main_widget().show_error(_(\
-    "Changing the number of clozes in Anki cards is currently not supported."))
+            self.main_widget().show_error(
+                _(
+                    "Changing the number of clozes in Anki cards is currently not supported."
+                )
+            )
             return
         self._store_state()
         status = self.apply_changes()
@@ -228,10 +272,11 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards,
     def reject(self):  # Override 'add cards' behaviour.
         self._store_state()
         if self.is_changed() == True:
-            status = self.main_widget().show_question(\
-                _("Abandon changes to current card?"), _("&Yes"), _("&No"), "")
+            status = self.main_widget().show_question(
+                _("Abandon changes to current card?"), _("&Yes"), _("&No"), ""
+            )
             if status == 0:
                 QtWidgets.QDialog.reject(self)
                 return
         else:
-           QtWidgets.QDialog.reject(self)
+            QtWidgets.QDialog.reject(self)

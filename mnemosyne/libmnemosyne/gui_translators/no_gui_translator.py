@@ -9,4 +9,3 @@ class NoGuiTranslator(GuiTranslator):
 
     def set_translator(self, language):
         pass
-

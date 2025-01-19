@@ -20,7 +20,6 @@ class LogUploader(Thread, Component):
         Component.__init__(self, component_manager)
 
     def upload(self, filename):
-
         """Upload a single file to our serverside CGI script.
         Based on code by Jeff Bauer, Aaron Watters, Jim Fulton.
 
@@ -31,31 +30,40 @@ class LogUploader(Thread, Component):
         # cause problems with backwards compatibility.
         print("upload", filename)
         host, port = self.config()["science_server"].split(":")
-        uri = '/cgi-bin/cgiupload.py'
-        boundary = '%s%s_%s_%s' % \
-                    ('-----', int(time.time()), os.getpid(),
-                     random.randint(1, 10000))
-        f = open(filename, 'rb')
+        uri = "/cgi-bin/cgiupload.py"
+        boundary = "%s%s_%s_%s" % (
+            "-----",
+            int(time.time()),
+            os.getpid(),
+            random.randint(1, 10000),
+        )
+        f = open(filename, "rb")
         data = f.read()
         f.close()
         upload_name = str(filename.split("/")[-1].split("\\")[-1])
         hdr, part, total = [], [], []
-        hdr.append('Content-Disposition: form-data;' + \
-                   ' name="file"; filename="%s"' % (upload_name))
-        hdr.append('Content-Type: application/octet-stream')
-        hdr.append('Content-Length: %d' % len(data))
-        header = (('--%s\n' % boundary) + "\n".join(hdr) + "\n\n")\
-            .encode("utf-8")
-        footer = ('\n--%s--\n' % boundary).encode("utf-8")
+        hdr.append(
+            "Content-Disposition: form-data;"
+            + ' name="file"; filename="%s"' % (upload_name)
+        )
+        hdr.append("Content-Type: application/octet-stream")
+        hdr.append("Content-Length: %d" % len(data))
+        header = (("--%s\n" % boundary) + "\n".join(hdr) + "\n\n").encode(
+            "utf-8"
+        )
+        footer = ("\n--%s--\n" % boundary).encode("utf-8")
         query = header + data + footer
-        contentType = 'multipart/form-data; boundary=%s' % boundary
+        contentType = "multipart/form-data; boundary=%s" % boundary
         contentLength = str(len(query))
-        headers = {'Accept' : '*/*',
-                   'Proxy-Connection' : 'Keep-Alive',
-                   'Content-Type' : contentType,
-                   'Content-Length' : contentLength}
-        req = urllib.request.Request('http://' + host + ':' + port+uri,
-                                     query, headers)
+        headers = {
+            "Accept": "*/*",
+            "Proxy-Connection": "Keep-Alive",
+            "Content-Type": contentType,
+            "Content-Length": contentLength,
+        }
+        req = urllib.request.Request(
+            "http://" + host + ":" + port + uri, query, headers
+        )
         response = urllib.request.urlopen(req)
         html = str(response.read())
         print(html)
@@ -79,10 +87,10 @@ class LogUploader(Thread, Component):
         if len(to_upload) == 0:
             return
         # Upload them to our server.
-        upload_log = open(uploaded_filename, 'a')
+        upload_log = open(uploaded_filename, "a")
         try:
             for f in to_upload:
-                print(_("Uploading"), f, "...", end=' ')
+                print(_("Uploading"), f, "...", end=" ")
                 filename = join(data_dir, "history", f)
                 self.upload(filename)
                 print(f, file=upload_log)
@@ -92,4 +100,3 @@ class LogUploader(Thread, Component):
             print(str(e))
             print(traceback_string())
         upload_log.close()
-

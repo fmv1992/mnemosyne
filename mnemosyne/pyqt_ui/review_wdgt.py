@@ -13,7 +13,6 @@ from mnemosyne.libmnemosyne.ui_components.review_widget import ReviewWidget
 
 
 class QAOptimalSplit(object):
-
     """Algorithm to make sure the split between question and answer boxes is
     as optimal as possible.
 
@@ -28,20 +27,22 @@ class QAOptimalSplit(object):
         super().__init__(**kwds)
 
     def setup(self):
-        #self.question.settings().setAttribute(\
+        # self.question.settings().setAttribute(\
         #    QtWebEngineWidgets.QWebEngineSettings.PluginsEnabled, True)
-        #self.answer.settings().setAttribute(\
+        # self.answer.settings().setAttribute(\
         #    QtWebEngineWidgets.QWebEngineSettings.PluginsEnabled, True)
         # Add some dummy QWebEngineEngineViews that will be used to determine the actual
         # size of the rendered html. This information will then be used to
         # determine the optimal split between the question and the answer
         # pane.
         self.question_preview = QtWebEngineWidgets.QWebEngineView()
-        self.question_preview.loadFinished.connect(\
-            self.question_preview_load_finished)
+        self.question_preview.loadFinished.connect(
+            self.question_preview_load_finished
+        )
         self.answer_preview = QtWebEngineWidgets.QWebEngineView()
-        self.answer_preview.loadFinished.connect(\
-            self.answer_preview_load_finished)
+        self.answer_preview.loadFinished.connect(
+            self.answer_preview_load_finished
+        )
         # Calculate an offset to use in the stretching factor of the boxes,
         # e.g. question_box = question_label + question.
         self.stretch_offset = self.question_label.size().height()
@@ -79,26 +80,26 @@ class QAOptimalSplit(object):
         return QtWidgets.QWidget.resizeEvent(self, event)
 
     def question_preview_load_finished(self):
-        #webView->page()->runJavaScript("document.documentElement.scrollWidth;",[=](QVariant result){
-        #int newWidth=result.toInt();
-        #webView->resize(newWidth,webView->height());
-        #});
+        # webView->page()->runJavaScript("document.documentElement.scrollWidth;",[=](QVariant result){
+        # int newWidth=result.toInt();
+        # webView->resize(newWidth,webView->height());
+        # });
 
-        #webView->page()->runJavaScript("document.documentElement.scrollHeight;",[=](QVariant result){
-        #int newHeight=result.toInt();
-        #webView->resize(webView->width(),newHeight);
-        #});
+        # webView->page()->runJavaScript("document.documentElement.scrollHeight;",[=](QVariant result){
+        # int newHeight=result.toInt();
+        # webView->resize(webView->width(),newHeight);
+        # });
 
         pass
-        #self.required_question_size = \
+        # self.required_question_size = \
         #    self.question_preview.page().currentFrame().contentsSize()
-        #self.update_stretch_factors()
+        # self.update_stretch_factors()
 
     def answer_preview_load_finished(self):
         pass
-        #self.required_answer_size = \
+        # self.required_answer_size = \
         #    self.answer_preview.page().currentFrame().contentsSize()
-        #self.update_stretch_factors()
+        # self.update_stretch_factors()
 
     #
     # TMP workaround involving a heuristic to determine the height.
@@ -106,8 +107,9 @@ class QAOptimalSplit(object):
 
     import re
 
-    re_img = re.compile(r"""img src=\"file:///(.+?)\"(.*?)>""",
-        re.DOTALL | re.IGNORECASE)
+    re_img = re.compile(
+        r"""img src=\"file:///(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE
+    )
 
     def estimate_height(self, html):
         import math
@@ -118,7 +120,7 @@ class QAOptimalSplit(object):
         total_img_width = 0
         for match in self.re_img.finditer(html):
             img_file = match.group(1)
-            if not _abs_path(img_file): # Linux issue
+            if not _abs_path(img_file):  # Linux issue
                 img_file = "/" + img_file
             if not os.path.exists(img_file):
                 print("Missing path", img_file)
@@ -134,7 +136,7 @@ class QAOptimalSplit(object):
     def update_stretch_factors(self):
         if self.config()["QA_split"] != "adaptive":
             return
-        if 0: # Using prerendered html
+        if 0:  # Using prerendered html
             # Correct the required heights of question and answer for the
             # presence of horizontal scrollbars.
             required_question_height = self.required_question_size.height()
@@ -143,16 +145,16 @@ class QAOptimalSplit(object):
             required_answer_height = self.required_answer_size.height()
             if self.required_answer_size.width() > self.answer.width():
                 required_answer_height += self.scrollbar_width
-        else: # Tmp workaround using heuristic
-            required_question_height = \
-                self.estimate_height(self.question_text)
-            required_answer_height = \
-                self.estimate_height(self.answer_text)
+        else:  # Tmp workaround using heuristic
+            required_question_height = self.estimate_height(self.question_text)
+            required_answer_height = self.estimate_height(self.answer_text)
         total_height_available = self.question.height() + self.answer.height()
         # If both question and answer fit in their own boxes, there is no need
         # to deviate from a 50/50 split.
-        if required_question_height < total_height_available / 2 and \
-            required_answer_height < total_height_available / 2:
+        if (
+            required_question_height < total_height_available / 2
+            and required_answer_height < total_height_available / 2
+        ):
             question_stretch = 50
             answer_stretch = 50
         # Don't be clairvoyant about the answer size, unless we will need
@@ -167,8 +169,10 @@ class QAOptimalSplit(object):
             else:
                 # Make enough room for the question.
                 question_stretch = required_question_height
-                if required_question_height + required_answer_height \
-                    <= total_height_available:
+                if (
+                    required_question_height + required_answer_height
+                    <= total_height_available
+                ):
                     # Already have the stretch set-up to accomodate the answer,
                     # which makes the UI more relaxed (no need to have a
                     # different non 50/50 split once the answer is shown).
@@ -181,8 +185,10 @@ class QAOptimalSplit(object):
         # We are showing both question and answer.
         else:
             answer_stretch = required_answer_height
-            if required_question_height + required_answer_height \
-                    <= total_height_available:
+            if (
+                required_question_height + required_answer_height
+                <= total_height_available
+            ):
                 # If we have enough space, stretch in proportion to height.
                 question_stretch = required_question_height
             else:
@@ -198,40 +204,42 @@ class QAOptimalSplit(object):
                     if question_stretch < 50:
                         question_stretch = 50
         self.setUpdatesEnabled(False)
-        self.vertical_layout.setStretchFactor(\
-            self.question_box, question_stretch + self.stretch_offset)
-        self.vertical_layout.setStretchFactor(\
-            self.answer_box, answer_stretch + self.stretch_offset)
+        self.vertical_layout.setStretchFactor(
+            self.question_box, question_stretch + self.stretch_offset
+        )
+        self.vertical_layout.setStretchFactor(
+            self.answer_box, answer_stretch + self.stretch_offset
+        )
         self.setUpdatesEnabled(True)
 
         # http://stackoverflow.com/questions/37527714/qt-qml-webview-resizes-really-slowly-when-window-resizing
 
-
     def silence_media(self, text):
         # Silence media, but make sure the player widget still shows to get
         # correct information about the geometry.
-        text = text.replace("var soundFiles = new Array(",
-                            "var soundFiles = new Array('off',")
-        text = text.replace("<audio src=\"", "<audio src=\"off")
-        text = text.replace("<video src=\"", "<video src=\"off")
+        text = text.replace(
+            "var soundFiles = new Array(", "var soundFiles = new Array('off',"
+        )
+        text = text.replace('<audio src="', '<audio src="off')
+        text = text.replace('<video src="', '<video src="off')
         return text
 
     def set_question(self, text):
-        #self.main_widget().show_information(text.replace("<", "&lt;"))
+        # self.main_widget().show_information(text.replace("<", "&lt;"))
         self.question_text = text
-        #self.question_preview.page().setPreferredContentsSize(\
+        # self.question_preview.page().setPreferredContentsSize(\
         #    QtCore.QSize(self.question.size().width(), 1))
-        #self.question_preview.setHtml(self.silence_media(text))
-        #self.question_preview.show()
+        # self.question_preview.setHtml(self.silence_media(text))
+        # self.question_preview.show()
 
     def set_answer(self, text):
-        #self.main_widget().show_information(text.replace("<", "&lt;"))
+        # self.main_widget().show_information(text.replace("<", "&lt;"))
         self.answer_text = text
 
-        #self.answer_preview.page().setPreferredContentsSize(\
+        # self.answer_preview.page().setPreferredContentsSize(\
         #    QtCore.QSize(self.answer.size().width(), 1))
-        #self.answer_preview.setHtml(self.silence_media(text))
-        #self.answer_preview.show()
+        # self.answer_preview.setHtml(self.silence_media(text))
+        # self.answer_preview.show()
 
     def reveal_question(self):
         self.question.setHtml(self.question_text, QtCore.QUrl("file://"))
@@ -256,14 +264,22 @@ class QAOptimalSplit(object):
         self.answer.repaint()
 
 
-class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt):
+class ReviewWdgt(
+    QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt
+):
 
     auto_focus_grades = True
     number_keys_show_answer = True
 
-    key_to_grade_map = {QtCore.Qt.Key.Key_QuoteLeft: 0, QtCore.Qt.Key.Key_0: 0,
-            QtCore.Qt.Key.Key_1: 1, QtCore.Qt.Key.Key_2: 2, QtCore.Qt.Key.Key_3: 3,
-            QtCore.Qt.Key.Key_4: 4, QtCore.Qt.Key.Key_5: 5}
+    key_to_grade_map = {
+        QtCore.Qt.Key.Key_QuoteLeft: 0,
+        QtCore.Qt.Key.Key_0: 0,
+        QtCore.Qt.Key.Key_1: 1,
+        QtCore.Qt.Key.Key_2: 2,
+        QtCore.Qt.Key.Key_3: 3,
+        QtCore.Qt.Key.Key_4: 4,
+        QtCore.Qt.Key.Key_5: 5,
+    }
 
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -323,7 +339,7 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
         self.stop_media()
         ReviewWidget.deactivate(self)
 
-    #def focusInEvent(self, event):
+    # def focusInEvent(self, event):
     #    self.restore_focus()
     #    super().focusInEvent(event)
 
@@ -351,15 +367,22 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
             self.scroll_down()
         elif event.key() == QtCore.Qt.Key.Key_PageUp:
             self.scroll_up()
-        elif event.key() == QtCore.Qt.Key.Key_R and \
-            event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
-            self.review_controller().update_dialog(redraw_all=True) #Replay media.
+        elif (
+            event.key() == QtCore.Qt.Key.Key_R
+            and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
+        ):
+            self.review_controller().update_dialog(
+                redraw_all=True
+            )  # Replay media.
         # QtWebengine issue.
-        #elif event.key() == QtCore.Qt.Key.Key_C and \
+        # elif event.key() == QtCore.Qt.Key.Key_C and \
         #    event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
         #    self.copy()
         # Work around Qt issue.
-        elif event.key() in [QtCore.Qt.Key.Key_Backspace, QtCore.Qt.Key.Key_Delete]:
+        elif event.key() in [
+            QtCore.Qt.Key.Key_Backspace,
+            QtCore.Qt.Key.Key_Delete,
+        ]:
             self.controller().delete_current_card()
         else:
             QtWidgets.QWidget.keyPressEvent(self, event)
@@ -367,48 +390,57 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
     def empty(self):
         background = self.palette().color(QtGui.QPalette.ColorRole.Base).name()
         if self.review_controller().card:
-            colour = self.config().card_type_property(\
-            "background_colour", self.review_controller().card.card_type)
+            colour = self.config().card_type_property(
+                "background_colour", self.review_controller().card.card_type
+            )
             if colour:
-                background = ("%X" % colour)[2:] # Strip alpha.
-        return """
+                background = ("%X" % colour)[2:]  # Strip alpha.
+        return (
+            """
         <html><head>
         <style type="text/css">
         table { height: 100%; }
-        body  { background-color: """ + background + """;
+        body  { background-color: """
+            + background
+            + """;
                 margin: 0;
                 padding: 0;
                 border: thin solid #8F8F8F; }
         </style></head>
         <body><table><tr><td>
         </td></tr></table></body></html>"""
+        )
 
     def scroll_down(self):
         return
         # TODO: reimplement after webkit is back.
 
-        if self.review_controller().is_question_showing() or \
-           self.review_controller().card.fact_view.a_on_top_of_q:
+        if (
+            self.review_controller().is_question_showing()
+            or self.review_controller().card.fact_view.a_on_top_of_q
+        ):
             frame = self.question.page().mainFrame()
         else:
             frame = self.answer.page().mainFrame()
         x, y = frame.scrollPosition().x(), frame.scrollPosition().y()
-        y += int(0.9*(frame.geometry().height()))
-        #frame.scroll(x, y) # Seems buggy 20111121.
+        y += int(0.9 * (frame.geometry().height()))
+        # frame.scroll(x, y) # Seems buggy 20111121.
         frame.evaluateJavaScript("window.scrollTo(%d, %d);" % (x, y))
 
     def scroll_up(self):
         return
         # TODO: reimplement after webkit is back.
 
-        if self.review_controller().is_question_showing() or \
-           self.review_controller().card.fact_view.a_on_top_of_q:
+        if (
+            self.review_controller().is_question_showing()
+            or self.review_controller().card.fact_view.a_on_top_of_q
+        ):
             frame = self.question.page().mainFrame()
         else:
             frame = self.answer.page().mainFrame()
         x, y = frame.scrollPosition().x(), frame.scrollPosition().y()
-        y -= int(0.9*(frame.geometry().height()))
-        #frame.scroll(x, y)  # Seems buggy 20111121.
+        y -= int(0.9 * (frame.geometry().height()))
+        # frame.scroll(x, y)  # Seems buggy 20111121.
         frame.evaluateJavaScript("window.scrollTo(%d, %d);" % (x, y))
 
     def selection_changed_in_q(self):
@@ -417,7 +449,7 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
     def selection_changed_in_a(self):
         self.widget_with_last_selection = self.answer
 
-    #def copy(self):
+    # def copy(self):
     #    self.widget_with_last_selection.pageAction(\
     #        QtWebEngineKit.QWebEnginePage.Copy).trigger()
 
@@ -489,8 +521,9 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
         self.grade_buttons.button(grade).setToolTip(text)
 
     def update_status_bar_counters(self):
-        scheduled_count, non_memorised_count, active_count = \
+        scheduled_count, non_memorised_count, active_count = (
             self.review_controller().counters()
+        )
         self.sched.setText(_("Scheduled: %d ") % scheduled_count)
         self.notmem.setText(_("Not memorised: %d ") % non_memorised_count)
         self.act.setText(_("Active: %d ") % active_count)
@@ -501,16 +534,17 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
 
     def play_media(self, filename, start=None, stop=None):
         if self.player == None:
-            #print("Initialising mediaplayer")
-            #print("Available devices:")
+            # print("Initialising mediaplayer")
+            # print("Available devices:")
             from PyQt6.QtMultimedia import QMediaDevices
+
             for device in QMediaDevices().audioOutputs():
                 print("  ", device.description())
             self.player = QMediaPlayer()
             self.audio_output = QAudioOutput()
-            #print("Selected audio output:", self.audio_output.device().description())
-            #print("Volume:", self.audio_output.volume())
-            #print("Muted:", self.audio_output.isMuted())
+            # print("Selected audio output:", self.audio_output.device().description())
+            # print("Volume:", self.audio_output.volume())
+            # print("Muted:", self.audio_output.isMuted())
             self.player.setAudioOutput(self.audio_output)
             self.player.mediaStatusChanged.connect(self.player_status_changed)
         if start is None:
@@ -518,28 +552,31 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
         if stop is None:
             stop = 999999
         self.media_queue.append((filename, start, stop))
-        if not self.player.playbackState() == \
-            QMediaPlayer.PlaybackState.PlayingState:
+        if (
+            not self.player.playbackState()
+            == QMediaPlayer.PlaybackState.PlayingState
+        ):
             self.play_next_file()
 
     def play_next_file(self):
-        filename, self.current_media_start, self.current_media_stop = \
+        filename, self.current_media_start, self.current_media_stop = (
             self.media_queue.pop(0)
-        #print("Starting to play", filename)
+        )
+        # print("Starting to play", filename)
         self.player.setSource(QtCore.QUrl.fromLocalFile(filename))
         self.player.positionChanged.connect(self.stop_playing_if_end_reached)
         self.player.play()
 
     def stop_playing_if_end_reached(self, current_position):
-        if current_position >= 1000*self.current_media_stop:
+        if current_position >= 1000 * self.current_media_stop:
             self.player.stop()
             self.play_next_file()
 
     def player_status_changed(self, result):
         if result == QMediaPlayer.MediaStatus.BufferedMedia:
-            self.player.setPosition(int(self.current_media_start*1000))
+            self.player.setPosition(int(self.current_media_start * 1000))
         elif result == QMediaPlayer.MediaStatus.EndOfMedia:
-            #print("End of media reached.")
+            # print("End of media reached.")
             if len(self.media_queue) >= 1:
                 self.player.positionChanged.disconnect()
                 self.play_next_file()

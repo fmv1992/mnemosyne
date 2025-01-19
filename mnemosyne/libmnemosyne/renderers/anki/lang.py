@@ -23,9 +23,9 @@ langs = [
     ("Italiano", "it"),
     ("Lenga d'òc", "oc"),
     ("Magyar", "hu"),
-    ("Nederlands","nl"),
-    ("Norsk","nb"),
-    ("Occitan","oc"),
+    ("Nederlands", "nl"),
+    ("Norsk", "nb"),
+    ("Occitan", "oc"),
     ("Plattdüütsch", "nds"),
     ("Polski", "pl"),
     ("Português Brasileiro", "pt_BR"),
@@ -42,7 +42,7 @@ langs = [
     ("Ελληνικά", "el"),
     ("босански", "bs"),
     ("Български", "bg"),
-    ("Монгол хэл","mn"),
+    ("Монгол хэл", "mn"),
     ("русский язык", "ru"),
     ("Српски", "sr"),
     ("українська мова", "uk"),
@@ -62,34 +62,39 @@ threadLocal = threading.local()
 currentLang = None
 currentTranslation = None
 
+
 def localTranslation():
     "Return the translation local to this thread, or the default."
-    if getattr(threadLocal, 'currentTranslation', None):
+    if getattr(threadLocal, "currentTranslation", None):
         return threadLocal.currentTranslation
     else:
         return currentTranslation
 
+
 def _(str):
     return localTranslation().gettext(str)
+
 
 def ngettext(single, plural, n):
     return localTranslation().ngettext(single, plural, n)
 
+
 def langDir():
-    dir = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), "locale")
+    dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "locale")
     if not os.path.isdir(dir):
         try:
             dir = os.path.join(os.path.dirname(sys.argv[0]), "locale")
-        except: # MNEMOSYNE: android does not have sys.argv
+        except:  # MNEMOSYNE: android does not have sys.argv
             dir = ""
     if not os.path.isdir(dir):
         dir = "/usr/share/anki/locale"
     return dir
 
+
 def setLang(lang, local=True):
     trans = gettext.translation(
-        'anki', langDir(), languages=[lang], fallback=True)
+        "anki", langDir(), languages=[lang], fallback=True
+    )
     if local:
         threadLocal.currentLang = lang
         threadLocal.currentTranslation = trans
@@ -98,16 +103,19 @@ def setLang(lang, local=True):
         currentLang = lang
         currentTranslation = trans
 
+
 def getLang():
     "Return the language local to this thread, or the default."
-    if getattr(threadLocal, 'currentLang', None):
+    if getattr(threadLocal, "currentLang", None):
         return threadLocal.currentLang
     else:
         return currentLang
 
+
 def noHint(str):
     "Remove translation hint from end of string."
     return re.sub("(^.*?)( ?\(.+?\))?$", "\\1", str)
+
 
 if not currentTranslation:
     setLang("en_US", local=False)

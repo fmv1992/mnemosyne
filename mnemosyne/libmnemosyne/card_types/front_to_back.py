@@ -13,8 +13,7 @@ class FrontToBack(CardType):
     name = _("Front-to-back only")
 
     # List and name the keys.
-    fact_keys_and_names = [("f", _("Front")),
-                           ("b", _("Back"))]
+    fact_keys_and_names = [("f", _("Front")), ("b", _("Back"))]
 
     # Front-to-back.
     v = FactView(_("Front-to-back"), "1.1")

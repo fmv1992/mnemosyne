@@ -61,4 +61,3 @@ class MainWdgt(MainWidget, UDP_Widget):
 
     def enable_browse_cards(self, is_enabled):
         self.callback(is_enabled)
-

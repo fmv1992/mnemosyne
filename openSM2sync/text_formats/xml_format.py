@@ -10,7 +10,6 @@ PROTOCOL_VERSION = "openSM2sync 1.0   "
 
 
 class XMLFormat(object):
-
     """Class handling the conversion from data to XML streams and vice versa.
 
     Example of typical XML for log entries:
@@ -37,15 +36,16 @@ class XMLFormat(object):
         for key, value in list(info.items()):
             if key.lower() == "partners":
                 if value:
-                    repr_info += "%s=%s " % \
-                        (key, saxutils.quoteattr(",".join(value)))
+                    repr_info += "%s=%s " % (
+                        key,
+                        saxutils.quoteattr(",".join(value)),
+                    )
             else:
                 if type(value) != str and type(value) != str:
                     value = repr(value)
                 repr_info += "%s=%s " % (key, saxutils.quoteattr(value))
-        repr_info += "protocol_version=\"%s\"></partner>\n" \
-            % (PROTOCOL_VERSION, )
-        #import sys; sys.stderr.write(repr_info)
+        repr_info += 'protocol_version="%s"></partner>\n' % (PROTOCOL_VERSION,)
+        # import sys; sys.stderr.write(repr_info)
         return repr_info
 
     def parse_partner_info(self, xml):
@@ -61,27 +61,68 @@ class XMLFormat(object):
             if key.lower() == "partners":
                 value = value.split(",")
             partner_info[key] = value
-        #import sys; sys.stderr.write(repr(partner_info))
+        # import sys; sys.stderr.write(repr(partner_info))
         return partner_info
 
     # The list of LogEntry keys to be passed on as attributes.
-    keys_in_attribs = ["type", "time", "o_id", "sch", "n_mem", "c_time",
-        "m_time", "card_t", "fact", "fact_v", "tags", "act", "gr", "e", "l_rp",
-        "n_rp", "ac_rp", "rt_rp", "lps", "ac_rp_l", "rt_rp_l", "sch_data",
-        "sch_i", "act_i", "th_t"]
-    int_keys = ["type", "time", "sch", "n_mem", "act", "c_time", "m_time",
-        "act", "gr", "l_rp", "n_rp", "ac_rp", "rt_rp", "lps", "ac_rp_l",
-        "rt_rp_l", "sch_data", "sch_i", "act_i", "th_t"]
+    keys_in_attribs = [
+        "type",
+        "time",
+        "o_id",
+        "sch",
+        "n_mem",
+        "c_time",
+        "m_time",
+        "card_t",
+        "fact",
+        "fact_v",
+        "tags",
+        "act",
+        "gr",
+        "e",
+        "l_rp",
+        "n_rp",
+        "ac_rp",
+        "rt_rp",
+        "lps",
+        "ac_rp_l",
+        "rt_rp_l",
+        "sch_data",
+        "sch_i",
+        "act_i",
+        "th_t",
+    ]
+    int_keys = [
+        "type",
+        "time",
+        "sch",
+        "n_mem",
+        "act",
+        "c_time",
+        "m_time",
+        "act",
+        "gr",
+        "l_rp",
+        "n_rp",
+        "ac_rp",
+        "rt_rp",
+        "lps",
+        "ac_rp_l",
+        "rt_rp_l",
+        "sch_data",
+        "sch_i",
+        "act_i",
+        "th_t",
+    ]
     float_keys = ["e"]
 
     def log_entries_header(self, number_of_entries):
-        return "<openSM2sync number_of_entries=\"%d\">" % (number_of_entries, )
+        return '<openSM2sync number_of_entries="%d">' % (number_of_entries,)
 
     def log_entries_footer(self):
         return "</openSM2sync>\n"
 
     def repr_log_entry(self, log_entry):
-
         """Converts LogEntry to XML.
 
         For efficiency reasons we require tag names and attribute values to be
@@ -99,7 +140,7 @@ class XMLFormat(object):
         attribs, tags = "", ""
         for key, value in list(log_entry.items()):
             if key in self.keys_in_attribs:
-                attribs += " %s=\"%s\"" % (key, value)
+                attribs += ' %s="%s"' % (key, value)
             else:
                 # Anki keys can be numbers.
                 if key[0].isdigit():
@@ -108,11 +149,10 @@ class XMLFormat(object):
         xml = "<log%s>%s</log>\n" % (attribs, tags)
         # Strip control characters.
         xml = "".join([i for i in xml if 31 < ord(i) or ord(i) in [9, 10, 13]])
-        #import sys; sys.stderr.write(xml)
+        # import sys; sys.stderr.write(xml)
         return xml
 
     def parse_log_entries(self, xml):
-
         """Do incremental parsing of the XML stream.
 
         See http://effbot.org/zone/element-iterparse.htm
@@ -141,11 +181,11 @@ class XMLFormat(object):
                         # Should be string instead of None.
                         log_entry[child.tag] = ""
                 root.clear()  # Avoid taking up unnecessary memory.
-                #import sys; sys.stderr.write(str(log_entry) + "\n")
+                # import sys; sys.stderr.write(str(log_entry) + "\n")
                 yield log_entry
 
     def repr_message(self, message, traceback=None):
-        xml = "<openSM2sync message=\"%s\">" % (message, )
+        xml = '<openSM2sync message="%s">' % (message,)
         if traceback:
             xml += "<traceback>%s</traceback>" % saxutils.escape(traceback)
         xml += "</openSM2sync>\n"
@@ -158,4 +198,3 @@ class XMLFormat(object):
         if element.find("traceback") is not None:
             traceback = element.find("traceback").text
         return message, traceback
-

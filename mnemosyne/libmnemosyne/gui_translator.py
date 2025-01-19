@@ -7,8 +7,8 @@ from mnemosyne.libmnemosyne.component import Component
 
 _ = None
 
-class GuiTranslator(Component):
 
+class GuiTranslator(Component):
     """Note: static text will be marked as translatable by
     `static_variable = _("...")`, e.g. in CardType. However, if want to have
     this text show up translated in the GUI, we need to use
@@ -28,7 +28,7 @@ class GuiTranslator(Component):
         _ = self
         # We install a dummy translator so that translatable stings can be
         # marked even if 'activate' has not yet been called.
-        self._translator = lambda x : x
+        self._translator = lambda x: x
 
     def activate(self):
         Component.activate(self)
@@ -40,7 +40,6 @@ class GuiTranslator(Component):
         return []
 
     def set_language(self, language):
-
         """'language' should be an iso 693-1 code."""
 
         self.set_translator(language)
@@ -50,13 +49,11 @@ class GuiTranslator(Component):
         raise NotImplementedError
 
     def translate_ui(self, language):
-
         """To be overridden by a GUI to do GUI-specific translation."""
 
         pass
 
     def __call__(self, text):
-
         """Used to do translations / mark translatable strings by _("...")."""
 
         return self._translator(text)
@@ -177,7 +174,7 @@ language_name_for_iso6931_code = {
     "mt": "Maltese",
     "my": "Burmese",
     "na": "Nauruan",
-    "nb": u"Norwegian",
+    "nb": "Norwegian",
     "nb_NO": "Norwegian Bokm\u00e5l",
     "nd": "Northern Ndebele",
     "ne": "Nepali",
@@ -255,10 +252,11 @@ language_name_for_iso6931_code = {
     "zh_HK": "Chinese (Hong Kong)",
     "zh_SG": "Chinese (Singapore)",
     "zh_TW": "Chinese (Taiwan)",
-    "zu": "Zulu"
+    "zu": "Zulu",
 }
 
 
 def iso6931_code_for_language_name(language):
-    return dict((v,k) for k, v in \
-        language_name_for_iso6931_code.items())[language]
+    return dict((v, k) for k, v in language_name_for_iso6931_code.items())[
+        language
+    ]

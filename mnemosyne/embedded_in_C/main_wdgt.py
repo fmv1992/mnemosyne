@@ -2,7 +2,7 @@
 # main_wdgt.py <Peter.Bienstman@gmail.com>
 #
 
-import _main_wdgt as _
+import _main_wdgt as underscorε
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
 
 
@@ -15,20 +15,29 @@ class MainWdgt(MainWidget):
         _.show_information(text.encode("utf-8"))
 
     def show_question(self, text, option0, option1, option2=""):
-        return _.show_question(text.encode("utf-8"),
-            option0.encode("utf-8"), option1.encode("utf-8"),
-            option2.encode("utf-8"))
+        return _.show_question(
+            text.encode("utf-8"),
+            option0.encode("utf-8"),
+            option1.encode("utf-8"),
+            option2.encode("utf-8"),
+        )
 
     def show_error(self, text):
         _.show_information(text.encode("utf-8"))
 
     def get_filename_to_open(self, path, filter, caption=""):
-        return _.get_filename_to_open(path.encode("utf-8"),
-            filter.encode("utf-8"), caption.encode("utf-8"))
+        return _.get_filename_to_open(
+            path.encode("utf-8"),
+            filter.encode("utf-8"),
+            caption.encode("utf-8"),
+        )
 
     def get_filename_to_save(self, path, filter, caption=""):
-        return _.get_filename_to_save(path.encode("utf-8"),
-            filter.encode("utf-8"), caption.encode("utf-8"))
+        return _.get_filename_to_save(
+            path.encode("utf-8"),
+            filter.encode("utf-8"),
+            caption.encode("utf-8"),
+        )
 
     def set_status_bar_message(self, text):
         _.set_status_bar_message(text.encode("utf-8"))

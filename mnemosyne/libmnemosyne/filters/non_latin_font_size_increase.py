@@ -7,7 +7,6 @@ from mnemosyne.libmnemosyne.card_types.vocabulary import Vocabulary
 
 
 class NonLatinFontSizeIncrease(Filter):
-
     """Increase size of non-latin characters. A simple, card-level wide
     alternative to putting cloning card types from Vocabulary.
 
@@ -34,34 +33,57 @@ class NonLatinFontSizeIncrease(Filter):
     def run(self, text, card, fact_key, **render_args):
         if text == "" or self.config()["non_latin_font_size_increase"] == 0:
             return text
-        if issubclass(type(card.card_type), Vocabulary) and not \
-            isinstance(type(card.card_type), Vocabulary):
+        if issubclass(type(card.card_type), Vocabulary) and not isinstance(
+            type(card.card_type), Vocabulary
+        ):
             return text
         if fact_key not in card.card_type.fact_key_format_proxies():
             return text
         proxy_key = card.card_type.fact_key_format_proxies()[fact_key]
-        font_string = self.config().card_type_property(\
-            "font", card.card_type, proxy_key)
-        
+        font_string = self.config().card_type_property(
+            "font", card.card_type, proxy_key
+        )
+
         if font_string:
             style = ""
             if font_string.count(",") == 9:
-                family,size,x,x,w,i,u,s,x,x = font_string.split(",")
+                family, size, x, x, w, i, u, s, x, x = font_string.split(",")
             elif font_string.count(",") == 10:
-                family,size,x,x,w,i,u,s,x,x,x = font_string.split(",")
+                family, size, x, x, w, i, u, s, x, x, x = font_string.split(
+                    ","
+                )
             elif font_string.count(",") == 15:
-                family,size,x,x,w,i,u,s,x,x,x,x,x,x,x,style \
-                    = font_string.split(",")
+                family, size, x, x, w, i, u, s, x, x, x, x, x, x, x, style = (
+                    font_string.split(",")
+                )
             else:
-                #Segoe UI,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular
-                #Segoe UI,26,-1,5,700,1,1,1,0,0,0,0,0,0,0,1,Bold Italic
-                family,size,x,x,w,i,u,s,x,x,x,x,x,x,x,x,style \
-                    = font_string.split(",")
+                # Segoe UI,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular
+                # Segoe UI,26,-1,5,700,1,1,1,0,0,0,0,0,0,0,1,Bold Italic
+                (
+                    family,
+                    size,
+                    x,
+                    x,
+                    w,
+                    i,
+                    u,
+                    s,
+                    x,
+                    x,
+                    x,
+                    x,
+                    x,
+                    x,
+                    x,
+                    x,
+                    style,
+                ) = font_string.split(",")
             base_font_size = int(size)
         else:
             base_font_size = self.main_widget().default_font_size()
-        non_latin_size = base_font_size + \
-            self.config()["non_latin_font_size_increase"]
+        non_latin_size = (
+            base_font_size + self.config()["non_latin_font_size_increase"]
+        )
         new_text = ""
         in_tag = False
         in_protect = 0
@@ -74,8 +96,12 @@ class NonLatinFontSizeIncrease(Filter):
                     new_text += text[i]
                 else:
                     in_unicode_substring = True
-                    new_text += "<font style=\"font-size:" + \
-                        str(non_latin_size) + "pt\">" + text[i]
+                    new_text += (
+                        '<font style="font-size:'
+                        + str(non_latin_size)
+                        + 'pt">'
+                        + text[i]
+                    )
             else:
                 # First check for tag start/end.
                 if text[i] == "<":

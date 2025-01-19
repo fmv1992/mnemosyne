@@ -6,7 +6,6 @@ from mnemosyne.libmnemosyne.filter import Filter
 
 
 class EscapeToHtmlForCardBrowser(Filter):
-
     """Make sure tags like img, latex, ... show up as tags."""
 
     def run(self, text, card, fact_key, **render_args):

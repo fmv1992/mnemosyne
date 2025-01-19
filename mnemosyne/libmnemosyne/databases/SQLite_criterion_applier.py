@@ -3,7 +3,10 @@
 #
 
 from mnemosyne.libmnemosyne.criterion import CriterionApplier
-from mnemosyne.libmnemosyne.criteria.default_criterion import DefaultCriterion, TagMode
+from mnemosyne.libmnemosyne.criteria.default_criterion import (
+    DefaultCriterion,
+    TagMode,
+)
 
 
 class DefaultCriterionApplier(CriterionApplier):
@@ -13,7 +16,9 @@ class DefaultCriterionApplier(CriterionApplier):
     def split_set(self, _set, chunk_size):
         lst = list(_set)
         # Note that [1,2,3][2:666] = [3]
-        return [lst[i:i+chunk_size] for i in range(0, len(lst), chunk_size)]
+        return [
+            lst[i : i + chunk_size] for i in range(0, len(lst), chunk_size)
+        ]
 
     def set_activity_for_tags_with__id(self, _tag_ids, active):
         if len(_tag_ids) == 0:
@@ -41,15 +46,21 @@ class DefaultCriterionApplier(CriterionApplier):
                 # Turn off everything first
                 db.con.execute("update cards set active=0")
                 # Turn on cards with any of the active tags
-                for chunked__tag_ids in self.split_set(criterion._tag_ids_active, 500):
-                    self.set_activity_for_tags_with__id(chunked__tag_ids, active=1)
+                for chunked__tag_ids in self.split_set(
+                    criterion._tag_ids_active, 500
+                ):
+                    self.set_activity_for_tags_with__id(
+                        chunked__tag_ids, active=1
+                    )
 
         elif criterion.tag_mode == TagMode.NONE:
             # Not having any of these tags
             # Start with everything active
             db.con.execute("update cards set active=1")
             # Turn off cards with any forbidden tag
-            for chunked__tag_ids in self.split_set(criterion._tag_ids_forbidden, 500):
+            for chunked__tag_ids in self.split_set(
+                criterion._tag_ids_forbidden, 500
+            ):
                 self.set_activity_for_tags_with__id(chunked__tag_ids, active=0)
 
         elif criterion.tag_mode == TagMode.ALL:
@@ -62,25 +73,35 @@ class DefaultCriterionApplier(CriterionApplier):
                 db.con.execute("update cards set active=0")
                 # Get all cards that have tags
                 card_ids = set()
-                for _card_id, in db.con.execute("select distinct _card_id from tags_for_card"):
+                for (_card_id,) in db.con.execute(
+                    "select distinct _card_id from tags_for_card"
+                ):
                     card_ids.add(_card_id)
-                
+
                 # For each card, check if it has all required tags
                 for _card_id in card_ids:
                     card_tag_ids = set()
-                    for _tag_id, in db.con.execute("""select _tag_id from
-                        tags_for_card where _card_id=?""", (_card_id,)):
+                    for (_tag_id,) in db.con.execute(
+                        """select _tag_id from
+                        tags_for_card where _card_id=?""",
+                        (_card_id,),
+                    ):
                         card_tag_ids.add(_tag_id)
-                    
+
                     if criterion._tag_ids_active.issubset(card_tag_ids):
-                        db.con.execute("update cards set active=1 where _id=?",
-                            (_card_id,))
+                        db.con.execute(
+                            "update cards set active=1 where _id=?",
+                            (_card_id,),
+                        )
 
         # Turn off inactive card types and views
         if criterion.deactivated_card_type_fact_view_ids:
             command = "update cards set active=0 where "
             args = []
-            for card_type_id, fact_view_id in criterion.deactivated_card_type_fact_view_ids:
+            for (
+                card_type_id,
+                fact_view_id,
+            ) in criterion.deactivated_card_type_fact_view_ids:
                 command += "(cards.fact_view_id=? and cards.card_type_id=?)"
                 command += " or "
                 args.append(fact_view_id)

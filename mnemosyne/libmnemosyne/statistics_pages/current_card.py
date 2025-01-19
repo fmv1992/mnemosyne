@@ -5,7 +5,8 @@
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.statistics_page import HtmlStatisticsPage
 
-DAY = 24 * 60 * 60 # Seconds in a day.
+DAY = 24 * 60 * 60  # Seconds in a day.
+
 
 class CurrentCard(HtmlStatisticsPage):
 
@@ -30,17 +31,23 @@ class CurrentCard(HtmlStatisticsPage):
         else:
             self.html += _("Grade") + ": %d<br>" % card.grade
             self.html += _("Easiness") + ": %1.2f<br>" % card.easiness
-            self.html += _("Learning repetitions") + ": %d<br>" \
-                % card.acq_reps
-            self.html += _("Review repetitions") + ": %d<br>" \
-                % card.ret_reps
+            self.html += _("Learning repetitions") + ": %d<br>" % card.acq_reps
+            self.html += _("Review repetitions") + ": %d<br>" % card.ret_reps
             self.html += _("Lapses") + ": %d<br>" % card.lapses
-            self.html += _("Last repetition") + ": %s<br>" \
-                % self.scheduler().last_rep_to_interval_string(card.last_rep)
-            self.html += _("Next repetition") + ": %s<br>" \
-                % self.scheduler().next_rep_to_interval_string(card.next_rep)
-            self.html += _("Average thinking time (secs)") + ": %d<br>" \
-                % self.database().average_thinking_time(card)
-            self.html += _("Total thinking time (secs)") + ": %d<br>" \
-                % self.database().total_thinking_time(card)
+            self.html += _(
+                "Last repetition"
+            ) + ": %s<br>" % self.scheduler().last_rep_to_interval_string(
+                card.last_rep
+            )
+            self.html += _(
+                "Next repetition"
+            ) + ": %s<br>" % self.scheduler().next_rep_to_interval_string(
+                card.next_rep
+            )
+            self.html += _(
+                "Average thinking time (secs)"
+            ) + ": %d<br>" % self.database().average_thinking_time(card)
+            self.html += _(
+                "Total thinking time (secs)"
+            ) + ": %d<br>" % self.database().total_thinking_time(card)
         self.html += "</td></tr></table></body></html>"

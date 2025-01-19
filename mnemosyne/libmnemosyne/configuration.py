@@ -17,14 +17,15 @@ from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.libmnemosyne.schedulers.cramming import RANDOM
 from mnemosyne.libmnemosyne.utils import rand_uuid, traceback_string
 
-HOUR = 60 * 60 # Seconds in an hour.
-DAY = 24 * HOUR # Seconds in a day.
+HOUR = 60 * 60  # Seconds in an hour.
+DAY = 24 * HOUR  # Seconds in a day.
 
 re_long_int = re.compile(r"\d+L")
 
+
 def config_py():
-  return textwrap.dedent(
-  """  # Mnemosyne configuration file.
+    return textwrap.dedent(
+        """  # Mnemosyne configuration file.
 
   # This file contains settings which we deem to be too specialised to be
   # accesible from the GUI. However, if you use some of these settings, feel
@@ -80,7 +81,9 @@ def config_py():
   # Should be set on each device, including mobile clients. Be careful with this setting: if you
   # accidentally set it e.g. to 1 day, you will mess up your schedule completely.
   max_scheduled_interval_days = None
-  """)
+  """
+    )
+
 
 class Configuration(Component, dict):
 
@@ -103,103 +106,118 @@ class Configuration(Component, dict):
         self.set_defaults()
 
     def set_defaults(self):
-
         """Fill the config with default values.  Is called after every load,
         since a new version of Mnemosyne might have introduced new keys.
 
         """
 
-        for key, value in \
-            list({"last_database": \
-                self.database().default_name + self.database().suffix,
-             "first_run": True,
-             "import_img_dir": self.data_dir,
-             "import_sound_dir": self.data_dir,
-             "import_video_dir": self.data_dir,
-             "import_flash_dir": self.data_dir,
-             "import_plugin_dir": os.path.expanduser("~"),
-             "user_id": None,
-             "upload_science_logs": True,
-             "science_server": "mnemosyne-proj.dyndns.org:80",
-             "max_log_size_before_upload": 64000, # For testability.
-             "show_daily_tips": True,
-             "current_tip": 0,
-             "font": {}, # [card_type.id][fact_key]
-             "font_colour": {}, # [card_type.id][fact_key]
-             "background_colour": {}, # [card_type.id]
-             "alignment": {}, # [card_type.id]
-             "hide_pronunciation_field": {}, # [card_type.id]
-             "language_id": {}, # [card_type.id], ISO code
-             "sublanguage_id": {}, # [card_type.id], ISO code
-             "foreign_fact_key": {}, # [card_type.id]
-             "translation_language_id": {}, # [card_type.id], ISO code
-             "non_latin_font_size_increase": 0,
-             "non_memorised_cards_in_hand": 10,
-             "randomise_new_cards": False,
-             "randomise_scheduled_cards": False,
-             "cramming_store_state": True,
-             "max_ret_reps_for_recent_cards": 1,
-             "max_ret_reps_since_lapse": 999999, 
-             "cramming_order": RANDOM,
-             "show_intervals": "never",
-             "only_editable_when_answer_shown": False,
-             "show_tags_during_review": True,
-             "ui_language": self.default_language(),
-             "max_backups": 10,
-             "backup_before_sync": True,
-             "check_for_edited_local_media_files": False,
-             "interested_in_old_reps": True,
-             "single_database_help_shown": False,
-             "save_database_help_shown": False,
-             "find_duplicates_help_shown": False,
-             "star_help_shown": False,
-             "start_card_browser_sorted": False,
-             "day_starts_at": 3,
-             "save_after_n_reps": 10,
-             "latex_preamble": "\\documentclass[12pt]{article}\n"+
-                               "\\pagestyle{empty}\n\\begin{document}",
-             "latex_postamble": "\\end{document}",
-             "latex": "latex -interaction=nonstopmode",
-             "dvipng": "dvipng -D 200 -T tight tmp.dvi",
-             "active_plugins": set(), # Plugin class name, not instance.
-             "media_autoplay": True,
-             "media_controls": False,
-             "run_sync_server": False,
-             "run_web_server": False,
-             "sync_server_port": 8512,
-             "web_server_port": 8513,
-             "remote_access_username": "",
-             "remote_access_password": "",
-             "remote_access_password_algo": "",
-             "warned_about_learning_ahead": False,
-             "shown_backlog_help": False,
-             "shown_learn_new_cards_help": False,
-             "shown_schedule_help": False,
-             "asynchronous_database": False,
-             "author_name": "",
-             "author_email": "",
-             "import_dir": os.path.expanduser("~"),
-             "import_format": None,
-             "import_extra_tag_names": "",
-             "export_dir": os.path.expanduser("~"),
-             "export_format": None,
-             "last_db_maintenance": time.time() - 1 * DAY,
-             "QA_split": "fixed", # "fixed", "adaptive", "single_window",
-             "study_mode": "ScheduledForgottenNew",
-             "tts_dir_for_card_type_id": {}, # card_type_id, dir
-             "max_scheduled_interval_days": None
-            }.items()):
+        for key, value in list(
+            {
+                "last_database": self.database().default_name
+                + self.database().suffix,
+                "first_run": True,
+                "import_img_dir": self.data_dir,
+                "import_sound_dir": self.data_dir,
+                "import_video_dir": self.data_dir,
+                "import_flash_dir": self.data_dir,
+                "import_plugin_dir": os.path.expanduser("~"),
+                "user_id": None,
+                "upload_science_logs": True,
+                "science_server": "mnemosyne-proj.dyndns.org:80",
+                "max_log_size_before_upload": 64000,  # For testability.
+                "show_daily_tips": True,
+                "current_tip": 0,
+                "font": {},  # [card_type.id][fact_key]
+                "font_colour": {},  # [card_type.id][fact_key]
+                "background_colour": {},  # [card_type.id]
+                "alignment": {},  # [card_type.id]
+                "hide_pronunciation_field": {},  # [card_type.id]
+                "language_id": {},  # [card_type.id], ISO code
+                "sublanguage_id": {},  # [card_type.id], ISO code
+                "foreign_fact_key": {},  # [card_type.id]
+                "translation_language_id": {},  # [card_type.id], ISO code
+                "non_latin_font_size_increase": 0,
+                "non_memorised_cards_in_hand": 10,
+                "randomise_new_cards": False,
+                "randomise_scheduled_cards": False,
+                "cramming_store_state": True,
+                "max_ret_reps_for_recent_cards": 1,
+                "max_ret_reps_since_lapse": 999999,
+                "cramming_order": RANDOM,
+                "show_intervals": "never",
+                "only_editable_when_answer_shown": False,
+                "show_tags_during_review": True,
+                "ui_language": self.default_language(),
+                "max_backups": 10,
+                "backup_before_sync": True,
+                "check_for_edited_local_media_files": False,
+                "interested_in_old_reps": True,
+                "single_database_help_shown": False,
+                "save_database_help_shown": False,
+                "find_duplicates_help_shown": False,
+                "star_help_shown": False,
+                "start_card_browser_sorted": False,
+                "day_starts_at": 3,
+                "save_after_n_reps": 10,
+                "latex_preamble": "\\documentclass[12pt]{article}\n"
+                + "\\pagestyle{empty}\n\\begin{document}",
+                "latex_postamble": "\\end{document}",
+                "latex": "latex -interaction=nonstopmode",
+                "dvipng": "dvipng -D 200 -T tight tmp.dvi",
+                "active_plugins": set(),  # Plugin class name, not instance.
+                "media_autoplay": True,
+                "media_controls": False,
+                "run_sync_server": False,
+                "run_web_server": False,
+                "sync_server_port": 8512,
+                "web_server_port": 8513,
+                "remote_access_username": "",
+                "remote_access_password": "",
+                "remote_access_password_algo": "",
+                "warned_about_learning_ahead": False,
+                "shown_backlog_help": False,
+                "shown_learn_new_cards_help": False,
+                "shown_schedule_help": False,
+                "asynchronous_database": False,
+                "author_name": "",
+                "author_email": "",
+                "import_dir": os.path.expanduser("~"),
+                "import_format": None,
+                "import_extra_tag_names": "",
+                "export_dir": os.path.expanduser("~"),
+                "export_format": None,
+                "last_db_maintenance": time.time() - 1 * DAY,
+                "QA_split": "fixed",  # "fixed", "adaptive", "single_window",
+                "study_mode": "ScheduledForgottenNew",
+                "tts_dir_for_card_type_id": {},  # card_type_id, dir
+                "max_scheduled_interval_days": None,
+            }.items()
+        ):
             self.setdefault(key, value)
         # These keys will be shared in the sync protocol. Front-ends can
         # modify this list, e.g. if they don't want to override the fonts.
-        self.keys_to_sync = ["font", "font_colour", "background_colour",
-             "alignment", "non_latin_font_size_increase",
-             "hide_pronunciation_field", "non_memorised_cards_in_hand",
-             "randomise_new_cards", "randomise_scheduled_cards",
-             "max_ret_reps_since_lapse",
-             "ui_language", "day_starts_at", "latex_preamble",
-             "latex_postamble", "latex", "dvipng", "max_backups",
-             "language_id", "sublanguage_id", "foreign_fact_key"]
+        self.keys_to_sync = [
+            "font",
+            "font_colour",
+            "background_colour",
+            "alignment",
+            "non_latin_font_size_increase",
+            "hide_pronunciation_field",
+            "non_memorised_cards_in_hand",
+            "randomise_new_cards",
+            "randomise_scheduled_cards",
+            "max_ret_reps_since_lapse",
+            "ui_language",
+            "day_starts_at",
+            "latex_preamble",
+            "latex_postamble",
+            "latex",
+            "dvipng",
+            "max_backups",
+            "language_id",
+            "sublanguage_id",
+            "foreign_fact_key",
+        ]
         # If the user id is not set, it's either because this is the first run
         # of the program, or because the user deleted the config file. In the
         # latter case, we try to recuperate the id from the history files.
@@ -212,14 +230,18 @@ class Configuration(Component, dict):
                 self["user_id"] = history_files[0].split("_", 1)[0]
         # Hash the remote access passwords if it was previously stored in plain
         # text by an older version of Mnemosyne.
-        if self["remote_access_password"] != "" and \
-                self["remote_access_password_algo"] == "":
+        if (
+            self["remote_access_password"] != ""
+            and self["remote_access_password_algo"] == ""
+        ):
             from argon2 import PasswordHasher
             from argon2.exceptions import HashingError
+
             try:
                 ph = PasswordHasher()
-                self["remote_access_password"] = \
-                    ph.hash(self["remote_access_password"])
+                self["remote_access_password"] = ph.hash(
+                    self["remote_access_password"]
+                )
                 self["remote_access_password_algo"] = "argon2"
             except HashingError:
                 pass
@@ -243,15 +265,21 @@ class Configuration(Component, dict):
         # Create database tables if needed.
         with self.lock:
             con = sqlite3.connect(filename)
-            is_new = (con.execute("""select 1 from sqlite_master where
-                type='table' and name='config' limit 1;""").\
-                      fetchone() is None)
+            is_new = (
+                con.execute(
+                    """select 1 from sqlite_master where
+                type='table' and name='config' limit 1;"""
+                ).fetchone()
+                is None
+            )
             if is_new:
-                con.executescript("""
+                con.executescript(
+                    """
                 create table config(
                     key text primary key,
                     value text
-                );""")
+                );"""
+                )
                 con.commit()
         # Quick-and-dirty system to allow us to instantiate GUI variables
         # from the config db. The alternatives (e.g. having the frontend pass
@@ -268,7 +296,7 @@ class Configuration(Component, dict):
         for cursor in con.execute("select key, value from config"):
             # When importing Python 2 representations, strip the L
             # from long integers.
-            value = re_long_int.sub(lambda x : x.group()[:-1], cursor[1])
+            value = re_long_int.sub(lambda x: x.group()[:-1], cursor[1])
             try:
                 self[cursor[0]] = eval(value)
             except Exception as e:
@@ -284,12 +312,15 @@ class Configuration(Component, dict):
             filename = os.path.join(self.config_dir, "config.db")
             con = sqlite3.connect(filename)
             # Make sure the entries exist.
-            con.executemany\
-                ("insert or ignore into config(key, value) values(?,?)",
-                ((key, repr(value)) for key, value in self.items()))
+            con.executemany(
+                "insert or ignore into config(key, value) values(?,?)",
+                ((key, repr(value)) for key, value in self.items()),
+            )
             # Make sure they have the right data.
-            con.executemany("update config set value=? where key=?",
-                ((repr(value), key) for key, value in self.items()))
+            con.executemany(
+                "update config set value=? where key=?",
+                ((repr(value), key) for key, value in self.items()),
+            )
             con.commit()
             con.close()
 
@@ -305,9 +336,11 @@ class Configuration(Component, dict):
         join = os.path.join
         if sys.platform == "win32":
             import ctypes
-            n = ctypes.windll.kernel32.GetEnvironmentVariableW\
-                ("APPDATA", None, 0)
-            buf = ctypes.create_unicode_buffer("\0"*n)
+
+            n = ctypes.windll.kernel32.GetEnvironmentVariableW(
+                "APPDATA", None, 0
+            )
+            buf = ctypes.create_unicode_buffer("\0" * n)
             ctypes.windll.kernel32.GetEnvironmentVariableW("APPDATA", buf, n)
             self.data_dir = join(buf.value, "Mnemosyne")
             self.config_dir = self.data_dir
@@ -332,7 +365,6 @@ class Configuration(Component, dict):
             self.config_dir = join(self.config_dir, "mnemosyne")
 
     def fill_dirs(self):
-
         """Fill data_dir and config_dir. Do this even if they already exist,
         because we might have added new files since the last version.
 
@@ -362,16 +394,23 @@ class Configuration(Component, dict):
             print(rand_uuid(), file=f)
             f.close()
 
-    card_type_properties_generic = ["background_colour", "alignment",
-        "hide_pronunciation_field", "language_id",
-        "sublanguage_id", "foreign_fact_key", "translation_language_id"]
+    card_type_properties_generic = [
+        "background_colour",
+        "alignment",
+        "hide_pronunciation_field",
+        "language_id",
+        "sublanguage_id",
+        "foreign_fact_key",
+        "translation_language_id",
+    ]
     card_type_properties_for_fact_key = ["font", "font_colour"]
-    card_type_properties = card_type_properties_generic + \
-        card_type_properties_for_fact_key
+    card_type_properties = (
+        card_type_properties_generic + card_type_properties_for_fact_key
+    )
 
-    def set_card_type_property(self, property_name, property_value, card_type,
-            fact_key=None):
-
+    def set_card_type_property(
+        self, property_name, property_value, card_type, fact_key=None
+    ):
         """Set a property (like font, colour, ..) for a certain card type.
         If fact_key is None, then this will be applied to all fact keys.
 
@@ -386,7 +425,7 @@ class Configuration(Component, dict):
         # With the nested directories, we don't fall back on self.__setitem__,
         # so we have to log a event here ourselves.
         if property_name in self.keys_to_sync:
-          self.log().edited_setting(property_name)
+            self.log().edited_setting(property_name)
         if property_name in self.card_type_properties_generic:
             if property_value is None:
                 self[property_name].pop(card_type.id, None)
@@ -403,8 +442,9 @@ class Configuration(Component, dict):
             for _fact_key in fact_keys:
                 self[property_name][card_type.id][_fact_key] = property_value
 
-    def card_type_property(self, property_name, card_type, fact_key=None,
-                            default=None):
+    def card_type_property(
+        self, property_name, card_type, fact_key=None, default=None
+    ):
         if property_name in self.card_type_properties_generic:
             try:
                 return self[property_name][card_type.id]
@@ -417,18 +457,21 @@ class Configuration(Component, dict):
                 return default
 
     def clone_card_type_properties(self, old_card_type, new_card_type):
-      for property_name in self.card_type_properties_generic:
-          old_value = self.card_type_property(property_name, old_card_type)
-          if old_value:
-              self.set_card_type_property(\
-                  property_name, old_value, new_card_type)
-      for property_name in self.card_type_properties_for_fact_key:
-          for fact_key in new_card_type.fact_keys():
-              old_value = self.card_type_property(property_name,
-                  old_card_type, fact_key)
-              if old_value:
-                  self.set_card_type_property(property_name, old_value, \
-                      new_card_type, fact_key)
+        for property_name in self.card_type_properties_generic:
+            old_value = self.card_type_property(property_name, old_card_type)
+            if old_value:
+                self.set_card_type_property(
+                    property_name, old_value, new_card_type
+                )
+        for property_name in self.card_type_properties_for_fact_key:
+            for fact_key in new_card_type.fact_keys():
+                old_value = self.card_type_property(
+                    property_name, old_card_type, fact_key
+                )
+                if old_value:
+                    self.set_card_type_property(
+                        property_name, old_value, new_card_type, fact_key
+                    )
 
     def delete_card_type_properties(self, card_type):
         for property_name in self.card_type_properties:
@@ -436,8 +479,11 @@ class Configuration(Component, dict):
                 del self[property_name][card_type.id]
 
     def machine_id(self):
-        return open(os.path.join(self.config_dir, "machine.id")).\
-            readline().rstrip()
+        return (
+            open(os.path.join(self.config_dir, "machine.id"))
+            .readline()
+            .rstrip()
+        )
 
     def load_user_config(self):
         if self.config_dir not in sys.path:
@@ -449,16 +495,17 @@ class Configuration(Component, dict):
         if os.path.exists(config_file):
             try:
                 import config
+
                 config = importlib.reload(config)
                 for var in dir(config):
                     if var in self:
                         self[var] = getattr(config, var)
             except:
-                raise RuntimeError(_("Error in config.py:") \
-                          + "\n" + traceback_string())
+                raise RuntimeError(
+                    _("Error in config.py:") + "\n" + traceback_string()
+                )
 
     def change_user_id(self, new_user_id):
-
         """When a client syncs for the first time with a server, we need to
         set the client's user_id identical to the one of the server, in order
         for the uploaded anonymous logs to be consistent.
@@ -469,8 +516,10 @@ class Configuration(Component, dict):
             return
         old_user_id = self["user_id"]
         self["user_id"] = new_user_id
-        from mnemosyne.libmnemosyne.component_manager import \
-             migrate_component_manager
+        from mnemosyne.libmnemosyne.component_manager import (
+            migrate_component_manager,
+        )
+
         migrate_component_manager(old_user_id, new_user_id)
         self.save()
 
@@ -485,7 +534,7 @@ class Configuration(Component, dict):
         system_language, _ = getdefaultlocale()
         # if no default locale can be found, default to English
         if system_language is None:
-            system_language = 'en_us'
+            system_language = "en_us"
         lang_code = system_language.split("_")[0]
 
         # Special case ca@valencia, we only support this specific one.

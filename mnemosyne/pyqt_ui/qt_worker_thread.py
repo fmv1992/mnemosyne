@@ -18,7 +18,6 @@ dialog_closed = QtCore.QWaitCondition()
 
 
 class QtWorkerThread(QtCore.QThread):
-
     """Note that in Qt, we cannot do GUI updates in the worker thread, so we
     use the signal/slot mechanism to notify the main thread to do the
     necessary GUI operations.
@@ -41,7 +40,7 @@ class QtWorkerThread(QtCore.QThread):
         super().__init__()
         self.mnemosyne = mnemosyne
         # A fast moving progress bar seems to cause crashes on Windows.
-        self.show_numeric_progress_bar = (sys.platform != "win32")
+        self.show_numeric_progress_bar = sys.platform != "win32"
 
     def do_work(self):
         pass  # Override this with the actual task.
@@ -51,15 +50,17 @@ class QtWorkerThread(QtCore.QThread):
             # Libmnemosyne itself could also generate dialog messages, so
             # we temporarily override the main_widget with the threaded
             # routines in this class.
-            self.mnemosyne.component_manager.components\
-                [None]["main_widget"].append(self)
+            self.mnemosyne.component_manager.components[None][
+                "main_widget"
+            ].append(self)
             self.do_work()
         except Exception as e:
             self.show_error(str(e) + "\n" + traceback_string())
         finally:
             self.mnemosyne.database().release_connection()
-            self.mnemosyne.component_manager.components\
-                [None]["main_widget"].pop()
+            self.mnemosyne.component_manager.components[None][
+                "main_widget"
+            ].pop()
         self.work_ended_signal.emit()
 
     def show_information(self, message):
@@ -124,24 +125,29 @@ class QtGuiThread(Component, QtCore.QObject):
 
     def run_worker_thread(self):
         self.database().release_connection()
-        self.worker_thread.information_signal.connect(\
-            self.threaded_show_information)
-        self.worker_thread.error_signal.connect(\
-            self.threaded_show_error)
-        self.worker_thread.question_signal.connect(\
-            self.threaded_show_question)
-        self.worker_thread.set_progress_text_signal.connect(\
-            self.true_main_widget.set_progress_text)
-        self.worker_thread.set_progress_range_signal.connect(\
-            self.true_main_widget.set_progress_range)
-        self.worker_thread.set_progress_update_interval_signal.connect(\
-            self.true_main_widget.set_progress_update_interval)
-        self.worker_thread.increase_progress_signal.connect(\
-            self.true_main_widget.increase_progress)
-        self.worker_thread.set_progress_value_signal.connect(\
-            self.true_main_widget.set_progress_value)
-        self.worker_thread.close_progress_signal.connect(\
-            self.true_main_widget.close_progress)
+        self.worker_thread.information_signal.connect(
+            self.threaded_show_information
+        )
+        self.worker_thread.error_signal.connect(self.threaded_show_error)
+        self.worker_thread.question_signal.connect(self.threaded_show_question)
+        self.worker_thread.set_progress_text_signal.connect(
+            self.true_main_widget.set_progress_text
+        )
+        self.worker_thread.set_progress_range_signal.connect(
+            self.true_main_widget.set_progress_range
+        )
+        self.worker_thread.set_progress_update_interval_signal.connect(
+            self.true_main_widget.set_progress_update_interval
+        )
+        self.worker_thread.increase_progress_signal.connect(
+            self.true_main_widget.increase_progress
+        )
+        self.worker_thread.set_progress_value_signal.connect(
+            self.true_main_widget.set_progress_value
+        )
+        self.worker_thread.close_progress_signal.connect(
+            self.true_main_widget.close_progress
+        )
         self.worker_thread.work_ended_signal.connect(self.work_ended)
         self.worker_thread.start()
 
@@ -164,8 +170,9 @@ class QtGuiThread(Component, QtCore.QObject):
     def threaded_show_question(self, question, option0, option1, option2):
         global answer
         mutex.lock()
-        answer = self.true_main_widget.show_question(question, option0,
-            option1, option2)
+        answer = self.true_main_widget.show_question(
+            question, option0, option1, option2
+        )
         dialog_closed.wakeAll()
         mutex.unlock()
 

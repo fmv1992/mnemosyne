@@ -5,8 +5,9 @@
 from PyQt6 import QtCore, QtWebEngineWidgets
 
 from mnemosyne.libmnemosyne.statistics_page import HtmlStatisticsPage
-from mnemosyne.libmnemosyne.ui_components.statistics_widget import \
-     StatisticsWidget
+from mnemosyne.libmnemosyne.ui_components.statistics_widget import (
+    StatisticsWidget,
+)
 
 
 class HtmlStatisticsWdgt(QtWebEngineWidgets.QWebEngineView, StatisticsWidget):

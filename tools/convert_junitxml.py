@@ -7,6 +7,7 @@
 import os
 import xml.etree.ElementTree as ET
 
+
 def parse_junitxml(xml_file):
     tree = ET.parse(xml_file)
     root = tree.getroot()
@@ -22,48 +23,54 @@ def parse_junitxml(xml_file):
         "IndexError",
         "KeyError",
         "TypeError",
-        "ValueError"
+        "ValueError",
     ]
 
-    total_tests = len(root.findall('.//testcase'))
-    successful_tests = total_tests  # Initialize successful_tests to the total number of tests
+    total_tests = len(root.findall(".//testcase"))
+    successful_tests = (
+        total_tests  # Initialize successful_tests to the total number of tests
+    )
     failures_count = 0
     errors_count = 0
 
-    for testcase in root.findall('.//testcase'):
-        test_name = testcase.get('name')
-        classname = testcase.get('classname', '')
-        time = testcase.get('time', '')
+    for testcase in root.findall(".//testcase"):
+        test_name = testcase.get("name")
+        classname = testcase.get("classname", "")
+        time = testcase.get("time", "")
 
-        failure = testcase.find('failure')
-        error = testcase.find('error')
+        failure = testcase.find("failure")
+        error = testcase.find("error")
 
         if failure is not None:
             failures_count += 1
             successful_tests -= 1  # Decrement successful_tests on failure
-            failure_message = failure.get('message', '')
+            failure_message = failure.get("message", "")
 
             for error_type in junitxml_errors:
                 if error_type in failure_message:
                     test_results.append(
-                        f"{classname}::{test_name} time:{time} @failure @{error_type} message:\"{failure_message}\""
+                        f'{classname}::{test_name} time:{time} @failure @{error_type} message:"{failure_message}"'
                     )
                     break
             else:
-                test_results.append(f"{classname}::{test_name} time:{time} @failure message:\"{failure_message}\"")
+                test_results.append(
+                    f'{classname}::{test_name} time:{time} @failure message:"{failure_message}"'
+                )
         elif error is not None:
             errors_count += 1
             successful_tests -= 1  # Decrement successful_tests on error
-            error_message = error.get('message', '')
+            error_message = error.get("message", "")
 
             for error_type in junitxml_errors:
                 if error_type in error_message:
                     test_results.append(
-                        f"{classname}::{test_name} time:{time} @error @{error_type} message:\"{error_message}\""
+                        f'{classname}::{test_name} time:{time} @error @{error_type} message:"{error_message}"'
                     )
                     break
             else:
-                test_results.append(f"{classname}::{test_name} time:{time} @error message:\"{error_message}\"")
+                test_results.append(
+                    f'{classname}::{test_name} time:{time} @error message:"{error_message}"'
+                )
         else:
             test_results.append(f"x {classname}::{test_name} time:{time}")
 
@@ -75,9 +82,11 @@ def parse_junitxml(xml_file):
 
     return test_results
 
+
 def save_to_todo_file(todo_file, test_results):
-    with open(todo_file, 'w') as file:
-        file.write('\n'.join(test_results))
+    with open(todo_file, "w") as file:
+        file.write("\n".join(test_results))
+
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))

@@ -8,17 +8,17 @@ from xml.sax import saxutils
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor \
-    import MediaPreprocessor
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
+    MediaPreprocessor,
+)
 
 re0 = re.compile(r"&#(.+?);", re.DOTALL | re.IGNORECASE)
 
-HOUR = 60 * 60 # Seconds in an hour.
-DAY = 24 * HOUR # Seconds in a day.
+HOUR = 60 * 60  # Seconds in an hour.
+DAY = 24 * HOUR  # Seconds in a day.
 
 
 class SuperMemo7Txt(FileFormat, MediaPreprocessor):
-
     """Imports SuperMemo 7's text file format:
     A line starting with 'Q: ' holds a question, a line starting with 'A: '
     holds an answer.  Several consecutive question lines form a multi line
@@ -40,7 +40,6 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
         MediaPreprocessor.__init__(self, component_manager)
 
     def process_html_unicode(self, s):
-
         """Parse html style escaped unicode (e.g. &#33267;)"""
 
         for match in re0.finditer(s):
@@ -60,7 +59,7 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
     def do_import(self, filename, extra_tag_names=""):
         f = None
         try:
-            f = open(filename, 'r')
+            f = open(filename, "r")
         except:
             self.main_widget().show_error(_("Could not load file."))
             return
@@ -68,8 +67,11 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
         next_state = None
         error = False
         card_type = self.card_type_with_id("1")
-        tag_names = [tag_name.strip() for \
-            tag_name in extra_tag_names.split(",") if tag_name.strip()]
+        tag_names = [
+            tag_name.strip()
+            for tag_name in extra_tag_names.split(",")
+            if tag_name.strip()
+        ]
         while not error and state != "END-OF-FILE":
             line = self.read_line_sm7qa(f)
             # Perform the actions of the current state and calculate
@@ -120,11 +122,13 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
                     if len(attributes) != 6:
                         error = True
                     else:
-                        if (attributes[0].startswith("REP=") \
-                            and attributes[1].startswith("LAP=") \
-                            and attributes[2].startswith("EF=") \
-                            and attributes[4].startswith("INT=") \
-                            and attributes[5].startswith("LAST=")):
+                        if (
+                            attributes[0].startswith("REP=")
+                            and attributes[1].startswith("LAP=")
+                            and attributes[2].startswith("EF=")
+                            and attributes[4].startswith("INT=")
+                            and attributes[5].startswith("LAST=")
+                        ):
                             repetitions = int(attributes[0][4:])
                             lapses = int(attributes[1][4:])
                             easiness = float(attributes[2][3:])
@@ -132,8 +136,13 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
                             if attributes[5] == "LAST=0":
                                 last = 0
                             else:
-                                last = int(time.mktime(time.strptime\
-                                    (attributes[5][5:], "%d.%m.%y")))
+                                last = int(
+                                    time.mktime(
+                                        time.strptime(
+                                            attributes[5][5:], "%d.%m.%y"
+                                        )
+                                    )
+                                )
                         else:
                             error = True
                     next_state = "LEARNING-DATA"
@@ -144,7 +153,7 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
                 # The second line with the learning data has to follow.
                 if line == False:
                     error = True
-                elif line.startswith("O:"): # This line is ignored.
+                elif line.startswith("O:"):  # This line is ignored.
                     next_state = "CARD-END"
                 else:
                     error = True
@@ -159,10 +168,12 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
                     error = True
             # Perform the transition actions that are common for a set of
             # transitions.
-            if ( (state == "ANSWER" and next_state == "END-OF-FILE") \
-                    or (state == "ANSWER" and next_state == "CARD-START") \
-                    or (state == "CARD-END" and next_state == "END-OF-FILE") \
-                    or (state == "CARD-END" and next_state == "CARD-START") ):
+            if (
+                (state == "ANSWER" and next_state == "END-OF-FILE")
+                or (state == "ANSWER" and next_state == "CARD-START")
+                or (state == "CARD-END" and next_state == "END-OF-FILE")
+                or (state == "CARD-END" and next_state == "CARD-START")
+            ):
                 # Grade information is not given directly in the file format.
                 # To make the transition to Mnemosyne smooth for a SuperMemo
                 # user, we make sure that all cards get queried in a similar
@@ -171,12 +182,19 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
                     grade = -1
                 else:
                     grade = 4
-                fact_data = {"f": saxutils.escape(question),
-                    "b": saxutils.escape(answer)}
+                fact_data = {
+                    "f": saxutils.escape(question),
+                    "b": saxutils.escape(answer),
+                }
                 self.preprocess_media(fact_data, tag_names)
-                card = self.controller().create_new_cards(fact_data, card_type,
-                    grade=grade, tag_names=tag_names,
-                    check_for_duplicates=False, save=False)[0]
+                card = self.controller().create_new_cards(
+                    fact_data,
+                    card_type,
+                    grade=grade,
+                    tag_names=tag_names,
+                    check_for_duplicates=False,
+                    save=False,
+                )[0]
                 if _("MISSING_MEDIA") in tag_names:
                     tag_names.remove(_("MISSING_MEDIA"))
                 card.easiness = easiness

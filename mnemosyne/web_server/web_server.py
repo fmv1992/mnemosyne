@@ -25,7 +25,7 @@ class ReleaseDatabaseAfterTimeout(threading.Thread):
         self.last_ping = time.time()
 
     def run(self):
-        while time.time() < self.last_ping + 2*60:
+        while time.time() < self.last_ping + 2 * 60:
             time.sleep(1)
         con = http.client.HTTPConnection("localhost", self.port)
         con.request("GET", "/release_database")
@@ -33,7 +33,6 @@ class ReleaseDatabaseAfterTimeout(threading.Thread):
 
 
 class StopServerAfterTimeout(threading.Thread):
-
     """Stop server after a certain timeout, so that it has
     enough time to serve the final page.
 
@@ -52,8 +51,9 @@ class WebServer(Component):
 
     def __init__(self, port, data_dir, config_dir, filename, **kwds):
         if "client_on_same_machine_as_server" in kwds:
-            self.client_on_same_machine_as_server = \
-                kwds["client_on_same_machine_as_server"]
+            self.client_on_same_machine_as_server = kwds[
+                "client_on_same_machine_as_server"
+            ]
             del kwds["client_on_same_machine_as_server"]
         else:
             self.client_on_same_machine_as_server = False
@@ -73,15 +73,20 @@ class WebServer(Component):
         Component.activate(self)
         # Late import to speed up application startup.
         from cheroot import wsgi
-        self.wsgi_server = wsgi.Server(\
-            ("0.0.0.0", self.port), self.wsgi_app, server_name="localhost",
-            numthreads=1, timeout=5)
+
+        self.wsgi_server = wsgi.Server(
+            ("0.0.0.0", self.port),
+            self.wsgi_app,
+            server_name="localhost",
+            numthreads=1,
+            timeout=5,
+        )
         # We need to set the timeout relatively low, otherwise it will take
         # too long for the server to process a 'stop' request.
 
     def serve_until_stopped(self):
         try:
-            self.wsgi_server.start() # Sets self.wsgi_server.ready
+            self.wsgi_server.start()  # Sets self.wsgi_server.ready
         except KeyboardInterrupt:
             self.wsgi_server.stop()
             self.unload_mnemosyne()
@@ -92,41 +97,57 @@ class WebServer(Component):
         self.unload_mnemosyne()
 
     def load_mnemosyne(self):
-        self.mnemosyne = Mnemosyne(upload_science_logs=True,
-            interested_in_old_reps=True)
-        self.mnemosyne.components.insert(0, (
-            ("mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator",
-             "GetTextGuiTranslator")))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.libmnemosyne.ui_components.main_widget",
-             "MainWidget"))
-        self.mnemosyne.components.append(\
-            ("mnemosyne.web_server.web_server_render_chain",
-             "WebServerRenderChain"))
-        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [\
-            ("mnemosyne.web_server.review_wdgt",
-             "ReviewWdgt")]
-        self.mnemosyne.gui_for_component["NewOnly"] = [\
-            ("mnemosyne.web_server.review_wdgt",
-             "ReviewWdgt")]
-        self.mnemosyne.gui_for_component["CramAll"] = [\
-            ("mnemosyne.web_server.review_wdgt",
-             "ReviewWdgt")]
-        self.mnemosyne.gui_for_component["CramRecent"] = [\
-            ("mnemosyne.web_server.review_wdgt",
-             "ReviewWdgt")]
-        self.mnemosyne.initialise(self.data_dir, config_dir=self.config_dir,
-            filename=self.filename, automatic_upgrades=False)
+        self.mnemosyne = Mnemosyne(
+            upload_science_logs=True, interested_in_old_reps=True
+        )
+        self.mnemosyne.components.insert(
+            0,
+            (
+                (
+                    "mnemosyne.libmnemosyne.gui_translators.gettext_gui_translator",
+                    "GetTextGuiTranslator",
+                )
+            ),
+        )
+        self.mnemosyne.components.append(
+            ("mnemosyne.libmnemosyne.ui_components.main_widget", "MainWidget")
+        )
+        self.mnemosyne.components.append(
+            (
+                "mnemosyne.web_server.web_server_render_chain",
+                "WebServerRenderChain",
+            )
+        )
+        self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
+            ("mnemosyne.web_server.review_wdgt", "ReviewWdgt")
+        ]
+        self.mnemosyne.gui_for_component["NewOnly"] = [
+            ("mnemosyne.web_server.review_wdgt", "ReviewWdgt")
+        ]
+        self.mnemosyne.gui_for_component["CramAll"] = [
+            ("mnemosyne.web_server.review_wdgt", "ReviewWdgt")
+        ]
+        self.mnemosyne.gui_for_component["CramRecent"] = [
+            ("mnemosyne.web_server.review_wdgt", "ReviewWdgt")
+        ]
+        self.mnemosyne.initialise(
+            self.data_dir,
+            config_dir=self.config_dir,
+            filename=self.filename,
+            automatic_upgrades=False,
+        )
         self.save_after_n_reps = self.mnemosyne.config()["save_after_n_reps"]
         self.mnemosyne.config()["save_after_n_reps"] = 1
         self.mnemosyne.config()["study_mode"] = "ScheduledForgottenNew"
         self.mnemosyne.config()["QA_split"] = "fixed"
-        self.mnemosyne.review_widget().set_client_on_same_machine_as_server(\
-            self.client_on_same_machine_as_server)
+        self.mnemosyne.review_widget().set_client_on_same_machine_as_server(
+            self.client_on_same_machine_as_server
+        )
         self.mnemosyne.controller().reset_study_mode()
         self.is_mnemosyne_loaded = True
-        self.release_database_after_timeout = \
-            ReleaseDatabaseAfterTimeout(self.port)
+        self.release_database_after_timeout = ReleaseDatabaseAfterTimeout(
+            self.port
+        )
         self.release_database_after_timeout.start()
 
     def unload_mnemosyne(self):
@@ -172,8 +193,9 @@ class WebServer(Component):
                 self.unload_mnemosyne()
                 page = "Server stopped"
                 self.wsgi_server.stop()
-                self.stop_server_after_timeout = \
-                    StopServerAfterTimeout(self.wsgi_server)
+                self.stop_server_after_timeout = StopServerAfterTimeout(
+                    self.wsgi_server
+                )
                 self.stop_server_after_timeout.start()
                 self.is_shutting_down = True
             else:
@@ -185,23 +207,26 @@ class WebServer(Component):
             start_response("200 OK", response_headers)
             return [page]
         elif filename == "/api/scheduled":
-            scheduled_count, _, _ = \
+            scheduled_count, _, _ = (
                 self.mnemosyne.review_widget().review_controller().counters()
+            )
             response_headers = [("Content-type", "text/plain")]
             start_response("200 OK", response_headers)
-            return [str(scheduled_count).encode(encoding='UTF-8')]
+            return [str(scheduled_count).encode(encoding="UTF-8")]
         elif filename == "/api/non_memorized":
-            _, non_memorised_count, _ = \
+            _, non_memorised_count, _ = (
                 self.mnemosyne.review_widget().review_controller().counters()
+            )
             response_headers = [("Content-type", "text/plain")]
             start_response("200 OK", response_headers)
-            return [str(non_memorised_count).encode(encoding='UTF-8')]
+            return [str(non_memorised_count).encode(encoding="UTF-8")]
         elif filename == "/api/active":
-            _, _, active_count = \
+            _, _, active_count = (
                 self.mnemosyne.review_widget().review_controller().counters()
+            )
             response_headers = [("Content-type", "text/plain")]
             start_response("200 OK", response_headers)
-            return [str(active_count).encode(encoding='UTF-8')]
+            return [str(active_count).encode(encoding="UTF-8")]
         elif filename == "/release_database":
             self.unload_mnemosyne()
             response_headers = [("Content-type", "text/html")]
@@ -212,6 +237,7 @@ class WebServer(Component):
             # Late import to speed up application startup.
             from webob import Request
             from webob.static import FileApp
+
             # Prevent wsgi from decoding this as as non-unicode behind
             # our back ( https://bugs.python.org/issue16679).
             filename = filename.replace("___-___", "%")
@@ -221,8 +247,11 @@ class WebServer(Component):
                 full_path = os.path.join(full_path, word)
             request = Request(environ)
             if os.path.exists(full_path):
-                etag = "%s-%s-%s" % (os.path.getmtime(full_path),
-                    os.path.getsize(full_path), hash(full_path))
+                etag = "%s-%s-%s" % (
+                    os.path.getmtime(full_path),
+                    os.path.getsize(full_path),
+                    hash(full_path),
+                )
             else:
                 etag = "none"
             app = FileApp(full_path, etag=etag)
@@ -230,7 +259,6 @@ class WebServer(Component):
 
 
 class WebServerThread(threading.Thread, WebServer):
-
     """Basic threading implementation of the sync server, suitable for text-
     based UIs. A GUI-based client will want to override several functions
     in Server and ServerThread in view of the interaction between multiple
@@ -238,19 +266,35 @@ class WebServerThread(threading.Thread, WebServer):
 
     """
 
-    def __init__(self, component_manager, client_on_same_machine_as_server=False):
-        self.client_on_same_machine_as_server = client_on_same_machine_as_server
+    def __init__(
+        self, component_manager, client_on_same_machine_as_server=False
+    ):
+        self.client_on_same_machine_as_server = (
+            client_on_same_machine_as_server
+        )
         threading.Thread.__init__(self)
         self.config = component_manager.current("config")
-        WebServer.__init__(self,
-            self.config["web_server_port"], self.config.data_dir,
-            self.config.config_dir, self.config["last_database"],
+        WebServer.__init__(
+            self,
+            self.config["web_server_port"],
+            self.config.data_dir,
+            self.config.config_dir,
+            self.config["last_database"],
             component_manager=component_manager,
-            client_on_same_machine_as_server=self.client_on_same_machine_as_server)
+            client_on_same_machine_as_server=self.client_on_same_machine_as_server,
+        )
 
     def run(self):
         self.activate()
-        if not self.client_on_same_machine_as_server:  # Could fail if we are offline.
-            print(("Web server listening on http://" + \
-                localhost_IP() + ":" + str(self.config["web_server_port"])))
+        if (
+            not self.client_on_same_machine_as_server
+        ):  # Could fail if we are offline.
+            print(
+                (
+                    "Web server listening on http://"
+                    + localhost_IP()
+                    + ":"
+                    + str(self.config["web_server_port"])
+                )
+            )
         self.serve_until_stopped()

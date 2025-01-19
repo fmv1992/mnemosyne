@@ -48,14 +48,19 @@ class ReviewWdgtCramming(ReviewWdgt):
         if self.review_controller().is_answer_showing():
             if event.key() in [QtCore.Qt.Key.Key_0, QtCore.Qt.Key.Key_1]:
                 return self.grade_answer(0)
-            elif event.key() in [QtCore.Qt.Key.Key_2, QtCore.Qt.Key.Key_3,
-                QtCore.Qt.Key.Key_4, QtCore.Qt.Key.Key_5]:
+            elif event.key() in [
+                QtCore.Qt.Key.Key_2,
+                QtCore.Qt.Key.Key_3,
+                QtCore.Qt.Key.Key_4,
+                QtCore.Qt.Key.Key_5,
+            ]:
                 return self.grade_answer(5)
         super().keyPressEvent(event)
 
     def update_status_bar_counters(self):
-        wrong_count, unseen_count, active_count = \
-                   self.review_controller().counters()
+        wrong_count, unseen_count, active_count = (
+            self.review_controller().counters()
+        )
         self.wrong.setText(_("Wrong:") + " %d " % wrong_count)
         self.unseen.setText(_("Unseen:") + " %d " % unseen_count)
         self.active.setText(_("Active:") + " %d " % active_count)

@@ -8,11 +8,12 @@ from mnemosyne.libmnemosyne.plugin import Plugin
 from mnemosyne.libmnemosyne.statistics_page import PlotStatisticsPage
 from mnemosyne.pyqt_ui.statistics_wdgts_plotting import BarChartDaysWdgt
 
-HOUR = 60 * 60 # Seconds in an hour.
-DAY = 24 * HOUR # Seconds in a day.
+HOUR = 60 * 60  # Seconds in an hour.
+DAY = 24 * HOUR  # Seconds in a day.
 
 
 # The average grade statistics page (GUI independent part).
+
 
 class AvgGrade(PlotStatisticsPage):
 
@@ -24,19 +25,25 @@ class AvgGrade(PlotStatisticsPage):
     LAST_6_MONTHS = 4
     LAST_YEAR = 5
 
-    variants = [(LAST_WEEK, _("Last week")),
-                (LAST_MONTH, _("Last month")),
-                (LAST_3_MONTHS, _("Last 3 months")),
-                (LAST_6_MONTHS, _("Last 6 months")),
-                (LAST_YEAR, _("Last year"))]
+    variants = [
+        (LAST_WEEK, _("Last week")),
+        (LAST_MONTH, _("Last month")),
+        (LAST_3_MONTHS, _("Last 3 months")),
+        (LAST_6_MONTHS, _("Last 6 months")),
+        (LAST_YEAR, _("Last year")),
+    ]
 
     def avg_grade_n_days_ago(self, n):
         start_of_day = self.database().start_of_day_n_days_ago(n)
-        return self.database().con.execute(\
-            """select avg(grade) from log where ?<=timestamp and timestamp<?
+        return (
+            self.database()
+            .con.execute(
+                """select avg(grade) from log where ?<=timestamp and timestamp<?
             and event_type=? and scheduled_interval!=0""",
-            (start_of_day, start_of_day + DAY, EventTypes.REPETITION)).\
-            fetchone()[0]
+                (start_of_day, start_of_day + DAY, EventTypes.REPETITION),
+            )
+            .fetchone()[0]
+        )
 
     def prepare_statistics(self, variant):
         if variant == self.LAST_WEEK:
@@ -56,6 +63,7 @@ class AvgGrade(PlotStatisticsPage):
 
 # The custom widget.
 
+
 class AvgGradeWdgt(BarChartDaysWdgt):
 
     title = _("Average grades of scheduled cards")
@@ -68,26 +76,32 @@ class AvgGradeWdgt(BarChartDaysWdgt):
             self.display_message(_("No stats available."))
             return
         ticklabels_neg = lambda i, j, k: ["%d" % x for x in range(i, j, k)]
-        if hasattr(self.page, "LAST_WEEK") and \
-            variant == self.page.LAST_WEEK:
+        if hasattr(self.page, "LAST_WEEK") and variant == self.page.LAST_WEEK:
             xticks = list(range(-7, 1, 1))
             xticklabels = ticklabels_neg(-7, 1, 1)
-        elif hasattr(self.page, "LAST_MONTH") and \
-            variant == self.page.LAST_MONTH:
+        elif (
+            hasattr(self.page, "LAST_MONTH")
+            and variant == self.page.LAST_MONTH
+        ):
             xticks = list(range(-30, -4, 5)) + [0]
             xticklabels = ticklabels_neg(-30, -4, 5) + ["0"]
 
-        elif hasattr(self.page, "LAST_3_MONTHS") and \
-            variant == self.page.LAST_3_MONTHS:
+        elif (
+            hasattr(self.page, "LAST_3_MONTHS")
+            and variant == self.page.LAST_3_MONTHS
+        ):
             xticks = list(range(-90, -9, 10)) + [0]
             xticklabels = ticklabels_neg(-90, -9, 10) + ["0"]
 
-        elif hasattr(self.page, "LAST_6_MONTHS") and \
-            variant == self.page.LAST_6_MONTHS:
+        elif (
+            hasattr(self.page, "LAST_6_MONTHS")
+            and variant == self.page.LAST_6_MONTHS
+        ):
             xticks = list(range(-180, -19, 20)) + [0]
             xticklabels = ticklabels_neg(-180, -19, 20) + ["0"]
-        elif hasattr(self.page, "LAST_YEAR") and \
-            variant == self.page.LAST_YEAR:
+        elif (
+            hasattr(self.page, "LAST_YEAR") and variant == self.page.LAST_YEAR
+        ):
             xticks = list(range(-360, -59, 60)) + [0]
             xticklabels = ticklabels_neg(-360, -59, 60) + ["0"]
         else:
@@ -101,14 +115,19 @@ class AvgGradeWdgt(BarChartDaysWdgt):
         xmin, xmax = min(self.page.x), max(self.page.x)
         self.axes.set_xlim(xmin=xmin - 0.5, xmax=xmax + 0.5)
 
+
 # Wrap it into a Plugin and then register the Plugin.
+
 
 class AvgGradePlugin(Plugin):
     name = "Average grades"
-    description = "Average grade given to scheduled cards as a function of time"
+    description = (
+        "Average grade given to scheduled cards as a function of time"
+    )
     components = [AvgGrade, AvgGradeWdgt]
     supported_API_level = 3
 
-from mnemosyne.libmnemosyne.plugin import register_user_plugin
-register_user_plugin(AvgGradePlugin)
 
+from mnemosyne.libmnemosyne.plugin import register_user_plugin
+
+register_user_plugin(AvgGradePlugin)

@@ -7,12 +7,11 @@ import urllib
 
 from mnemosyne.libmnemosyne.filter import Filter
 
-re_audio = re.compile(r"""<audio src=\"(.+?)\"(.*?)>""",
-    re.DOTALL | re.IGNORECASE)
-re_start = re.compile(r"""start=\"(.+?)\"""",
-    re.DOTALL | re.IGNORECASE)
-re_stop = re.compile(r"""stop=\"(.+?)\"""",
-    re.DOTALL | re.IGNORECASE)
+re_audio = re.compile(
+    r"""<audio src=\"(.+?)\"(.*?)>""", re.DOTALL | re.IGNORECASE
+)
+re_start = re.compile(r"""start=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
+re_stop = re.compile(r"""stop=\"(.+?)\"""", re.DOTALL | re.IGNORECASE)
 
 script = """
 <script type="text/javascript">
@@ -72,7 +71,6 @@ script = """
 
 
 class Html5Audio(Filter):
-
     """Incorporate media player supporting more than 1 sound file."""
 
     def run(self, text, card, fact_key, **render_args):
@@ -80,8 +78,11 @@ class Html5Audio(Filter):
             return text
         sound_files = []
         for match in re_audio.finditer(text):
-            sound_files.append("'" + \
-                urllib.parse.quote(match.group(1).encode("utf-8"), safe="/:") + "'")
+            sound_files.append(
+                "'"
+                + urllib.parse.quote(match.group(1).encode("utf-8"), safe="/:")
+                + "'"
+            )
             start, stop = 0, 999999
             if match.group(2):
                 start_match = re_start.search(match.group(2))

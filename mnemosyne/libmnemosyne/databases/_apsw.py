@@ -49,9 +49,13 @@ class _APSW(Component):
         if sys.platform == "win32":  # pragma: no cover
             drive = os.path.splitdrive(path)[0]
             import ctypes
+
             if ctypes.windll.kernel32.GetDriveTypeW("%s\\" % drive) == 4:
-                self.main_widget().show_error(_\
-("Putting a database on a network drive is forbidden under Windows to avoid data corruption. Mnemosyne will now close."))
+                self.main_widget().show_error(
+                    _(
+                        "Putting a database on a network drive is forbidden under Windows to avoid data corruption. Mnemosyne will now close."
+                    )
+                )
                 sys.exit(-1)
         self.connection = apsw.Connection(path)
         self.connection.setbusytimeout(250)

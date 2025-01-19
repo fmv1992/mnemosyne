@@ -17,7 +17,8 @@ import traceback
 #   performance.
 # - mode bits are not copied since python on Android does not like this
 
-def copyfileobj(fsrc, fdst, length=8*1024*1024):
+
+def copyfileobj(fsrc, fdst, length=8 * 1024 * 1024):
     """copy data from file-like object fsrc to file-like object fdst"""
     while 1:
         buf = fsrc.read(length)
@@ -25,17 +26,20 @@ def copyfileobj(fsrc, fdst, length=8*1024*1024):
             break
         fdst.write(buf)
 
+
 def _samefile(src, dst):
     # Macintosh, Unix.
-    if hasattr(os.path, 'samefile'):
+    if hasattr(os.path, "samefile"):
         try:
             return os.path.samefile(src, dst)
         except OSError:
             return False
 
     # All other platforms: check for same pathname.
-    return (os.path.normcase(os.path.abspath(src)) ==
-            os.path.normcase(os.path.abspath(dst)))
+    return os.path.normcase(os.path.abspath(src)) == os.path.normcase(
+        os.path.abspath(dst)
+    )
+
 
 def copyfile(src, dst):
     """Copy data from src to dst"""
@@ -56,8 +60,8 @@ def copyfile(src, dst):
     fsrc = None
     fdst = None
     try:
-        fsrc = open(src, 'rb')
-        fdst = open(dst, 'wb')
+        fsrc = open(src, "rb")
+        fdst = open(dst, "wb")
         copyfileobj(fsrc, fdst)
     finally:
         if fdst:
@@ -65,12 +69,14 @@ def copyfile(src, dst):
         if fsrc:
             fsrc.close()
 
+
 def copymode(src, dst):
     """Copy mode bits from src to dst"""
-    if hasattr(os, 'chmod'):
+    if hasattr(os, "chmod"):
         st = os.stat(src)
         mode = stat.S_IMODE(st.st_mode)
         os.chmod(dst, mode)
+
 
 def copy(src, dst):
     """Copy data and mode bits ("cp src dst").
@@ -81,30 +87,31 @@ def copy(src, dst):
     if os.path.isdir(dst):
         dst = os.path.join(dst, os.path.basename(src))
     copyfile(src, dst)
-    #copymode(src, dst)
+    # copymode(src, dst)
+
 
 #
 # Memosyne-specific functions.
 #
+
 
 class MnemosyneError(Exception):
     pass
 
 
 def _abs_path(path):
-
     """Our own version of os.path.abspath, which does not check for platform.
     In this way, we can test Windows paths even when running the testsuite
     under Linux.
 
     """
 
-    return    ((len(path) > 1) and path[0] == "/") \
-           or ((len(path) > 2) and path[1] == ":")
+    return ((len(path) > 1) and path[0] == "/") or (
+        (len(path) > 2) and path[1] == ":"
+    )
 
 
 def contract_path(path, start):
-
     """Return relative path to 'path' from the directory 'start'.
 
     All paths in Mnemosyne are internally stored with Unix separators /.
@@ -126,7 +133,6 @@ def contract_path(path, start):
 
 
 def expand_path(path, start):
-
     """Make 'path' absolute starting from 'start'.
 
     Also convert Unix separators to Windows separators on that platform.
@@ -140,7 +146,6 @@ def expand_path(path, start):
 
 
 def normalise_path(path):
-
     """Make sure the correct types of slashes are used.
     'pathlib' itself turns out to be not sufficient for that.
 
@@ -165,7 +170,6 @@ def make_filename_unique(filename):
 
 
 def copy_file_to_dir(filename, dirname):
-
     """If the file is not in the directory, copy it there. Return the relative
     path to that file inside the directory.
 
@@ -175,20 +179,22 @@ def copy_file_to_dir(filename, dirname):
     dirname = os.path.abspath(dirname)
     if filename.startswith(dirname):
         return contract_path(filename, dirname)
-    dest_path = os.path.join(dirname, os.path.basename(\
-        filename.replace(':', '-')))
+    dest_path = os.path.join(
+        dirname, os.path.basename(filename.replace(":", "-"))
+    )
     dest_path = make_filename_unique(dest_path)
     copy(filename, dest_path)
     return contract_path(dest_path, dirname)
+
 
 def remove_empty_dirs_in(path, level=0):
     # Remove empty subfolders.
     for f in os.listdir(path):
         fullpath = os.path.join(path, f)
         if os.path.isdir(fullpath):
-            remove_empty_dirs_in(fullpath, level+1)
+            remove_empty_dirs_in(fullpath, level + 1)
     # If the directory is empty, delete it.
-    if level !=  0 and len(os.listdir(path)) == 0:
+    if level != 0 and len(os.listdir(path)) == 0:
         os.rmdir(path)
 
 
@@ -197,6 +203,7 @@ def is_filesystem_case_insensitive():
     # Android versions. (This function is not needed on Android devices
     # anyhow.)
     import tempfile
+
     # By default mkstemp() creates a file with a name that begins with
     # 'tmp' (lowercase)
     tmp_handle, tmp_path = tempfile.mkstemp()
@@ -208,7 +215,6 @@ def is_filesystem_case_insensitive():
 
 
 def numeric_string_cmp_key(s):
-
     """Key for comparing two strings using numeric ordering. so that, e.g.,
     "abc2" < "abc10".
 
@@ -220,29 +226,30 @@ def numeric_string_cmp_key(s):
     """
 
     atoi = lambda s: int(s) if s.isdigit() else s.lower()
-    return tuple(atoi(str) for str in re.split('(\d+)', s))
+    return tuple(atoi(str) for str in re.split("(\d+)", s))
 
 
 def traceback_string():
-
     """Like traceback.print_exc(), but returns a string."""
 
     type, value, tb = sys.exc_info()
     body = "\nTraceback (innermost last):\n"
-    list = traceback.format_tb(tb, limit=None) + \
-           traceback.format_exception_only(type, value)
+    list = traceback.format_tb(
+        tb, limit=None
+    ) + traceback.format_exception_only(type, value)
     body = body + "%-20s %s" % ("".join(list[:-1]), list[-1])
     del tb  # Prevent circular references.
     return body
 
 
 re1 = re.compile(r"<[^>]*?>", re.DOTALL | re.IGNORECASE)
+
+
 def strip_tags(string):
     return re1.sub("", string)
 
 
 def mangle(string):
-
     """Massage string such that it can be used as an identifier."""
 
     string = html.escape(string)
@@ -256,7 +263,6 @@ def mangle(string):
 
 
 def rand_uuid():
-
     """Importing Python's uuid module brings a huge overhead, so we use
     our own variant: a length 22 random string from a 62 letter alphabet,
     which in terms of randomness is about the same as the traditional hex
@@ -272,9 +278,7 @@ def rand_uuid():
     return uuid
 
 
-
 class CompareOnId(object):
-
     """When pulling the same object twice from an SQL database, the resulting
     Python objects will be separate entities. That's why we need to compare
     them on id.
@@ -290,7 +294,6 @@ class CompareOnId(object):
         return NotImplemented  # So Python can try other.__eq__(self)
 
     def __ne__(self, other):
-
         """Not automatically overridden by overriding __eq__!"""
 
         result = self.__eq__(other)
@@ -299,11 +302,12 @@ class CompareOnId(object):
         return not result
 
 
-
 # Hack to determine local IP.
+
 
 def localhost_IP():
     import socket
+
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("google.com", 8000))

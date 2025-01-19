@@ -10,15 +10,15 @@ from mnemosyne.pyqt_ui.review_wdgt import QAOptimalSplit
 from mnemosyne.pyqt_ui.ui_preview_cards_dlg import Ui_PreviewCardsDlg
 
 
-class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit,
-                      Ui_PreviewCardsDlg):
+class PreviewCardsDlg(
+    QtWidgets.QDialog, Component, QAOptimalSplit, Ui_PreviewCardsDlg
+):
 
     page_up_down_signal = QtCore.pyqtSignal(int)
     UP = 0
     DOWN = 1
 
     def __init__(self, cards, tag_text, **kwds):
-
         """We need to provide tag_text explicitly, since it's possible that
         the cards have not yet been added to the database.
 
@@ -31,10 +31,13 @@ class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit,
         self.answer.setFocusProxy(self)
         QAOptimalSplit.setup(self)
         self.used_for_reviewing = False
-        self.setWindowFlags(self.windowFlags() \
-            | QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
-        self.setWindowFlags(self.windowFlags() \
-            & ~ QtCore.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+        )
+        self.setWindowFlags(
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+        )
         self.tag_text = tag_text
         self.cards = cards
         self.index = 0
@@ -44,7 +47,6 @@ class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit,
         self.update_dialog()
 
     def keyPressEvent(self, event):
-
         """When this dialog is called from the card browser, PageUp and
         PageDown keys can be used to move the previous/next card in the list.
 
@@ -77,8 +79,14 @@ class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit,
         self.reveal_question()
         self.reveal_answer()
         self.config()["QA_split"] = stored
-        self.fact_view_name.setText(_(card.fact_view.name) + " (" + \
-            str(self.index + 1) + "/" + str(len(self.cards)) + ")")
+        self.fact_view_name.setText(
+            _(card.fact_view.name)
+            + " ("
+            + str(self.index + 1)
+            + "/"
+            + str(len(self.cards))
+            + ")"
+        )
         self.previous_button.setEnabled(self.index != 0)
         self.next_button.setEnabled(self.index != len(self.cards) - 1)
 

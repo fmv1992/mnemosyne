@@ -5,28 +5,39 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.pyqt_ui.ui_edit_M_sided_card_type_dlg import \
-     Ui_EditMSidedCardTypeDlg
-from mnemosyne.pyqt_ui.edit_M_sided_card_template_wdgt import \
-     EditMSidedCardTemplateWdgt
-from mnemosyne.libmnemosyne.ui_components.dialogs import \
-     EditMSidedCardTypeDialog
+from mnemosyne.pyqt_ui.ui_edit_M_sided_card_type_dlg import (
+    Ui_EditMSidedCardTypeDlg,
+)
+from mnemosyne.pyqt_ui.edit_M_sided_card_template_wdgt import (
+    EditMSidedCardTemplateWdgt,
+)
+from mnemosyne.libmnemosyne.ui_components.dialogs import (
+    EditMSidedCardTypeDialog,
+)
 
 
-class EditMSidedCardTypeDlg(QtWidgets.QDialog, EditMSidedCardTypeDialog,
-                            Ui_EditMSidedCardTypeDlg):
+class EditMSidedCardTypeDlg(
+    QtWidgets.QDialog, EditMSidedCardTypeDialog, Ui_EditMSidedCardTypeDlg
+):
 
     def __init__(self, card_type, **kwds):
         super().__init__(**kwds)
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() \
-            | QtCore.Qt.WindowType.WindowMinMaxButtonsHint)
-        self.setWindowFlags(self.windowFlags() \
-            & ~ QtCore.Qt.WindowType.WindowContextHelpButtonHint)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
+        )
+        self.setWindowFlags(
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+        )
         self.card_type = card_type
         for fact_view in self.card_type.fact_views:
-            widget = EditMSidedCardTemplateWdgt(card_type, fact_view,
-                component_manager=self.component_manager, parent=self)
+            widget = EditMSidedCardTemplateWdgt(
+                card_type,
+                fact_view,
+                component_manager=self.component_manager,
+                parent=self,
+            )
             self.tab_widget.addTab(widget, _(fact_view.name))
         self.tab_widget.tabBar().setVisible(self.tab_widget.count() > 1)
         self.ok_button.setFocus()
@@ -59,4 +70,3 @@ class EditMSidedCardTypeDlg(QtWidgets.QDialog, EditMSidedCardTypeDialog,
             if hasattr(self.tab_widget.widget(index), "reject"):
                 self.tab_widget.widget(index).reject()
         return QtWidgets.QDialog.reject(self)
-

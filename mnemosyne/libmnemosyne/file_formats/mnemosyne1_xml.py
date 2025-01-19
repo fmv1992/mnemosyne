@@ -63,10 +63,13 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
         except:
             w.show_error(_("Unable to open file."))
             raise MnemosyneError
-        if tree.getroot().tag != "mnemosyne" or \
-            tree.getroot().get("core_version") != "1":
-            w.show_error(_
-                    ("XML file does not seem to be a Mnemosyne 1.x XML file."))
+        if (
+            tree.getroot().tag != "mnemosyne"
+            or tree.getroot().get("core_version") != "1"
+        ):
+            w.show_error(
+                _("XML file does not seem to be a Mnemosyne 1.x XML file.")
+            )
             raise MnemosyneError
         self.starttime = 0
         if tree.getroot().get("time_of_start"):
@@ -86,7 +89,7 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             item.id = element.get("id")
             if not item.id:
                 item.id = rand_uuid()
-            if item.id.startswith('_'):
+            if item.id.startswith("_"):
                 item.id = self.unanonymise_id(item.id)
             item.q = element.find("Q").text
             item.a = element.find("A").text
@@ -95,7 +98,14 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             item.cat = category_with_name[element.find("cat").text]
             if element.get("gr"):
                 if not warned_about_import:
-                    result = w.show_question(_("This XML file contains learning data. It's best to import this from a mem file, in order to preserve historical statistics. Continue?"), _("Yes"), _("No"), "")
+                    result = w.show_question(
+                        _(
+                            "This XML file contains learning data. It's best to import this from a mem file, in order to preserve historical statistics. Continue?"
+                        ),
+                        _("Yes"),
+                        _("No"),
+                        "",
+                    )
                     warned_about_import = True
                     if result == 1:  # No
                         return
@@ -137,8 +147,11 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             if element.get("u"):
                 item.unseen = bool(element.get("u"))
             else:
-                if item.acq_reps <= 1 and item.ret_reps == 0 \
-                    and item.grade == 0:
+                if (
+                    item.acq_reps <= 1
+                    and item.ret_reps == 0
+                    and item.grade == 0
+                ):
                     item.unseen = True
                 else:
                     item.unseen = False
@@ -156,4 +169,3 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             item_id = rand_uuid()
             self.anon_to_id[old_id] = item_id
         return item_id + suffix
-

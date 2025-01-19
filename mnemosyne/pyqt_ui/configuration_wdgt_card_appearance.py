@@ -10,14 +10,17 @@ from mnemosyne.libmnemosyne.fact import Fact
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.pyqt_ui.preview_cards_dlg import PreviewCardsDlg
-from mnemosyne.libmnemosyne.ui_components.configuration_widget import \
-    ConfigurationWidget
-from mnemosyne.pyqt_ui.ui_configuration_wdgt_card_appearance import \
-     Ui_ConfigurationWdgtCardAppearance
+from mnemosyne.libmnemosyne.ui_components.configuration_widget import (
+    ConfigurationWidget,
+)
+from mnemosyne.pyqt_ui.ui_configuration_wdgt_card_appearance import (
+    Ui_ConfigurationWdgtCardAppearance,
+)
 
 
-class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
-    Ui_ConfigurationWdgtCardAppearance):
+class ConfigurationWdgtCardAppearance(
+    QtWidgets.QWidget, ConfigurationWidget, Ui_ConfigurationWdgtCardAppearance
+):
 
     name = _("Card appearance")
 
@@ -27,12 +30,14 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
         self.dynamic_widgets = []
         self.affected_card_types = []
         self.fact_key_names = []
-        self.non_latin_font_size_increase.setValue\
-            (self.config()['non_latin_font_size_increase'])
+        self.non_latin_font_size_increase.setValue(
+            self.config()["non_latin_font_size_increase"]
+        )
         # We calculate card_type_by_name here because these names can change
         # if the user chooses another translation.
-        self.card_types_widget.currentTextChanged[str].\
-            connect(self.card_type_changed)
+        self.card_types_widget.currentTextChanged[str].connect(
+            self.card_type_changed
+        )
         self.card_types_widget.addItem(_("<all card types>"))
         self.card_type_by_name = {}
         for card_type in self.database().sorted_card_types():
@@ -42,17 +47,26 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
             self.card_types_widget.addItem(_(card_type.name))
         # Store backups in order to be able to revert our changes.
         self.old_font = deepcopy(self.config()["font"])
-        self.old_background_colour = \
-            deepcopy(self.config()["background_colour"])
+        self.old_background_colour = deepcopy(
+            self.config()["background_colour"]
+        )
         self.old_font_colour = deepcopy(self.config()["font_colour"])
         self.old_alignment = deepcopy(self.config()["alignment"])
-        
+
     def card_type_changed(self, new_card_type_name):
-        non_latin_widgets = [self.label_non_latin_1, self.label_non_latin_2,
-                self.label_non_latin_3, self.line_non_latin,
-                self.non_latin_font_size_increase]
-        background_align_widgets = [self.background_label,
-            self.background_button, self.align_label, self.alignment]
+        non_latin_widgets = [
+            self.label_non_latin_1,
+            self.label_non_latin_2,
+            self.label_non_latin_3,
+            self.line_non_latin,
+            self.non_latin_font_size_increase,
+        ]
+        background_align_widgets = [
+            self.background_label,
+            self.background_button,
+            self.align_label,
+            self.alignment,
+        ]
         if new_card_type_name == _("<all card types>"):
             self.affected_card_types = self.card_types()
             self.fact_key_names = [_("Text")]
@@ -90,7 +104,7 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
             self.gridLayout.addWidget(font, row, 1, 1, 1)
             self.dynamic_widgets.append(font)
 
-            colour = QtWidgets.QPushButton(_("Select colour"),self)
+            colour = QtWidgets.QPushButton(_("Select colour"), self)
             self.colour_buttons.addButton(colour, row)
             self.gridLayout.addWidget(colour, row, 2, 1, 1)
             self.dynamic_widgets.append(colour)
@@ -99,11 +113,11 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
         self.gridLayout.setColumnStretch(1, 10)
         self.gridLayout.setColumnStretch(2, 10)
         self.font_buttons.idClicked[int].connect(self.update_font)
-        self.colour_buttons.idClicked[int].\
-            connect(self.update_font_colour)
+        self.colour_buttons.idClicked[int].connect(self.update_font_colour)
 
-        current_alignment = self.config().card_type_property(\
-            "alignment", self.affected_card_types[0], default="center")
+        current_alignment = self.config().card_type_property(
+            "alignment", self.affected_card_types[0], default="center"
+        )
         if current_alignment == "left":
             self.alignment.setCurrentIndex(0)
         elif current_alignment == "center":
@@ -126,41 +140,50 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
 
     def update_background_colour(self):
         # Determine current colour.
-        current_rgb = self.config().card_type_property("background_colour",
-            self.affected_card_types[0])
+        current_rgb = self.config().card_type_property(
+            "background_colour", self.affected_card_types[0]
+        )
         if current_rgb:
             current_colour = QtGui.QColor(current_rgb)
         else:
-            current_colour = self.palette().color(QtGui.QPalette.ColorRole.Base)
+            current_colour = self.palette().color(
+                QtGui.QPalette.ColorRole.Base
+            )
         # Set new colour.
         colour = QtWidgets.QColorDialog.getColor(current_colour, self)
         if colour.isValid():
             for card_type in self.affected_card_types:
-                self.config().set_card_type_property("background_colour",
-                    colour.rgb(), card_type)
+                self.config().set_card_type_property(
+                    "background_colour", colour.rgb(), card_type
+                )
 
     def update_font(self, index):
         # Determine keys affected.
         if len(self.affected_card_types) > 1:
-            affected_fact_key = None # Actually means all the keys.
+            affected_fact_key = None  # Actually means all the keys.
         else:
-            affected_fact_key = \
-                self.affected_card_types[0].fact_keys_and_names[index][0]
+            affected_fact_key = self.affected_card_types[
+                0
+            ].fact_keys_and_names[index][0]
         # Determine current font.
         if len(self.affected_card_types) > 1:
             font_strings = set()
             for card_type in self.affected_card_types:
                 if card_type.hidden_from_UI:
                     continue
-                font_strings.add(self.config().card_type_property(\
-                    "font", card_type, card_type.fact_keys_and_names[0][0]))
+                font_strings.add(
+                    self.config().card_type_property(
+                        "font", card_type, card_type.fact_keys_and_names[0][0]
+                    )
+                )
             if len(font_strings) > 1:
                 font_string = None
             else:
                 font_string = font_strings.pop()
         else:
-            font_string = self.config().card_type_property(\
-                "font", self.affected_card_types[0], affected_fact_key)
+            font_string = self.config().card_type_property(
+                "font", self.affected_card_types[0], affected_fact_key
+            )
         current_font = QtGui.QFont(self.font())
         if font_string:
             current_font.fromString(font_string)
@@ -169,23 +192,27 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
         if ok:
             font_string = font.toString()
             for card_type in self.affected_card_types:
-                self.config().set_card_type_property("font", font_string,
-                    card_type, affected_fact_key)
+                self.config().set_card_type_property(
+                    "font", font_string, card_type, affected_fact_key
+                )
 
     def update_font_colour(self, index):
         # Determine keys affected.
         if len(self.affected_card_types) > 1:
-            affected_fact_key = None # Actually means all the keys.
+            affected_fact_key = None  # Actually means all the keys.
         else:
-            affected_fact_key = \
-                self.affected_card_types[0].fact_keys_and_names[index][0]
+            affected_fact_key = self.affected_card_types[
+                0
+            ].fact_keys_and_names[index][0]
         # Determine current colour.
         if len(self.affected_card_types) > 1:
-            current_rgb = self.config().card_type_property(\
-                "font_colour", self.card_type_with_id("1"), "f")
+            current_rgb = self.config().card_type_property(
+                "font_colour", self.card_type_with_id("1"), "f"
+            )
         else:
-            current_rgb = self.config().card_type_property(\
-                "font_colour", self.affected_card_types[0], affected_fact_key)
+            current_rgb = self.config().card_type_property(
+                "font_colour", self.affected_card_types[0], affected_fact_key
+            )
         if current_rgb:
             current_colour = QtGui.QColor(current_rgb)
         else:
@@ -194,8 +221,9 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
         colour = QtWidgets.QColorDialog.getColor(current_colour, self)
         if colour.isValid():
             for card_type in self.affected_card_types:
-                self.config().set_card_type_property("font_colour",
-                    colour.rgb(), card_type, affected_fact_key)
+                self.config().set_card_type_property(
+                    "font_colour", colour.rgb(), card_type, affected_fact_key
+                )
 
     def update_alignment(self, index):
         if index == 0:
@@ -205,17 +233,20 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
         elif index == 2:
             new_alignment = "right"
         for card_type in self.affected_card_types:
-            self.config().set_card_type_property("alignment", new_alignment,
-                card_type)
+            self.config().set_card_type_property(
+                "alignment", new_alignment, card_type
+            )
         self.alignment.font().setWeight(50)
 
     def apply(self):
-        self.config()["non_latin_font_size_increase"] = \
-            self.non_latin_font_size_increase.value()
+        self.config()[
+            "non_latin_font_size_increase"
+        ] = self.non_latin_font_size_increase.value()
         for card_type in self.card_types():
             for render_chain in self.component_manager.all("render_chain"):
-                render_chain.renderer_for_card_type(card_type).\
-                    update(card_type)
+                render_chain.renderer_for_card_type(card_type).update(
+                    card_type
+                )
 
     def preview(self):
         card_type = self.affected_card_types[0]
@@ -233,18 +264,24 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
         for card in cards:
             card.extra_data["ord"] = 1
         tag_text = ""
-        dlg = PreviewCardsDlg(cards, tag_text,
-            component_manager=self.component_manager, parent=self)
+        dlg = PreviewCardsDlg(
+            cards,
+            tag_text,
+            component_manager=self.component_manager,
+            parent=self,
+        )
         dlg.exec()
 
     def reset_to_defaults(self):
         if len(self.affected_card_types) > 1:
             message = _("Reset all card types to default system font?")
         else:
-            message = _("Reset '%s' to default system font?") \
-                % (_(self.affected_card_types[0].name))
-        result = self.main_widget().show_question(\
-            message, _("&Yes"), _("&No"), "")
+            message = _("Reset '%s' to default system font?") % (
+                _(self.affected_card_types[0].name)
+            )
+        result = self.main_widget().show_question(
+            message, _("&Yes"), _("&No"), ""
+        )
         if result == 1:
             return
         self.non_latin_font_size_increase.setValue(0)
@@ -268,6 +305,6 @@ class ConfigurationWdgtCardAppearance(QtWidgets.QWidget, ConfigurationWidget,
         self.config()["alignment"] = self.old_alignment
         for card_type in self.card_types():
             for render_chain in self.component_manager.all("render_chain"):
-                render_chain.renderer_for_card_type(card_type).\
-                    update(card_type)
-
+                render_chain.renderer_for_card_type(card_type).update(
+                    card_type
+                )

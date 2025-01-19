@@ -33,6 +33,14 @@ build:
 	# Just the bare minimum to get things running
 	make -C mnemosyne/pyqt_ui
 
+format:
+	git checkout fb34fb7 -- **/*.py || true
+	dos2unix **/*.py || true
+	git ls -z | grep --null --null-data --extended-regexp '\.py' | parallel --verbose --max-args 10 --null -- 'sed --in-place --regexp-extended '"'"'s#as _\s*$$#as underscorε#g'"'"' ' || true
+	pre-commit run ruff --all-files || true
+	@# pre-commit run black --all-files
+	black . --config pyproject.toml
+
 build-po:
 	make -C po update
 	make -C po

@@ -21,16 +21,23 @@ class GetTextGuiTranslator(GuiTranslator):
 
     def supported_languages(self):
         try:
-            return [os.path.split(x)[1] for x in os.listdir(self.lang_path) \
-            if os.path.isdir(os.path.join(self.lang_path, x)) and \
-            os.path.exists(os.path.join(self.lang_path, x, "LC_MESSAGES")) \
-            and "mnemosyne.mo" in os.listdir(\
-            os.path.join(self.lang_path, x, "LC_MESSAGES"))]
+            return [
+                os.path.split(x)[1]
+                for x in os.listdir(self.lang_path)
+                if os.path.isdir(os.path.join(self.lang_path, x))
+                and os.path.exists(
+                    os.path.join(self.lang_path, x, "LC_MESSAGES")
+                )
+                and "mnemosyne.mo"
+                in os.listdir(os.path.join(self.lang_path, x, "LC_MESSAGES"))
+            ]
         except:
             return []
 
     def set_translator(self, language):
-        self._translator = gettext.translation("mnemosyne",
-            localedir=self.lang_path, languages=[language],
-            fallback=True).gettext
-
+        self._translator = gettext.translation(
+            "mnemosyne",
+            localedir=self.lang_path,
+            languages=[language],
+            fallback=True,
+        ).gettext

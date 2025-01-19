@@ -10,6 +10,6 @@ class StatisticsWidget(UiComponent):
     component_type = "statistics_widget"
     instantiate = UiComponent.LATER
     name = ""
-    
+
     def show_statistics(self, variant):
         pass

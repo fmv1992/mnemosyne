@@ -23,9 +23,11 @@ from .lang import _, ngettext
 # Time handling
 ##############################################################################
 
+
 def intTime(scale=1):
     "The time in integer seconds. Pass scale=1000 to get milliseconds."
-    return int(time.time()*scale)
+    return int(time.time() * scale)
+
 
 timeTable = {
     "years": lambda n: ngettext("%s year", "%s years", n),
@@ -34,26 +36,38 @@ timeTable = {
     "hours": lambda n: ngettext("%s hour", "%s hours", n),
     "minutes": lambda n: ngettext("%s minute", "%s minutes", n),
     "seconds": lambda n: ngettext("%s second", "%s seconds", n),
-    }
+}
 
 afterTimeTable = {
-    "years": lambda n: ngettext("%s year<!--after-->", "%s years<!--after-->", n),
-    "months": lambda n: ngettext("%s month<!--after-->", "%s months<!--after-->", n),
+    "years": lambda n: ngettext(
+        "%s year<!--after-->", "%s years<!--after-->", n
+    ),
+    "months": lambda n: ngettext(
+        "%s month<!--after-->", "%s months<!--after-->", n
+    ),
     "days": lambda n: ngettext("%s day<!--after-->", "%s days<!--after-->", n),
-    "hours": lambda n: ngettext("%s hour<!--after-->", "%s hours<!--after-->", n),
-    "minutes": lambda n: ngettext("%s minute<!--after-->", "%s minutes<!--after-->", n),
-    "seconds": lambda n: ngettext("%s second<!--after-->", "%s seconds<!--after-->", n),
-    }
+    "hours": lambda n: ngettext(
+        "%s hour<!--after-->", "%s hours<!--after-->", n
+    ),
+    "minutes": lambda n: ngettext(
+        "%s minute<!--after-->", "%s minutes<!--after-->", n
+    ),
+    "seconds": lambda n: ngettext(
+        "%s second<!--after-->", "%s seconds<!--after-->", n
+    ),
+}
+
 
 def shortTimeFmt(type):
     return {
-    "years": _("%sy"),
-    "months": _("%smo"),
-    "days": _("%sd"),
-    "hours": _("%sh"),
-    "minutes": _("%sm"),
-    "seconds": _("%ss"),
+        "years": _("%sy"),
+        "months": _("%smo"),
+        "days": _("%sd"),
+        "hours": _("%sh"),
+        "minutes": _("%sm"),
+        "seconds": _("%ss"),
     }[type]
+
 
 def fmtTimeSpan(time, pad=0, point=0, short=False, after=False, unit=99):
     "Return a string representing a time span (eg '2 days')."
@@ -68,8 +82,9 @@ def fmtTimeSpan(time, pad=0, point=0, short=False, after=False, unit=99):
             fmt = afterTimeTable[type](_pluralCount(time, point))
         else:
             fmt = timeTable[type](_pluralCount(time, point))
-    timestr = "%(a)d.%(b)df" % {'a': pad, 'b': point}
+    timestr = "%(a)d.%(b)df" % {"a": pad, "b": point}
     return locale.format_string("%" + (fmt % timestr), time)
+
 
 def optimalPeriod(time, point, unit):
     if abs(time) < 60 or unit < 1:
@@ -89,6 +104,7 @@ def optimalPeriod(time, point, unit):
         point += 1
     return (type, max(point, 0))
 
+
 def convertSecondsTo(seconds, type):
     if type == "seconds":
         return seconds
@@ -104,23 +120,28 @@ def convertSecondsTo(seconds, type):
         return seconds / 31536000
     assert False
 
+
 def _pluralCount(time, point):
     if point:
         return 2
     return math.floor(time)
 
+
 # Locale
 ##############################################################################
 
+
 def fmtPercentage(float_value, point=1):
     "Return float with percentage sign"
-    fmt = '%' + "0.%(b)df" % {'b': point}
+    fmt = "%" + "0.%(b)df" % {"b": point}
     return locale.format_string(fmt, float_value) + "%"
+
 
 def fmtFloat(float_value, point=1):
     "Return a string with decimal separator according to current locale"
-    fmt = '%' + "0.%(b)df" % {'b': point}
+    fmt = "%" + "0.%(b)df" % {"b": point}
     return locale.format_string(fmt, float_value)
+
 
 # HTML
 ##############################################################################
@@ -130,6 +151,7 @@ reTag = re.compile("<.*?>")
 reEnts = re.compile("&#?\w+;")
 reMedia = re.compile("(?i)<img[^>]+src=[\"']?([^\"'>]+)[\"']?[^>]*>")
 
+
 def stripHTML(s):
     s = reStyle.sub("", s)
     s = reScript.sub("", s)
@@ -137,20 +159,26 @@ def stripHTML(s):
     s = entsToTxt(s)
     return s
 
+
 def stripHTMLMedia(s):
     "Strip HTML but keep media filenames"
     s = reMedia.sub(" \\1 ", s)
     return stripHTML(s)
 
+
 def minimizeHTML(s):
     "Correct Qt's verbose bold/underline/etc."
-    s = re.sub('<span style="font-weight:600;">(.*?)</span>', '<b>\\1</b>',
-               s)
-    s = re.sub('<span style="font-style:italic;">(.*?)</span>', '<i>\\1</i>',
-               s)
-    s = re.sub('<span style="text-decoration: underline;">(.*?)</span>',
-               '<u>\\1</u>', s)
+    s = re.sub('<span style="font-weight:600;">(.*?)</span>', "<b>\\1</b>", s)
+    s = re.sub(
+        '<span style="font-style:italic;">(.*?)</span>', "<i>\\1</i>", s
+    )
+    s = re.sub(
+        '<span style="text-decoration: underline;">(.*?)</span>',
+        "<u>\\1</u>",
+        s,
+    )
     return s
+
 
 def htmlToTextLine(s):
     s = s.replace("<br>", " ")
@@ -163,10 +191,12 @@ def htmlToTextLine(s):
     s = s.strip()
     return s
 
+
 def entsToTxt(html):
     # entitydefs defines nbsp as \xa0 instead of a standard space, so we
     # replace it first
     html = html.replace("&nbsp;", " ")
+
     def fixup(m):
         text = m.group(0)
         if text[:2] == "&#":
@@ -184,21 +214,27 @@ def entsToTxt(html):
                 text = chr(name2codepoint[text[1:-1]])
             except KeyError:
                 pass
-        return text # leave as is
+        return text  # leave as is
+
     return reEnts.sub(fixup, html)
+
 
 # IDs
 ##############################################################################
 
+
 def hexifyID(id):
     return "%x" % int(id)
+
 
 def dehexifyID(id):
     return int(id, 16)
 
+
 def ids2str(ids):
     """Given a list of integers, return a string '(int1,int2,...)'."""
     return "(%s)" % ",".join(str(i) for i in ids)
+
 
 def timestampID(db, table):
     "Return a non-conflicting timestamp for table."
@@ -209,6 +245,7 @@ def timestampID(db, table):
         t += 1
     return t
 
+
 def maxID(db):
     "Return the first safe ID to use."
     now = intTime(1000)
@@ -216,82 +253,105 @@ def maxID(db):
         now = max(now, db.scalar("select max(id) from %s" % tbl) or 0)
     return now + 1
 
+
 # used in ankiweb
 def base62(num, extra=""):
-    s = string; table = s.ascii_letters + s.digits + extra
+    s = string
+    table = s.ascii_letters + s.digits + extra
     buf = ""
     while num:
         num, i = divmod(num, len(table))
         buf = table[i] + buf
     return buf
 
+
 _base91_extra_chars = "!#$%&()*+,-./:;<=>?@[]^_`{|}~"
+
+
 def base91(num):
     # all printable characters minus quotes, backslash and separators
     return base62(num, _base91_extra_chars)
 
+
 def guid64():
     "Return a base91-encoded 64bit random number."
-    return base91(random.randint(0, 2**64-1))
+    return base91(random.randint(0, 2**64 - 1))
+
 
 # increment a guid by one, for note type conflicts
 def incGuid(guid):
     return _incGuid(guid[::-1])[::-1]
 
+
 def _incGuid(guid):
-    s = string; table = s.ascii_letters + s.digits + _base91_extra_chars
+    s = string
+    table = s.ascii_letters + s.digits + _base91_extra_chars
     idx = table.index(guid[0])
     if idx + 1 == len(table):
         # overflow
         guid = table[0] + _incGuid(guid[1:])
     else:
-        guid = table[idx+1] + guid[1:]
+        guid = table[idx + 1] + guid[1:]
     return guid
+
 
 # Fields
 ##############################################################################
 
+
 def joinFields(list):
     return "\x1f".join(list)
+
 
 def splitFields(string):
     return string.split("\x1f")
 
+
 # Checksums
 ##############################################################################
+
 
 def checksum(data):
     if isinstance(data, str):
         data = data.encode("utf-8")
     return sha1(data).hexdigest()
 
+
 def fieldChecksum(data):
     # 32 bit unsigned number from first 8 digits of sha1 hash
     return int(checksum(stripHTMLMedia(data).encode("utf-8"))[:8], 16)
+
 
 # Temp files
 ##############################################################################
 
 _tmpdir = None
 
+
 def tmpdir():
     "A reusable temp folder which we clean out on each program invocation."
     global _tmpdir
     if not _tmpdir:
+
         def cleanup():
             import shutil
+
             shutil.rmtree(_tmpdir)
+
         import atexit
+
         atexit.register(cleanup)
         _tmpdir = os.path.join(tempfile.gettempdir(), "anki_temp")
     if not os.path.exists(_tmpdir):
         os.mkdir(_tmpdir)
     return _tmpdir
 
+
 def tmpfile(prefix="", suffix=""):
     (fd, name) = tempfile.mkstemp(dir=tmpdir(), prefix=prefix, suffix=suffix)
     os.close(fd)
     return name
+
 
 def namedtmp(name, rm=True):
     "Return tmpdir+name. Deletes any existing file."
@@ -303,8 +363,10 @@ def namedtmp(name, rm=True):
             pass
     return path
 
+
 # Cmd invocation
 ##############################################################################
+
 
 def call(argv, wait=True, **kwargs):
     "Execute a command. If WAIT, return exit code."
@@ -336,6 +398,7 @@ def call(argv, wait=True, **kwargs):
         ret = 0
     return ret
 
+
 # OS helpers
 ##############################################################################
 
@@ -343,7 +406,8 @@ isMac = sys.platform.startswith("darwin")
 isWin = sys.platform.startswith("win32")
 isLin = not isMac and not isWin
 
-invalidFilenameChars = ":*?\"<>|"
+invalidFilenameChars = ':*?"<>|'
+
 
 def invalidFilename(str, dirsep=True):
     for c in invalidFilenameChars:
@@ -355,6 +419,7 @@ def invalidFilename(str, dirsep=True):
         return "\\"
     elif str.strip().startswith("."):
         return "."
+
 
 def platDesc():
     # we may get an interrupted system call, so try this in a loop
@@ -378,14 +443,18 @@ def platDesc():
             continue
     return theos
 
+
 # Debugging
 ##############################################################################
+
 
 class TimedLog:
     def __init__(self):
         self._last = time.time()
+
     def log(self, s):
         path, num, fn, y = traceback.extract_stack(limit=2)[0]
-        sys.stderr.write("%5dms: %s(): %s\n" % ((time.time() - self._last)*1000, fn, s))
+        sys.stderr.write(
+            "%5dms: %s(): %s\n" % ((time.time() - self._last) * 1000, fn, s)
+        )
         self._last = time.time()
-

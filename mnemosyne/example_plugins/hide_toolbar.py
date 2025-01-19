@@ -28,5 +28,5 @@ class HideToolbarPlugin(Plugin):
 # Register plugin.
 
 from mnemosyne.libmnemosyne.plugin import register_user_plugin
-register_user_plugin(HideToolbarPlugin)
 
+register_user_plugin(HideToolbarPlugin)

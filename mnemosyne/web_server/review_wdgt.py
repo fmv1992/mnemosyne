@@ -11,7 +11,6 @@ import re
 
 
 class ReviewWdgt(ReviewWidget):
-
     """I've tried fiddling with css to get the grades area always show up at
     the bottom of the screen, no matter the contents of the cards, but I
     never got this to work satisfactory both on Firefox and IE. There would
@@ -35,7 +34,8 @@ class ReviewWdgt(ReviewWidget):
         self.is_show_button_enabled = True
         self.is_grade_buttons_enabled = False
         self.status_bar = ""
-        self.template = Template("""
+        self.template = Template(
+            """
 <!DOCTYPE html>
 <html>
 <head>
@@ -86,12 +86,15 @@ $hide_answer_css
 $js
 </body>
 </html>
-""")
+"""
+        )
 
-    def set_client_on_same_machine_as_server\
-        (self, client_on_same_machine_as_server):
-        self.client_on_same_machine_as_server = \
+    def set_client_on_same_machine_as_server(
+        self, client_on_same_machine_as_server
+    ):
+        self.client_on_same_machine_as_server = (
             client_on_same_machine_as_server
+        )
 
     def redraw_now(self):
         pass
@@ -134,28 +137,39 @@ $js
         pass
 
     def update_status_bar_counters(self):
-        scheduled_count, non_memorised_count, active_count = \
+        scheduled_count, non_memorised_count, active_count = (
             self.review_controller().counters()
-        counters = "Sch.: %d Not mem.: %d Act.: %d" % \
-            (scheduled_count, non_memorised_count, active_count)
-        self.status_bar = """
+        )
+        counters = "Sch.: %d Not mem.: %d Act.: %d" % (
+            scheduled_count,
+            non_memorised_count,
+            active_count,
+        )
+        self.status_bar = (
+            """
               <table class="buttonarea">
               <tr>
-                <td> """ + counters + """ </td>
+                <td> """
+            + counters
+            + """ </td>
                 <td>
                   <form action="" method="post">
                     <input type="submit" name="star" value="Star">
                   </form>
                 </td>
               </tr></table>"""
+        )
 
     def to_html(self):
         self.controller().heartbeat()
         card_css = ""
         card = self.review_controller().card
         if card:
-            card_css = self.render_chain().renderer_for_card_type\
-                (card.card_type).card_type_css(card.card_type)
+            card_css = (
+                self.render_chain()
+                .renderer_for_card_type(card.card_type)
+                .card_type_css(card.card_type)
+            )
         buttons = ""
         if self.is_grade_buttons_enabled:
             buttons = ""
@@ -166,14 +180,19 @@ $js
                       <input type="submit" name="grade" accesskey="%d"
                        value="%d">
                     </form>
-                  </td>""" % (i, i)
+                  </td>""" % (
+                    i,
+                    i,
+                )
         if self.is_show_button_enabled:
             buttons = """
               <td>
                 <form action="" method="post">
                   <input type="submit" name="show_answer" value="%s">
                 </form>
-              </td>""" % (self.show_button)
+              </td>""" % (
+                self.show_button
+            )
         if not self.question:
             self.question = "&nbsp;"  # For esthetic reasons.
         if not self.answer:
@@ -188,45 +207,52 @@ $js
             """
         extended_status_bar = self.status_bar
         if self.client_on_same_machine_as_server:
-            extended_status_bar = extended_status_bar.replace(\
-            "</tr></table>", \
-            """<td>
+            extended_status_bar = extended_status_bar.replace(
+                "</tr></table>",
+                """<td>
                   <form action="" method="post">
                     <input type="submit" name="exit" value="Exit">
                   </form>
                 </td>
-            </tr></table>""")
+            </tr></table>""",
+            )
 
         player_and_index = ""
         call_player = ""
-        for match in re.finditer(r'player_(\d+)', self.question, re.DOTALL):
-              end_index = self.question.find("</audio>", match.start())
-              substr = self.question[match.start():end_index]
-              ids_count = substr.count('<source src=')
-              if ids_count > 1:
-                  str1 = self.question[match.start():match.end()]
-                  idstr = re.findall(r'player_(\d+)', str1)
-                  i = idstr.pop()
-                  player_and_index += \
-                  'var audio_player_{id} = null;\n'.format(id = i)
-                  player_and_index += "let index_{id} = {val};\n". \
-                                  format(id = i, val =  "{val : 0}" )
-                  call_player += \
-                      "init_player(audio_player_{id}, 'player_{id}' , index_{id});\n".format(id = i) 
-        for match in re.finditer(r'player_(\d+)', self.answer, re.DOTALL):
-            end_index = self.answer.find("</audio>", match.start())
-            substr = self.answer[match.start():end_index]
-            ids_count = substr.count('<source src=')
+        for match in re.finditer(r"player_(\d+)", self.question, re.DOTALL):
+            end_index = self.question.find("</audio>", match.start())
+            substr = self.question[match.start() : end_index]
+            ids_count = substr.count("<source src=")
             if ids_count > 1:
-                str1 = self.answer[match.start():match.end()]
-                idstr = re.findall(r'player_(\d+)', str1)
+                str1 = self.question[match.start() : match.end()]
+                idstr = re.findall(r"player_(\d+)", str1)
                 i = idstr.pop()
-                player_and_index += \
-                'var audio_player_{id} = null;\n'.format(id = i)
-                player_and_index += "let index_{id} = {val};\n". \
-                                format(id = i, val =  "{val : 0}" )
-                call_player += \
-                    "init_player(audio_player_{id}, 'player_{id}' , index_{id});\n".format(id = i) 
+                player_and_index += "var audio_player_{id} = null;\n".format(
+                    id=i
+                )
+                player_and_index += "let index_{id} = {val};\n".format(
+                    id=i, val="{val : 0}"
+                )
+                call_player += "init_player(audio_player_{id}, 'player_{id}' , index_{id});\n".format(
+                    id=i
+                )
+        for match in re.finditer(r"player_(\d+)", self.answer, re.DOTALL):
+            end_index = self.answer.find("</audio>", match.start())
+            substr = self.answer[match.start() : end_index]
+            ids_count = substr.count("<source src=")
+            if ids_count > 1:
+                str1 = self.answer[match.start() : match.end()]
+                idstr = re.findall(r"player_(\d+)", str1)
+                i = idstr.pop()
+                player_and_index += "var audio_player_{id} = null;\n".format(
+                    id=i
+                )
+                player_and_index += "let index_{id} = {val};\n".format(
+                    id=i, val="{val : 0}"
+                )
+                call_player += "init_player(audio_player_{id}, 'player_{id}' , index_{id});\n".format(
+                    id=i
+                )
         if player_and_index == "":
             javascript = ""
         else:
@@ -261,10 +287,19 @@ $js
                     }
                     %s   
               </script> 		 
-              """ % (player_and_index, call_player)
-        
-        return self.template.substitute(card_css=card_css, buttons=buttons,
-            question_label=self.question_label, question=self.question,
-            answer_label=self.answer_label, answer=self.answer,
-            status_bar=extended_status_bar, 
-            hide_answer_css=hide_answer_css, js = javascript).encode("utf-8")
+              """ % (
+                player_and_index,
+                call_player,
+            )
+
+        return self.template.substitute(
+            card_css=card_css,
+            buttons=buttons,
+            question_label=self.question_label,
+            question=self.question,
+            answer_label=self.answer_label,
+            answer=self.answer,
+            status_bar=extended_status_bar,
+            hide_answer_css=hide_answer_css,
+            js=javascript,
+        ).encode("utf-8")
