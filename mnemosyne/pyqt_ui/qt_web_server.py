@@ -194,7 +194,9 @@ class QtWebServer(Component, QtCore.QObject):
                     self.main_widget().show_error(
                         _("Unable to start web server.")
                         + " "
-                        + _("You don't have the permission to use the requested port.")
+                        + _(
+                            "You don't have the permission to use the requested port."
+                        )
                     )
                     self.thread = None
                     return
@@ -202,7 +204,9 @@ class QtWebServer(Component, QtCore.QObject):
                     raise e
             self.thread.review_started_signal.connect(self.unload_database)
             self.thread.review_ended_signal.connect(self.load_database)
-            self.thread.information_signal.connect(self.threaded_show_information)
+            self.thread.information_signal.connect(
+                self.threaded_show_information
+            )
             self.thread.error_signal.connect(self.threaded_show_error)
             self.thread.question_signal.connect(self.threaded_show_question)
             self.thread.set_progress_text_signal.connect(

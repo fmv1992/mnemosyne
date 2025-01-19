@@ -28,13 +28,19 @@ class GoogleCloudPronouncer(Pronouncer):
         # Lazy import to speed things up.
         from google.cloud import texttospeech
 
-        language_id = self.config().card_type_property("sublanguage_id", card_type)
+        language_id = self.config().card_type_property(
+            "sublanguage_id", card_type
+        )
         if not language_id:
-            language_id = self.config().card_type_property("language_id", card_type)
+            language_id = self.config().card_type_property(
+                "language_id", card_type
+            )
 
         if " ج " in foreign_text:
             singular, plural = foreign_text.split(" ج ")
-            foreign_text = f"""<speak>{singular}<break time="0.3s"/>{plural}</speak>"""
+            foreign_text = (
+                f"""<speak>{singular}<break time="0.3s"/>{plural}</speak>"""
+            )
         if "<br>" in foreign_text:
             foreign_text = (
                 "<speak>"
@@ -44,7 +50,8 @@ class GoogleCloudPronouncer(Pronouncer):
         client = texttospeech.TextToSpeechClient()
         synthesis_input = texttospeech.SynthesisInput(ssml=foreign_text)
         voice = texttospeech.VoiceSelectionParams(
-            language_code=language_id, ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+            language_code=language_id,
+            ssml_gender=texttospeech.SsmlVoiceGender.FEMALE,
         )
         audio_config = texttospeech.AudioConfig(
             audio_encoding=texttospeech.AudioEncoding.MP3
@@ -57,7 +64,9 @@ class GoogleCloudPronouncer(Pronouncer):
             }
         )
 
-        filename = expand_path("__GTTS__TMP__.mp3", self.database().media_dir())
+        filename = expand_path(
+            "__GTTS__TMP__.mp3", self.database().media_dir()
+        )
         with open(filename, "wb") as mp3_file:
             mp3_file.write(response.audio_content)
         return filename
@@ -69,7 +78,9 @@ class GoogleCloudTTSPlugin(Plugin):
     description = "Add Google Cloud text-to-speech."
     components = [GoogleCloudPronouncer]
     gui_for_component = {
-        "GoogleCloudPronouncer": [("mnemosyne.pyqt_ui.pronouncer_dlg", "PronouncerDlg")]
+        "GoogleCloudPronouncer": [
+            ("mnemosyne.pyqt_ui.pronouncer_dlg", "PronouncerDlg")
+        ]
     }
     supported_API_level = 3
 

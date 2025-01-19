@@ -51,8 +51,12 @@ class Mnemosyne(MnemosyneParent):
         self.gui_for_component["CramRecent"] = [
             ("mnemosyne.script", "ScriptReviewWidget")
         ]
-        self.gui_for_component["CramAll"] = [("mnemosyne.script", "ScriptReviewWidget")]
-        self.gui_for_component["NewOnly"] = [("mnemosyne.script", "ScriptReviewWidget")]
+        self.gui_for_component["CramAll"] = [
+            ("mnemosyne.script", "ScriptReviewWidget")
+        ]
+        self.gui_for_component["NewOnly"] = [
+            ("mnemosyne.script", "ScriptReviewWidget")
+        ]
         if data_dir is not None:
             data_dir = os.path.abspath(data_dir)
         self.initialise(data_dir, filename=filename)

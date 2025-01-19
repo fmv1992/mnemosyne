@@ -16,7 +16,8 @@ class RemoveTagsDlg(QtWidgets.QDialog, Ui_RemoveTagsDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.return_values = return_values
         for tag in tags:

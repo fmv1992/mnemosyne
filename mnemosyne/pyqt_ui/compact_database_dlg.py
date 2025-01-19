@@ -8,7 +8,9 @@ from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.component import Component
 from mnemosyne.pyqt_ui.qt_worker_thread import QtWorkerThread, QtGuiThread
 from mnemosyne.pyqt_ui.ui_compact_database_dlg import Ui_CompactDatabaseDlg
-from mnemosyne.pyqt_ui.delete_unused_media_files_dlg import DeleteUnusedMediaFilesDlg
+from mnemosyne.pyqt_ui.delete_unused_media_files_dlg import (
+    DeleteUnusedMediaFilesDlg,
+)
 from mnemosyne.libmnemosyne.ui_components.dialogs import CompactDatabaseDialog
 
 
@@ -27,7 +29,10 @@ class CompactThread(QtWorkerThread):
 
 
 class CompactDatabaseDlg(
-    QtWidgets.QDialog, QtGuiThread, CompactDatabaseDialog, Ui_CompactDatabaseDlg
+    QtWidgets.QDialog,
+    QtGuiThread,
+    CompactDatabaseDialog,
+    Ui_CompactDatabaseDlg,
 ):
 
     def __init__(self, started_automatically=False, **kwds):
@@ -37,7 +42,8 @@ class CompactDatabaseDlg(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.started_automatically = started_automatically
 
@@ -47,15 +53,21 @@ class CompactDatabaseDlg(
 
     def accept(self):
         defragment_database = (
-            self.defragment_database.checkState() == QtCore.Qt.CheckState.Checked
+            self.defragment_database.checkState()
+            == QtCore.Qt.CheckState.Checked
         )
         delete_unused_media_files = (
-            self.delete_unused_media_files.checkState() == QtCore.Qt.CheckState.Checked
+            self.delete_unused_media_files.checkState()
+            == QtCore.Qt.CheckState.Checked
         )
         archive_old_logs = (
             self.archive_old_logs.checkState() == QtCore.Qt.CheckState.Checked
         )
-        if not (defragment_database or delete_unused_media_files or archive_old_logs):
+        if not (
+            defragment_database
+            or delete_unused_media_files
+            or archive_old_logs
+        ):
             QtWidgets.QDialog.accept(self)
         if delete_unused_media_files:
             unused_media_files = self.database().unused_media_files()
@@ -89,5 +101,6 @@ class PyQtDatabaseMaintenance(Component):
 
     def run(self):
         CompactDatabaseDlg(
-            started_automatically=True, component_manager=self.component_manager
+            started_automatically=True,
+            component_manager=self.component_manager,
         ).compact_in_thread(defragment_database=True, archive_old_logs=True)

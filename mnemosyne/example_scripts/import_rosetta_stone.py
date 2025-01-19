@@ -48,7 +48,9 @@ native_directory = "/home/pbienst/tmp/trs_english"
 
 # Subdirectory in the media directory to used.
 media_subdir = "trs_ara"
-full_media_subdir = os.path.join(mnemosyne.database().media_dir(), media_subdir)
+full_media_subdir = os.path.join(
+    mnemosyne.database().media_dir(), media_subdir
+)
 if not os.path.exists(full_media_subdir):
     os.mkdir(full_media_subdir)
 
@@ -72,7 +74,8 @@ def get_txt(directory, codec):
             # Determine sentences.
             txt_file = file(
                 os.path.join(
-                    subdir, [x for x in os.listdir(subdir) if x.endswith(".TXT")][0]
+                    subdir,
+                    [x for x in os.listdir(subdir) if x.endswith(".TXT")][0],
                 )
             )
             entries = (
@@ -111,16 +114,22 @@ def extract_images(directory):
             for img in sorted(os.listdir(img_dir)):
                 full_path = os.path.join(img_dir, img)
                 if img.endswith("JPG"):
-                    shutil.copyfile(full_path, os.path.join(full_media_subdir, img))
+                    shutil.copyfile(
+                        full_path, os.path.join(full_media_subdir, img)
+                    )
                     img_list.append(media_subdir + "/" + img)
                 if img.endswith("PCT"):
                     os.system(
                         "convert "
                         + full_path
                         + " "
-                        + os.path.join(full_media_subdir, img).replace("PCT", "JPG")
+                        + os.path.join(full_media_subdir, img).replace(
+                            "PCT", "JPG"
+                        )
                     )
-                    img_list.append(media_subdir + "/" + img.replace("PCT", "JPG"))
+                    img_list.append(
+                        media_subdir + "/" + img.replace("PCT", "JPG")
+                    )
             images[unit][lesson] = img_list
     return images
 
@@ -151,13 +160,17 @@ def extract_sound(directory):
                         "mplayer -vo null -vc dummy -af resample=44100 -ao pcm:waveheader "
                         + full_path
                         + " && lame audiodump.wav "
-                        + os.path.join(full_media_subdir, snd).replace("SWA", "MP3")
+                        + os.path.join(full_media_subdir, snd).replace(
+                            "SWA", "MP3"
+                        )
                     )
                     # High bitrate version, not really needed.
                     # os.system("mplayer -vo null -vc dummy -af resample=44100 -ao pcm:waveheader " \
                     #    + full_path + " && lame -h --resample 44.1 -b 128 audiodump.wav " + \
                     #    os.path.join(full_media_subdir, snd).replace("SWA", "MP3"))
-                    snd_list.append(media_subdir + "/" + snd.replace("SWA", "MP3"))
+                    snd_list.append(
+                        media_subdir + "/" + snd.replace("SWA", "MP3")
+                    )
             sound[unit][lesson] = snd_list
     return sound
 
@@ -186,7 +199,11 @@ for unit in foreign_txt:
                 card_type,
                 grade=-1,
                 tag_names=[
-                    tag_prefix + "::Unit " + str(unit) + "::Lesson " + str(lesson)
+                    tag_prefix
+                    + "::Unit "
+                    + str(unit)
+                    + "::Lesson "
+                    + str(lesson)
                 ],
             )
         print()

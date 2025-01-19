@@ -113,7 +113,10 @@ class WebServer(Component):
             ("mnemosyne.libmnemosyne.ui_components.main_widget", "MainWidget")
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.web_server.web_server_render_chain", "WebServerRenderChain")
+            (
+                "mnemosyne.web_server.web_server_render_chain",
+                "WebServerRenderChain",
+            )
         )
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne.web_server.review_wdgt", "ReviewWdgt")
@@ -142,7 +145,9 @@ class WebServer(Component):
         )
         self.mnemosyne.controller().reset_study_mode()
         self.is_mnemosyne_loaded = True
-        self.release_database_after_timeout = ReleaseDatabaseAfterTimeout(self.port)
+        self.release_database_after_timeout = ReleaseDatabaseAfterTimeout(
+            self.port
+        )
         self.release_database_after_timeout.start()
 
     def unload_mnemosyne(self):
@@ -261,8 +266,12 @@ class WebServerThread(threading.Thread, WebServer):
 
     """
 
-    def __init__(self, component_manager, client_on_same_machine_as_server=False):
-        self.client_on_same_machine_as_server = client_on_same_machine_as_server
+    def __init__(
+        self, component_manager, client_on_same_machine_as_server=False
+    ):
+        self.client_on_same_machine_as_server = (
+            client_on_same_machine_as_server
+        )
         threading.Thread.__init__(self)
         self.config = component_manager.current("config")
         WebServer.__init__(
@@ -277,7 +286,9 @@ class WebServerThread(threading.Thread, WebServer):
 
     def run(self):
         self.activate()
-        if not self.client_on_same_machine_as_server:  # Could fail if we are offline.
+        if (
+            not self.client_on_same_machine_as_server
+        ):  # Could fail if we are offline.
             print(
                 (
                     "Web server listening on http://"

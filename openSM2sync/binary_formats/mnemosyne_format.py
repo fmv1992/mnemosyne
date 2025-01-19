@@ -30,7 +30,9 @@ class MnemosyneFormat(object):
         # Delete old reps if needed.
         if not interested_in_old_reps:
             con = sqlite3.connect(self.tmp_name)
-            con.execute("delete from log where event_type=?", (EventTypes.REPETITION,))
+            con.execute(
+                "delete from log where event_type=?", (EventTypes.REPETITION,)
+            )
             con.commit()
             con.execute("vacuum")
             con.close()

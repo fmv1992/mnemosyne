@@ -54,11 +54,14 @@ class CardType(Component, CompareOnId):
     extra_data = {}
 
     def fact_keys(self):
-        return set(fact_key for (fact_key, fact_key_name) in self.fact_keys_and_names)
+        return set(
+            fact_key for (fact_key, fact_key_name) in self.fact_keys_and_names
+        )
 
     def fact_key_names(self):
         return [
-            _(fact_key_name) for (fact_key, fact_key_name) in self.fact_keys_and_names
+            _(fact_key_name)
+            for (fact_key, fact_key_name) in self.fact_keys_and_names
         ]
 
     def fact_key_with_name(self, name):
@@ -72,16 +75,23 @@ class CardType(Component, CompareOnId):
                 return _(fact_key_name)
 
     def render_question(self, card, render_chain="default", **render_args):
-        return self.render_chain(render_chain).render_question(card, **render_args)
+        return self.render_chain(render_chain).render_question(
+            card, **render_args
+        )
 
     def render_answer(self, card, render_chain="default", **render_args):
-        return self.render_chain(render_chain).render_answer(card, **render_args)
+        return self.render_chain(render_chain).render_answer(
+            card, **render_args
+        )
 
     def is_fact_data_valid(self, fact_data):
         """Check if all the required keys are present."""
 
         for required_fact_key in self.required_fact_keys:
-            if required_fact_key not in fact_data or not fact_data[required_fact_key]:
+            if (
+                required_fact_key not in fact_data
+                or not fact_data[required_fact_key]
+            ):
                 return False
         return True
 

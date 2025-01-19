@@ -42,7 +42,9 @@ class TestSmconvImport(MnemosyneTest):
             ("mnemosyne_test", "TestReviewWidget")
         ]
         self.mnemosyne.components.append(("test_cuecard_wcu_import", "Widget"))
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def importer(self):
@@ -58,7 +60,9 @@ class TestSmconvImport(MnemosyneTest):
         assert len([c for c in self.database().cards()]) == 4
 
     def teardown_method(self):
-        filename = os.path.join(os.getcwd(), "dot_test", "default.db_media", "a.png")
+        filename = os.path.join(
+            os.getcwd(), "dot_test", "default.db_media", "a.png"
+        )
         if os.path.exists(filename):
             os.remove(filename)
         filename = os.path.join(os.getcwd(), "dot_test", "test.txt")

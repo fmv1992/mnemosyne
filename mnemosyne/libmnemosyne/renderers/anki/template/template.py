@@ -181,12 +181,19 @@ class Template:
             elif mod.startswith("cq-") or mod.startswith("ca-"):
                 # cloze deletion
                 mod, extra = mod.split("-")
-                txt = self.clozeText(txt, extra, mod[1]) if txt and extra else ""
+                txt = (
+                    self.clozeText(txt, extra, mod[1]) if txt and extra else ""
+                )
             else:
                 # hook-based field modifier
                 mod, extra = re.search("^(.*?)(?:\((.*)\))?$", mod).groups()
                 txt = runFilter(
-                    "fmod_" + mod, txt or "", extra or "", context, tag, tag_name
+                    "fmod_" + mod,
+                    txt or "",
+                    extra or "",
+                    context,
+                    tag,
+                    tag_name,
                 )
                 if txt is None:
                     return "{unknown field %s}" % tag_name

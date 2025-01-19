@@ -173,7 +173,9 @@ class Database(object):
     def update_last_log_index_synced_for(self, partner):
         raise NotImplementedError
 
-    def number_of_log_entries_to_sync_for(self, partner, interested_in_old_reps=True):
+    def number_of_log_entries_to_sync_for(
+        self, partner, interested_in_old_reps=True
+    ):
         raise NotImplementedError
 
     def number_of_log_entries(self, interested_in_old_reps=True):

@@ -26,7 +26,8 @@ class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         previous_page_index = self.config()["previous_statistics_page"]
         page_index = 0
@@ -74,7 +75,9 @@ class StatisticsDlg(QtWidgets.QDialog, StatisticsDialog, Ui_StatisticsDlg):
     def display_page(self, page_index):
         page = self.tab_widget.widget(page_index)
         self.config()["previous_statistics_page"] = page_index
-        self.config()["previous_variant_for_statistics_page"].setdefault(page_index, 0)
+        self.config()["previous_variant_for_statistics_page"].setdefault(
+            page_index, 0
+        )
         variant_index = self.config()["previous_variant_for_statistics_page"][
             page_index
         ]
@@ -125,7 +128,9 @@ class StatisticsPageWdgt(QtWidgets.QWidget, Component):
             self.current_variant_widget.hide()
         # Create widget if it has not been shown before.
         if not self.variant_widgets[variant_index]:
-            self.statistics_page.prepare_statistics(self.variant_ids[variant_index])
+            self.statistics_page.prepare_statistics(
+                self.variant_ids[variant_index]
+            )
             widget_class = self.component_manager.current(
                 "statistics_widget", used_for=self.statistics_page.__class__
             )

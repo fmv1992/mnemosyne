@@ -13,11 +13,15 @@ from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.pyqt_ui.ui_edit_M_sided_card_template_wdgt import (
     Ui_EditMSidedCardTemplateWdgt,
 )
-from mnemosyne.libmnemosyne.ui_components.dialogs import EditMSidedCardTemplateWidget
+from mnemosyne.libmnemosyne.ui_components.dialogs import (
+    EditMSidedCardTemplateWidget,
+)
 
 
 class EditMSidedCardTemplateWdgt(
-    QtWidgets.QDialog, EditMSidedCardTemplateWidget, Ui_EditMSidedCardTemplateWdgt
+    QtWidgets.QDialog,
+    EditMSidedCardTemplateWidget,
+    Ui_EditMSidedCardTemplateWdgt,
 ):
 
     def __init__(self, card_type, fact_view, **kwds):
@@ -29,7 +33,8 @@ class EditMSidedCardTemplateWdgt(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         # Qt designer does not accept these special symbols.
         self.label1_2.setText("→")
@@ -59,8 +64,13 @@ class EditMSidedCardTemplateWdgt(
     def update_preview(self, focus_widget=None):
         fact_data = {}
         for fact_key, name in self.card_type.fact_keys_and_names:
-            if name == "Text" and "{{cloze:Text}}" in self.front_template.toPlainText():
-                fact_data[fact_key] = "This is a {{c1::sample}} cloze deletion."
+            if (
+                name == "Text"
+                and "{{cloze:Text}}" in self.front_template.toPlainText()
+            ):
+                fact_data[fact_key] = (
+                    "This is a {{c1::sample}} cloze deletion."
+                )
             else:
                 fact_data[fact_key] = "(" + name + ")"
         fact = Fact(fact_data)

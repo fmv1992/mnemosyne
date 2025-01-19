@@ -35,7 +35,10 @@ class Mnemosyne2Cards(FileFormat):
             return -1
         metadata_file = open("METADATA", "w", encoding="utf-8")
         for key, value in metadata.items():
-            print(key + ":" + value.strip().replace("\n", "<br>"), file=metadata_file)
+            print(
+                key + ":" + value.strip().replace("\n", "<br>"),
+                file=metadata_file,
+            )
         metadata_file.close()
         db = self.database()
         w = self.main_widget()
@@ -73,8 +76,12 @@ class Mnemosyne2Cards(FileFormat):
             log_entry["name"] = fact_view.name
             log_entry["q_fact_keys"] = repr(fact_view.q_fact_keys)
             log_entry["a_fact_keys"] = repr(fact_view.a_fact_keys)
-            log_entry["q_fact_key_decorators"] = repr(fact_view.q_fact_key_decorators)
-            log_entry["a_fact_key_decorators"] = repr(fact_view.a_fact_key_decorators)
+            log_entry["q_fact_key_decorators"] = repr(
+                fact_view.q_fact_key_decorators
+            )
+            log_entry["a_fact_key_decorators"] = repr(
+                fact_view.a_fact_key_decorators
+            )
             log_entry["a_on_top_of_q"] = repr(fact_view.a_on_top_of_q)
             log_entry["type_answer"] = repr(fact_view.type_answer)
             if fact_view.extra_data:
@@ -87,13 +94,19 @@ class Mnemosyne2Cards(FileFormat):
             log_entry["type"] = EventTypes.ADDED_CARD_TYPE
             log_entry["o_id"] = card_type.id
             log_entry["name"] = card_type.name
-            log_entry["fact_keys_and_names"] = repr(card_type.fact_keys_and_names)
+            log_entry["fact_keys_and_names"] = repr(
+                card_type.fact_keys_and_names
+            )
             log_entry["fact_views"] = repr(
                 [fact_view.id for fact_view in card_type.fact_views]
             )
             log_entry["unique_fact_keys"] = repr(card_type.unique_fact_keys)
-            log_entry["required_fact_keys"] = repr(card_type.required_fact_keys)
-            log_entry["keyboard_shortcuts"] = repr(card_type.keyboard_shortcuts)
+            log_entry["required_fact_keys"] = repr(
+                card_type.required_fact_keys
+            )
+            log_entry["keyboard_shortcuts"] = repr(
+                card_type.keyboard_shortcuts
+            )
             if card_type.extra_data:
                 log_entry["extra"] = repr(card_type.extra_data)
             xml_file.write(xml_format.repr_log_entry(log_entry))
@@ -169,9 +182,13 @@ class Mnemosyne2Cards(FileFormat):
                 os.path.join(self.database().media_dir(), media_filename)
             )
             if not os.path.exists(full_path):
-                self.main_widget().show_error(_("Missing filename: " + full_path))
+                self.main_widget().show_error(
+                    _("Missing filename: " + full_path)
+                )
                 continue
-            zip_file.write(full_path, media_filename, compress_type=zipfile.ZIP_STORED)
+            zip_file.write(
+                full_path, media_filename, compress_type=zipfile.ZIP_STORED
+            )
             w.increase_progress(1)
         zip_file.close()
         if os.path.exists(filename):
@@ -198,13 +215,17 @@ class Mnemosyne2Cards(FileFormat):
         zip_file = zipfile.ZipFile(filename, "r")
         zip_file.extractall(self.database().media_dir())
         # Show metadata.
-        metadata_filename = os.path.join(self.database().media_dir(), "METADATA")
+        metadata_filename = os.path.join(
+            self.database().media_dir(), "METADATA"
+        )
         if show_metadata:
             metadata = {}
             for line in open(metadata_filename, encoding="utf-8"):
                 key, value = line.split(":", 1)
                 metadata[key] = value.replace("<br>", "\n")
-            self.main_widget().show_export_metadata_dialog(metadata, read_only=True)
+            self.main_widget().show_export_metadata_dialog(
+                metadata, read_only=True
+            )
         # Parse XML.
         w.set_progress_text(_("Importing cards..."))
         self.database().card_types_to_instantiate_later = set()

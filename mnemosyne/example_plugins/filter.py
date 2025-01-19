@@ -21,7 +21,9 @@ class AlignImgTopPlugin(Plugin):
 
     def activate(self):
         Plugin.activate(self)
-        self.render_chain("default").register_filter(AlignImgTop, in_front=False)
+        self.render_chain("default").register_filter(
+            AlignImgTop, in_front=False
+        )
         # Other chain you might want to add to is e.g. "card_browser".
 
     def deactivate(self):

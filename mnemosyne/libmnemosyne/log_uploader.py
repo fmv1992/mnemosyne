@@ -50,7 +50,9 @@ class LogUploader(Thread, Component):
         )
         hdr.append("Content-Type: application/octet-stream")
         hdr.append("Content-Length: %d" % len(data))
-        header = (("--%s\n" % boundary) + "\n".join(hdr) + "\n\n").encode("utf-8")
+        header = (("--%s\n" % boundary) + "\n".join(hdr) + "\n\n").encode(
+            "utf-8"
+        )
         footer = ("\n--%s--\n" % boundary).encode("utf-8")
         query = header + data + footer
         contentType = "multipart/form-data; boundary=%s" % boundary

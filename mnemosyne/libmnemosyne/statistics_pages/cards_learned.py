@@ -42,6 +42,8 @@ class CardsLearned(PlotStatisticsPage):
         self.main_widget().set_progress_update_interval(3)
         self.y = []
         for day in self.x:
-            self.y.append(self.database().card_count_learned_n_days_ago(n=-day))
+            self.y.append(
+                self.database().card_count_learned_n_days_ago(n=-day)
+            )
             self.main_widget().increase_progress(1)
         self.main_widget().close_progress()

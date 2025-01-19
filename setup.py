@@ -19,7 +19,9 @@ class InnoScript:
         return pathname[len(self.dist_dir) + 1 :]
 
     def create(self):
-        self.pathname = os.path.join(os.getcwd(), "dist", "Mnemosyne", "mnemosyne.iss")
+        self.pathname = os.path.join(
+            os.getcwd(), "dist", "Mnemosyne", "mnemosyne.iss"
+        )
         ofi = self.file = open(self.pathname, "w")
         print(
             "; WARNING: This script has been created automatically. "
@@ -64,7 +66,8 @@ class InnoScript:
         )
         print(" ; WorkingDir: {app}", file=ofi)
         print(
-            r'Name: "{group}\Uninstall %s"; Filename: "{uninstallexe}"' % self.name,
+            r'Name: "{group}\Uninstall %s"; Filename: "{uninstallexe}"'
+            % self.name,
             file=ofi,
         )
 
@@ -103,16 +106,28 @@ if sys.platform == "darwin":  # For py2app.
     data_files = []
 else:
     base_path = os.path.join(
-        sys.exec_prefix, "lib", "python" + sys.version[:3], "site-packages", "mnemosyne"
+        sys.exec_prefix,
+        "lib",
+        "python" + sys.version[:3],
+        "site-packages",
+        "mnemosyne",
     )
     data_files = [
-        (os.path.join(sys.exec_prefix, "share", "applications"), ["mnemosyne.desktop"]),
-        (os.path.join(sys.exec_prefix, "share", "icons"), ["pixmaps/mnemosyne.png"]),
+        (
+            os.path.join(sys.exec_prefix, "share", "applications"),
+            ["mnemosyne.desktop"],
+        ),
+        (
+            os.path.join(sys.exec_prefix, "share", "icons"),
+            ["pixmaps/mnemosyne.png"],
+        ),
     ]
 
 # Translations.
 if sys.platform != "win32":
-    for mo in [x for x in glob.glob(os.path.join("mo", "*")) if os.path.isdir(x)]:
+    for mo in [
+        x for x in glob.glob(os.path.join("mo", "*")) if os.path.isdir(x)
+    ]:
         data_files.append(
             (
                 os.path.join(
@@ -130,7 +145,11 @@ for mo in [x for x in glob.glob(os.path.join("mo", "*")) if os.path.isdir(x)]:
     data_files.append(
         (
             os.path.join(
-                sys.exec_prefix, "share", "locale", os.path.split(mo)[1], "LC_MESSAGES"
+                sys.exec_prefix,
+                "share",
+                "locale",
+                os.path.split(mo)[1],
+                "LC_MESSAGES",
             ),
             [os.path.join(mo, "LC_MESSAGES", "mnemosyne.mo")],
         )

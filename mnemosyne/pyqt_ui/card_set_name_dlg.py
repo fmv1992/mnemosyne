@@ -16,7 +16,8 @@ class CardSetNameDlg(QtWidgets.QDialog, UiComponent, Ui_CardSetNameDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.setupUi(self)
         self.criterion = criterion

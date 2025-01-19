@@ -34,9 +34,9 @@ build:
 	make -C mnemosyne/pyqt_ui
 
 format:
-	cp ./makefile /tmp
-	git checkout 99fca5c -- . || true
-	cp /tmp/makefile ./makefile
+	@# cp ./makefile /tmp
+	@# git checkout 99fca5c -- . || true
+	@# cp /tmp/makefile ./makefile
 	dos2unix **/*.py || true
 	pre-commit run ruff --all-files || true
 	@# pre-commit run black --all-files

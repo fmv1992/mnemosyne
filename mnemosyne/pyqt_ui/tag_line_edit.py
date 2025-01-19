@@ -57,7 +57,9 @@ class TagLineEdit(QtWidgets.QLineEdit):
         )
         self.setText(new_text)
         new_cursor_index = previous_comma_index + len(self.last_highlight_)
-        self.setCursorPosition(previous_comma_index + len(self.last_highlight_) + 1)
+        self.setCursorPosition(
+            previous_comma_index + len(self.last_highlight_) + 1
+        )
 
     def refresh_completion_model(self, new_model):
         self.custom_completer_.refresh_completion_model(new_model)

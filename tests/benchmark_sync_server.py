@@ -45,7 +45,8 @@ class MyServer(Server):
             upload_science_logs=False, interested_in_old_reps=True
         )
         self.mnemosyne.components.insert(
-            0, ("mnemosyne.libmnemosyne.gui_translator", "GetTextGuiTranslator")
+            0,
+            ("mnemosyne.libmnemosyne.gui_translator", "GetTextGuiTranslator"),
         )
         self.mnemosyne.components.append(("test_sync", "Widget"))
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
@@ -81,7 +82,9 @@ class MyServer(Server):
         self.wsgi_server.stop()
 
     def run(self):
-        Server.__init__(self, "client_machine_id", 8186, self.mnemosyne.main_widget())
+        Server.__init__(
+            self, "client_machine_id", 8186, self.mnemosyne.main_widget()
+        )
         self.serve_until_stopped()
 
 

@@ -78,7 +78,12 @@ class _Sqlite3(Component):
             self._cursor = self.connection.execute(sql, *args)
         except:
             raise MnemosyneError(
-                "SQL error: " + sql + " " + str(*args) + "\n" + traceback_string()
+                "SQL error: "
+                + sql
+                + " "
+                + str(*args)
+                + "\n"
+                + traceback_string()
             )
         if self.DEBUG:
             print(("took %.3f secs" % (time.time() - t)))

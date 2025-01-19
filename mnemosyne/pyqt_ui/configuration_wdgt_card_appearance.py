@@ -34,7 +34,9 @@ class ConfigurationWdgtCardAppearance(
         )
         # We calculate card_type_by_name here because these names can change
         # if the user chooses another translation.
-        self.card_types_widget.currentTextChanged[str].connect(self.card_type_changed)
+        self.card_types_widget.currentTextChanged[str].connect(
+            self.card_type_changed
+        )
         self.card_types_widget.addItem(_("<all card types>"))
         self.card_type_by_name = {}
         for card_type in self.database().sorted_card_types():
@@ -44,7 +46,9 @@ class ConfigurationWdgtCardAppearance(
             self.card_types_widget.addItem(_(card_type.name))
         # Store backups in order to be able to revert our changes.
         self.old_font = deepcopy(self.config()["font"])
-        self.old_background_colour = deepcopy(self.config()["background_colour"])
+        self.old_background_colour = deepcopy(
+            self.config()["background_colour"]
+        )
         self.old_font_colour = deepcopy(self.config()["font_colour"])
         self.old_alignment = deepcopy(self.config()["alignment"])
 
@@ -141,7 +145,9 @@ class ConfigurationWdgtCardAppearance(
         if current_rgb:
             current_colour = QtGui.QColor(current_rgb)
         else:
-            current_colour = self.palette().color(QtGui.QPalette.ColorRole.Base)
+            current_colour = self.palette().color(
+                QtGui.QPalette.ColorRole.Base
+            )
         # Set new colour.
         colour = QtWidgets.QColorDialog.getColor(current_colour, self)
         if colour.isValid():
@@ -155,9 +161,9 @@ class ConfigurationWdgtCardAppearance(
         if len(self.affected_card_types) > 1:
             affected_fact_key = None  # Actually means all the keys.
         else:
-            affected_fact_key = self.affected_card_types[0].fact_keys_and_names[index][
+            affected_fact_key = self.affected_card_types[
                 0
-            ]
+            ].fact_keys_and_names[index][0]
         # Determine current font.
         if len(self.affected_card_types) > 1:
             font_strings = set()
@@ -194,9 +200,9 @@ class ConfigurationWdgtCardAppearance(
         if len(self.affected_card_types) > 1:
             affected_fact_key = None  # Actually means all the keys.
         else:
-            affected_fact_key = self.affected_card_types[0].fact_keys_and_names[index][
+            affected_fact_key = self.affected_card_types[
                 0
-            ]
+            ].fact_keys_and_names[index][0]
         # Determine current colour.
         if len(self.affected_card_types) > 1:
             current_rgb = self.config().card_type_property(
@@ -226,7 +232,9 @@ class ConfigurationWdgtCardAppearance(
         elif index == 2:
             new_alignment = "right"
         for card_type in self.affected_card_types:
-            self.config().set_card_type_property("alignment", new_alignment, card_type)
+            self.config().set_card_type_property(
+                "alignment", new_alignment, card_type
+            )
         self.alignment.font().setWeight(50)
 
     def apply(self):
@@ -235,7 +243,9 @@ class ConfigurationWdgtCardAppearance(
         ] = self.non_latin_font_size_increase.value()
         for card_type in self.card_types():
             for render_chain in self.component_manager.all("render_chain"):
-                render_chain.renderer_for_card_type(card_type).update(card_type)
+                render_chain.renderer_for_card_type(card_type).update(
+                    card_type
+                )
 
     def preview(self):
         card_type = self.affected_card_types[0]
@@ -254,7 +264,10 @@ class ConfigurationWdgtCardAppearance(
             card.extra_data["ord"] = 1
         tag_text = ""
         dlg = PreviewCardsDlg(
-            cards, tag_text, component_manager=self.component_manager, parent=self
+            cards,
+            tag_text,
+            component_manager=self.component_manager,
+            parent=self,
         )
         dlg.exec()
 
@@ -265,7 +278,9 @@ class ConfigurationWdgtCardAppearance(
             message = _("Reset '%s' to default system font?") % (
                 _(self.affected_card_types[0].name)
             )
-        result = self.main_widget().show_question(message, _("&Yes"), _("&No"), "")
+        result = self.main_widget().show_question(
+            message, _("&Yes"), _("&No"), ""
+        )
         if result == 1:
             return
         self.non_latin_font_size_increase.setValue(0)
@@ -289,4 +304,6 @@ class ConfigurationWdgtCardAppearance(
         self.config()["alignment"] = self.old_alignment
         for card_type in self.card_types():
             for render_chain in self.component_manager.all("render_chain"):
-                render_chain.renderer_for_card_type(card_type).update(card_type)
+                render_chain.renderer_for_card_type(card_type).update(
+                    card_type
+                )

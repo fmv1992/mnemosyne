@@ -10,7 +10,9 @@ from mnemosyne.pyqt_ui.review_wdgt import QAOptimalSplit
 from mnemosyne.pyqt_ui.ui_preview_cards_dlg import Ui_PreviewCardsDlg
 
 
-class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit, Ui_PreviewCardsDlg):
+class PreviewCardsDlg(
+    QtWidgets.QDialog, Component, QAOptimalSplit, Ui_PreviewCardsDlg
+):
 
     page_up_down_signal = QtCore.pyqtSignal(int)
     UP = 0
@@ -33,7 +35,8 @@ class PreviewCardsDlg(QtWidgets.QDialog, Component, QAOptimalSplit, Ui_PreviewCa
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.tag_text = tag_text
         self.cards = cards

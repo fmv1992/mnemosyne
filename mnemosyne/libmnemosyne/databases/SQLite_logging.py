@@ -44,7 +44,12 @@ class SQLiteLogging(object):
         )
 
     def log_loaded_database(
-        self, timestamp, machine_id, scheduled_count, non_memorised_count, active_count
+        self,
+        timestamp,
+        machine_id,
+        scheduled_count,
+        non_memorised_count,
+        active_count,
     ):
         self.con.execute(
             """insert into log(event_type, timestamp, object_id, acq_reps,
@@ -60,7 +65,12 @@ class SQLiteLogging(object):
         )
 
     def log_saved_database(
-        self, timestamp, machine_id, scheduled_count, non_memorised_count, active_count
+        self,
+        timestamp,
+        machine_id,
+        scheduled_count,
+        non_memorised_count,
+        active_count,
     ):
         self.con.execute(
             """insert into log(event_type, timestamp, object_id, acq_reps,
@@ -89,7 +99,9 @@ class SQLiteLogging(object):
         scheduled_count = 0
         for n in range(1, 8):
             timestamp += DAY
-            scheduled_count += self.scheduler().card_count_scheduled_n_days_from_now(n)
+            scheduled_count += (
+                self.scheduler().card_count_scheduled_n_days_from_now(n)
+            )
             self.con.execute(
                 """insert into log(event_type, timestamp,
                 object_id, acq_reps,ret_reps, lapses) values(?,?,?,?,?,?)""",
@@ -293,7 +305,8 @@ class SQLiteLogging(object):
         logname = os.path.join(self.config().data_dir, "log.txt")
         logfile = open(logname, "a")
         sql_res = self.con.execute(
-            "select _last_log_id from partnerships where partner=?", ("log.txt",)
+            "select _last_log_id from partnerships where partner=?",
+            ("log.txt",),
         ).fetchone()
         last_index = int(sql_res[0])
         index = 0
@@ -307,13 +320,19 @@ class SQLiteLogging(object):
         ):
             index = int(cursor[0])
             event_type = cursor[1]
-            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(cursor[2]))
+            timestamp = time.strftime(
+                "%Y-%m-%d %H:%M:%S", time.localtime(cursor[2])
+            )
             if event_type == EventTypes.STARTED_PROGRAM:
                 print(
-                    "%s : Program started : %s" % (timestamp, cursor[3]), file=logfile
+                    "%s : Program started : %s" % (timestamp, cursor[3]),
+                    file=logfile,
                 )
             elif event_type == EventTypes.STARTED_SCHEDULER:
-                print("%s : Scheduler : %s" % (timestamp, cursor[3]), file=logfile)
+                print(
+                    "%s : Scheduler : %s" % (timestamp, cursor[3]),
+                    file=logfile,
+                )
             elif event_type == EventTypes.LOADED_DATABASE:
                 print(
                     "%s : Loaded database %d %d %d"
@@ -329,9 +348,15 @@ class SQLiteLogging(object):
             elif event_type == EventTypes.ADDED_CARD:
                 # Use dummy grade and interval, We log the first repetition
                 # separately anyhow.
-                print("%s : New item %s -1 -1" % (timestamp, cursor[3]), file=logfile)
+                print(
+                    "%s : New item %s -1 -1" % (timestamp, cursor[3]),
+                    file=logfile,
+                )
             elif event_type == EventTypes.DELETED_CARD:
-                print("%s : Deleted item %s" % (timestamp, cursor[3]), file=logfile)
+                print(
+                    "%s : Deleted item %s" % (timestamp, cursor[3]),
+                    file=logfile,
+                )
             elif event_type == EventTypes.REPETITION:
                 new_interval = int(cursor[14] - cursor[2])
                 print(
@@ -412,7 +437,9 @@ class SQLiteLogging(object):
         return sql_res[0], sql_res[1]
 
     def change_card_id(self, card, new_id):
-        self.con.execute("update cards set id=? where _id=?", (new_id, card._id))
+        self.con.execute(
+            "update cards set id=? where _id=?", (new_id, card._id)
+        )
 
     def update_card_after_log_import(self, id, creation_time, offset):
         sql_res = self.con.execute(
@@ -428,7 +455,13 @@ class SQLiteLogging(object):
             """update cards set creation_time=?,
             modification_time=?, acq_reps=?, acq_reps_since_lapse=?
             where _id=?""",
-            (creation_time, creation_time, acq_reps, acq_reps_since_lapse, sql_res[0]),
+            (
+                creation_time,
+                creation_time,
+                acq_reps,
+                acq_reps_since_lapse,
+                sql_res[0],
+            ),
         )
 
     def remove_card_log_entries_since(self, index):

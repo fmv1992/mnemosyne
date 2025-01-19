@@ -14,7 +14,9 @@ from mnemosyne.pyqt_ui.preview_cards_dlg import PreviewCardsDlg
 from mnemosyne.libmnemosyne.ui_components.dialogs import EditCardDialog
 
 
-class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDlg):
+class EditCardDlg(
+    QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDlg
+):
 
     page_up_down_signal = QtCore.pyqtSignal(int)
     UP = 0
@@ -38,7 +40,7 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDl
         allow_cancel=True,
         started_from_card_browser=False,
         parent=None,
-        **kwds
+        **kwds,
     ):
         super().__init__(**kwds)
         # Note: even though this is in essence an EditFactDlg, we don't use
@@ -51,7 +53,8 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDl
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.started_from_card_browser = started_from_card_browser
         self.before_apply_hook = None
@@ -91,7 +94,9 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDl
             if self.card_types_widget.itemText(i) == _(card.card_type.name):
                 self.card_types_widget.setCurrentIndex(i)
                 break
-        self.card_types_widget.currentTextChanged[str].connect(self.card_type_changed)
+        self.card_types_widget.currentTextChanged[str].connect(
+            self.card_type_changed
+        )
         self.update_card_widget(keep_data_from_previous_widget=False)
         self.update_tags_combobox(self.card.tag_string())
 
@@ -165,7 +170,10 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDl
         return False
 
     def is_changed(self):
-        if self.previous_card_type_name != self.card_types_widget.currentText():
+        if (
+            self.previous_card_type_name
+            != self.card_types_widget.currentText()
+        ):
             return True
         if self.previous_tags != self.tags.currentText():
             return True
@@ -185,7 +193,9 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDl
         if not self.is_changed():
             return 0  # OK.
         new_fact_data = self.card_type_widget.fact_data()
-        new_tag_names = [tag.strip() for tag in self.tags.currentText().split(",")]
+        new_tag_names = [
+            tag.strip() for tag in self.tags.currentText().split(",")
+        ]
         new_card_type_name = self.card_types_widget.currentText()
         new_card_type = self.card_type_by_name[new_card_type_name]
         if (
@@ -203,7 +213,11 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDl
         if self.before_apply_hook:
             self.before_apply_hook()
         status = self.controller().edit_card_and_sisters(
-            self.card, new_fact_data, new_card_type, new_tag_names, self.correspondence
+            self.card,
+            new_fact_data,
+            new_card_type,
+            new_tag_names,
+            self.correspondence,
         )
         if self.after_apply_hook:
             self.after_apply_hook()
@@ -234,7 +248,10 @@ class EditCardDlg(QtWidgets.QDialog, AddEditCards, EditCardDialog, Ui_EditCardDl
             cards = new_card_type.create_sister_cards(fact)
         tag_text = self.tags.currentText()
         dlg = PreviewCardsDlg(
-            cards, tag_text, component_manager=self.component_manager, parent=self
+            cards,
+            tag_text,
+            component_manager=self.component_manager,
+            parent=self,
         )
         dlg.exec()
 

@@ -55,15 +55,17 @@ class SyncThread(QtCore.QThread):
             # Libmnemosyne itself could also generate dialog messages, so
             # we temporarily override the main_widget with the threaded
             # routines in this class.
-            self.mnemosyne.component_manager.components[None]["main_widget"].append(
-                self
-            )
+            self.mnemosyne.component_manager.components[None][
+                "main_widget"
+            ].append(self)
             self.mnemosyne.controller().sync(
                 self.server, self.port, self.username, self.password, ui=self
             )
         finally:
             self.mnemosyne.database().release_connection()
-            self.mnemosyne.component_manager.components[None]["main_widget"].pop()
+            self.mnemosyne.component_manager.components[None][
+                "main_widget"
+            ].pop()
 
     def show_information(self, message):
         global answer
@@ -125,7 +127,8 @@ class SyncDlg(QtWidgets.QDialog, SyncDialog, Ui_SyncDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         if not self.config()["sync_help_shown"]:
             self.main_widget().show_information(
@@ -205,7 +208,9 @@ class SyncDlg(QtWidgets.QDialog, SyncDialog, Ui_SyncDlg):
         self.thread.set_progress_value_signal.connect(
             self.true_main_widget.set_progress_value
         )
-        self.thread.close_progress_signal.connect(self.true_main_widget.close_progress)
+        self.thread.close_progress_signal.connect(
+            self.true_main_widget.close_progress
+        )
         self.thread.finished.connect(self.finish_sync)
         self.thread.start()
 

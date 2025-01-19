@@ -66,7 +66,9 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             tree.getroot().tag != "mnemosyne"
             or tree.getroot().get("core_version") != "1"
         ):
-            w.show_error(_("XML file does not seem to be a Mnemosyne 1.x XML file."))
+            w.show_error(
+                _("XML file does not seem to be a Mnemosyne 1.x XML file.")
+            )
             raise MnemosyneError
         self.starttime = 0
         if tree.getroot().get("time_of_start"):
@@ -144,7 +146,11 @@ class Mnemosyne1XML(FileFormat, Mnemosyne1):
             if element.get("u"):
                 item.unseen = bool(element.get("u"))
             else:
-                if item.acq_reps <= 1 and item.ret_reps == 0 and item.grade == 0:
+                if (
+                    item.acq_reps <= 1
+                    and item.ret_reps == 0
+                    and item.grade == 0
+                ):
                     item.unseen = True
                 else:
                     item.unseen = False

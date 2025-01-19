@@ -10,7 +10,9 @@ from mnemosyne.pyqt_ui.ui_manage_plugins_dlg import Ui_ManagePluginsDlg
 from mnemosyne.libmnemosyne.ui_components.dialogs import ManagePluginsDialog
 
 
-class ManagePluginsDlg(QtWidgets.QDialog, ManagePluginsDialog, Ui_ManagePluginsDlg):
+class ManagePluginsDlg(
+    QtWidgets.QDialog, ManagePluginsDialog, Ui_ManagePluginsDlg
+):
 
     def __init__(self, **kwds):
         super().__init__(**kwds)
@@ -19,7 +21,8 @@ class ManagePluginsDlg(QtWidgets.QDialog, ManagePluginsDialog, Ui_ManagePluginsD
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.last_selected_row = 0
         self.build_plugin_list()
@@ -43,7 +46,9 @@ class ManagePluginsDlg(QtWidgets.QDialog, ManagePluginsDialog, Ui_ManagePluginsD
                 list_item.flags() | QtCore.Qt.ItemFlag.ItemIsUserCheckable
             )
             self.plugin_with_name[_(plugin.name)] = plugin
-            active = plugin.__class__.__name__ in self.config()["active_plugins"]
+            active = (
+                plugin.__class__.__name__ in self.config()["active_plugins"]
+            )
             self.previously_active[_(plugin.name)] = active
             if active:
                 list_item.setCheckState(QtCore.Qt.CheckState.Checked)
@@ -64,7 +69,9 @@ class ManagePluginsDlg(QtWidgets.QDialog, ManagePluginsDialog, Ui_ManagePluginsD
         self.plugin_list.setCurrentItem(list_item)
         plugin = self.plugin_with_name[list_item.text()]
         self.plugin_description.setText(_(plugin.description))
-        self.delete_button.setEnabled(plugin.__class__.__name__ in self.can_be_deleted)
+        self.delete_button.setEnabled(
+            plugin.__class__.__name__ in self.can_be_deleted
+        )
 
     def activate(self):
         self.exec()

@@ -14,7 +14,10 @@ from mnemosyne.pyqt_ui.tip_after_starting_n_times import TipAfterStartingNTimes
 
 
 class ActivateCardsDlg(
-    QtWidgets.QDialog, ActivateCardsDialog, TipAfterStartingNTimes, Ui_ActivateCardsDlg
+    QtWidgets.QDialog,
+    ActivateCardsDialog,
+    TipAfterStartingNTimes,
+    Ui_ActivateCardsDlg,
 ):
 
     started_n_times_counter = "started_activate_cards_n_times"
@@ -25,7 +28,9 @@ class ActivateCardsDlg(
         6: _(
             "Double-click on the name of a saved set to quickly activate it and close the dialog."
         ),
-        9: _("You can right-click on the name of a saved set to rename or delete it."),
+        9: _(
+            "You can right-click on the name of a saved set to rename or delete it."
+        ),
         12: _(
             "If you single-click the name of a saved set, modifications to the selected tags and card types are not saved to that set unless you press 'Save this set for later use' again. This allows you to make some quick-and-dirty temporary modifications."
         ),
@@ -38,7 +43,8 @@ class ActivateCardsDlg(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         # Initialise widgets.
         self.was_showing_a_saved_set = False
@@ -52,7 +58,9 @@ class ActivateCardsDlg(
                 "criterion_widget", used_for=criterion_class
             )(component_manager=self.component_manager, parent=self)
             self.tab_widget.addTab(widget, criterion_class.criterion_type)
-            self.widget_for_criterion_type[criterion_class.criterion_type] = widget
+            self.widget_for_criterion_type[criterion_class.criterion_type] = (
+                widget
+            )
         self.tab_widget.setCurrentWidget(
             self.widget_for_criterion_type[current_criterion.criterion_type]
         )
@@ -75,7 +83,10 @@ class ActivateCardsDlg(
         self.update_saved_sets_pane()
 
     def keyPressEvent(self, event):
-        if event.key() in [QtCore.Qt.Key.Key_Delete, QtCore.Qt.Key.Key_Backspace]:
+        if event.key() in [
+            QtCore.Qt.Key.Key_Delete,
+            QtCore.Qt.Key.Key_Backspace,
+        ]:
             self.delete_set()
         else:
             QtWidgets.QDialog.keyPressEvent(self, event)
@@ -114,7 +125,10 @@ class ActivateCardsDlg(
         else:
             if splitter_sizes[0] == 0:  # First time we add a set.
                 self.splitter.setSizes(
-                    [int(0.3 * sum(splitter_sizes)), int(0.7 * sum(splitter_sizes))]
+                    [
+                        int(0.3 * sum(splitter_sizes)),
+                        int(0.7 * sum(splitter_sizes)),
+                    ]
                 )
 
     def saved_sets_custom_menu(self, pos):
@@ -126,7 +140,9 @@ class ActivateCardsDlg(
     def save_set(self):
         criterion = self.tab_widget.currentWidget().criterion()
         if criterion.is_empty():
-            self.main_widget().show_error(_("This set can never contain any cards!"))
+            self.main_widget().show_error(
+                _("This set can never contain any cards!")
+            )
             return
         CardSetNameDlg(
             criterion,
@@ -242,7 +258,9 @@ class ActivateCardsDlg(
 
     def _store_state(self):
         self.config()["activate_cards_dlg_state"] = self.saveGeometry()
-        self.config()["activate_cards_dlg_splitter_state"] = self.splitter.saveState()
+        self.config()[
+            "activate_cards_dlg_splitter_state"
+        ] = self.splitter.saveState()
 
     def closeEvent(self, event):
         # Generated when clicking the window's close button.
@@ -253,7 +271,9 @@ class ActivateCardsDlg(
     def accept(self):
         criterion = self.tab_widget.currentWidget().criterion()
         if criterion.is_empty():
-            self.main_widget().show_error(_("This set can never contain any cards!"))
+            self.main_widget().show_error(
+                _("This set can never contain any cards!")
+            )
             return
         if (
             self.saved_sets.count() != 0

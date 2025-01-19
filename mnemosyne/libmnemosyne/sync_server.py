@@ -29,7 +29,9 @@ class SyncServer(Component, Server):
         else:
             self.server_only = False
         super().__init__(
-            machine_id=config.machine_id(), port=config["sync_server_port"], **kwds
+            machine_id=config.machine_id(),
+            port=config["sync_server_port"],
+            **kwds,
         )
         self.check_for_edited_local_media_files = self.config()[
             "check_for_edited_local_media_files"
@@ -92,7 +94,9 @@ class SyncServer(Component, Server):
                 response = con.getresponse()
             except:
                 pass
-            if not os.path.exists(expand_path(database_name, self.config().data_dir)):
+            if not os.path.exists(
+                expand_path(database_name, self.config().data_dir)
+            ):
                 self.database().new(database_name)
             else:
                 self.database().load(database_name)
@@ -140,7 +144,10 @@ class SyncServerThread(threading.Thread, SyncServer):
     def __init__(self, component_manager):
         threading.Thread.__init__(self)
         SyncServer.__init__(
-            self, component_manager=component_manager, ui=UI(), server_only=True
+            self,
+            component_manager=component_manager,
+            ui=UI(),
+            server_only=True,
         )
 
     def run(self):

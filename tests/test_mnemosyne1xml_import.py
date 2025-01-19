@@ -51,7 +51,9 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
 
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
+        path = os.path.join(
+            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
+        )
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -69,8 +71,12 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.components.append(("test_mnemosyne1xml_import", "Widget"))
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.components.append(
+            ("test_mnemosyne1xml_import", "Widget")
+        )
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def xml_importer(self):
@@ -84,12 +90,16 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         assert last_error.startswith("Unable to open")
 
     def test_wrong_format(self):
-        filename = os.path.join(os.getcwd(), "tests", "files", "wrong_format.xml")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "wrong_format.xml"
+        )
         self.xml_importer().do_import(filename)
         assert last_error.startswith("Unable to parse")
 
     def test_bad_version(self):
-        filename = os.path.join(os.getcwd(), "tests", "files", "bad_version.xml")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "bad_version.xml"
+        )
         self.xml_importer().do_import(filename)
         assert last_error.startswith("XML file does not seem")
 
@@ -125,7 +135,9 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
     def test_card_type_1_unseen(self):
         global answer
         answer = 0
-        filename = os.path.join(os.getcwd(), "tests", "files", "1sided_unseen.xml")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "1sided_unseen.xml"
+        )
         self.xml_importer().do_import(filename)
         self.review_controller().reset()
         assert self.database().card_count() == 1
@@ -142,7 +154,8 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -158,7 +171,9 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         assert "question" in card.question()
         filename = os.path.join(os.getcwd(), "tests", "files", "1sided.xml")
         self.xml_importer().do_import(filename)
-        assert last_error.startswith("These cards seem to have been imported before")
+        assert last_error.startswith(
+            "These cards seem to have been imported before"
+        )
 
     def test_card_type_2(self):
         global answer
@@ -180,7 +195,8 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 2
@@ -198,7 +214,8 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 2
@@ -207,7 +224,9 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
     def test_card_type_3_corrupt(self):
         global answer
         answer = 0
-        filename = os.path.join(os.getcwd(), "tests", "files", "3sided_corrupt.xml")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "3sided_corrupt.xml"
+        )
         self.xml_importer().do_import(filename)
         self.review_controller().reset()
         assert self.database().card_count() == 2
@@ -216,7 +235,8 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 2
@@ -225,7 +245,9 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
     def test_card_type_3_missing(self):
         global answer
         answer = 0
-        filename = os.path.join(os.getcwd(), "tests", "files", "3sided_missing.xml")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "3sided_missing.xml"
+        )
         self.xml_importer().do_import(filename)
         self.review_controller().reset()
         assert self.database().card_count() == 1
@@ -234,7 +256,8 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -248,23 +271,33 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         figures = [
             os.path.join(os.getcwd(), "tests", "files", "a.png"),
             os.path.join(os.getcwd(), "tests", "files", "figs", "a.png"),
-            os.path.join(os.getcwd(), "tests", "files", "figs", "figs", "a.png"),
+            os.path.join(
+                os.getcwd(), "tests", "files", "figs", "figs", "a.png"
+            ),
         ]
         for filename in figures:
             open(filename, "w")
         filename = os.path.join(os.getcwd(), "tests", "files", "media.xml")
         self.xml_importer().do_import(filename)
         assert os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
-        )
-        assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
             )
         )
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
+            )
+        )
+        assert os.path.exists(
+            os.path.join(
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -291,11 +324,16 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         filename = os.path.join(os.getcwd(), "tests", "files", "media.xml")
         self.xml_importer().do_import(filename)
         assert os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
+            os.path.join(
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
+            )
         )
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -314,11 +352,16 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         filename = os.path.join(os.getcwd(), "tests", "files", "media.xml")
         self.xml_importer().do_import(filename)
         assert not os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
+            os.path.join(
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
+            )
         )
         assert not os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -339,23 +382,35 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         figures = [
             os.path.join(os.getcwd(), "tests", "files", "a.png"),
             os.path.join(os.getcwd(), "tests", "files", "figs", "a.png"),
-            os.path.join(os.getcwd(), "tests", "files", "figs", "figs", "a.png"),
+            os.path.join(
+                os.getcwd(), "tests", "files", "figs", "figs", "a.png"
+            ),
         ]
         for filename in figures:
             open(filename, "w")
-        filename = os.path.join(os.getcwd(), "tests", "files", "media_slashes.xml")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "media_slashes.xml"
+        )
         self.xml_importer().do_import(filename)
         assert os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
-        )
-        assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
             )
         )
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
+            )
+        )
+        assert os.path.exists(
+            os.path.join(
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -380,7 +435,10 @@ class TestMnemosyne1XMLImport(MnemosyneTest):
         self.xml_importer().do_import(filename)
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "soundfiles", "a.ogg"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "soundfiles",
+                "a.ogg",
             )
         )
         assert (

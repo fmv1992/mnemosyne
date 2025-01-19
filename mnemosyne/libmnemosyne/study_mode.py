@@ -27,7 +27,9 @@ class StudyMode(Component):
         self.component_manager.register(self.Scheduler(self.component_manager))
         self.scheduler().activate()
         self.log().started_scheduler()
-        self.component_manager.register(self.ReviewController(self.component_manager))
+        self.component_manager.register(
+            self.ReviewController(self.component_manager)
+        )
         self.review_controller().activate()
         Component.activate_gui_components(self)
 

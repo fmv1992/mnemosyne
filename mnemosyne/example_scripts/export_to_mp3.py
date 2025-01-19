@@ -27,7 +27,9 @@ data_dir = None
 mnemosyne = Mnemosyne(data_dir)
 
 # Use mplayer to determine the lenght of an mp3 file.
-re_length = re.compile(r"""ID_LENGTH=([0-9]*\.[0-9])""", re.DOTALL | re.IGNORECASE)
+re_length = re.compile(
+    r"""ID_LENGTH=([0-9]*\.[0-9])""", re.DOTALL | re.IGNORECASE
+)
 
 
 def determine_length(filename):
@@ -59,13 +61,17 @@ for cursor in mnemosyne.database().con.execute(
     facts.add(card.fact)
 
 # For each fact, collect all the mp3 files and add silence near the end.
-re_sound = re.compile(r"""audio src=['\"](.+?)['\"]""", re.DOTALL | re.IGNORECASE)
+re_sound = re.compile(
+    r"""audio src=['\"](.+?)['\"]""", re.DOTALL | re.IGNORECASE
+)
 subprocess.call(["mp3wrap", "mnemosyne.mp3", silence, silence])
 for fact in facts:
     length = 0
     filenames = []
     for match in re_sound.finditer("".join(list(fact.data.values()))):
-        filename = os.path.join(mnemosyne.database().media_dir(), match.group(1))
+        filename = os.path.join(
+            mnemosyne.database().media_dir(), match.group(1)
+        )
         print((filename, determine_length(filename)))
         length += determine_length(filename)
         filenames.append(filename)

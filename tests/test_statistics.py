@@ -12,7 +12,9 @@ HOUR = 60 * 60  # Seconds in an hour.
 DAY = 24 * HOUR  # Seconds in a day.
 
 from mnemosyne_test import MnemosyneTest
-from mnemosyne.libmnemosyne.file_formats.science_log_parser import ScienceLogParser
+from mnemosyne.libmnemosyne.file_formats.science_log_parser import (
+    ScienceLogParser,
+)
 
 from openSM2sync.log_entry import EventTypes
 
@@ -20,7 +22,9 @@ from openSM2sync.log_entry import EventTypes
 class TestStatistics(MnemosyneTest):
 
     def test_current_card(self):
-        from mnemosyne.libmnemosyne.statistics_pages.current_card import CurrentCard
+        from mnemosyne.libmnemosyne.statistics_pages.current_card import (
+            CurrentCard,
+        )
 
         page = CurrentCard(self.mnemosyne.component_manager)
         page.prepare_statistics(0)
@@ -69,11 +73,15 @@ class TestStatistics(MnemosyneTest):
     def test_past_schedule(self):
         self.database().update_card_after_log_import = lambda x, y, z: 0
         self.database().before_1x_log_import()
-        filename = os.path.join(os.getcwd(), "tests", "files", "schedule_1.txt")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "schedule_1.txt"
+        )
         ScienceLogParser(self.database()).parse(filename)
         days_elapsed = datetime.date.today() - datetime.date(2009, 8, 15)
         assert (
-            self.scheduler().card_count_scheduled_n_days_from_now(-days_elapsed.days)
+            self.scheduler().card_count_scheduled_n_days_from_now(
+                -days_elapsed.days
+            )
             == 124
         )
         assert self.scheduler().card_count_scheduled_n_days_from_now(-1) == 0
@@ -83,12 +91,26 @@ class TestStatistics(MnemosyneTest):
         con.execute(
             """insert into log(event_type, timestamp, object_id,
             acq_reps,ret_reps, lapses) values(?,?,?,?,?,?)""",
-            (EventTypes.LOADED_DATABASE, time.time() - DAY, "A", 20, -666, -666),
+            (
+                EventTypes.LOADED_DATABASE,
+                time.time() - DAY,
+                "A",
+                20,
+                -666,
+                -666,
+            ),
         )
         con.execute(
             """insert into log(event_type, timestamp, object_id,
             acq_reps,ret_reps, lapses) values(?,?,?,?,?,?)""",
-            (EventTypes.LOADED_DATABASE, time.time() - DAY, "B", 40, -666, -666),
+            (
+                EventTypes.LOADED_DATABASE,
+                time.time() - DAY,
+                "B",
+                40,
+                -666,
+                -666,
+            ),
         )
         assert self.scheduler().card_count_scheduled_n_days_from_now(-10) == 0
         assert self.scheduler().card_count_scheduled_n_days_from_now(-1) == 20
@@ -98,7 +120,14 @@ class TestStatistics(MnemosyneTest):
         con.execute(
             """insert into log(event_type, timestamp, object_id,
             acq_reps,ret_reps, lapses) values(?,?,?,?,?,?)""",
-            (EventTypes.LOADED_DATABASE, time.time() - DAY, "A.fut", 20, -666, -666),
+            (
+                EventTypes.LOADED_DATABASE,
+                time.time() - DAY,
+                "A.fut",
+                20,
+                -666,
+                -666,
+            ),
         )
         assert self.scheduler().card_count_scheduled_n_days_from_now(-10) == 0
         assert self.scheduler().card_count_scheduled_n_days_from_now(-1) == 20
@@ -112,7 +141,9 @@ class TestStatistics(MnemosyneTest):
 
     def test_schedule_page_2(self):
         with raises(AttributeError):
-            from mnemosyne.libmnemosyne.statistics_pages.schedule import Schedule
+            from mnemosyne.libmnemosyne.statistics_pages.schedule import (
+                Schedule,
+            )
 
             page = Schedule(self.mnemosyne.component_manager)
             page.prepare_statistics(0)
@@ -124,18 +155,24 @@ class TestStatistics(MnemosyneTest):
         filename = os.path.join(os.getcwd(), "tests", "files", "added_1.txt")
         ScienceLogParser(self.database()).parse(filename)
         days_elapsed = datetime.date.today() - datetime.date(2009, 8, 19)
-        assert self.database().card_count_added_n_days_ago(days_elapsed.days) == 2
+        assert (
+            self.database().card_count_added_n_days_ago(days_elapsed.days) == 2
+        )
         assert self.scheduler().card_count_scheduled_n_days_from_now(1) == 0
 
     def test_added_cards_page(self):
-        from mnemosyne.libmnemosyne.statistics_pages.cards_added import CardsAdded
+        from mnemosyne.libmnemosyne.statistics_pages.cards_added import (
+            CardsAdded,
+        )
 
         page = CardsAdded(self.mnemosyne.component_manager)
         for i in range(1, 6):
             page.prepare_statistics(i)
 
     def test_learned_cards_page(self):
-        from mnemosyne.libmnemosyne.statistics_pages.cards_learned import CardsLearned
+        from mnemosyne.libmnemosyne.statistics_pages.cards_learned import (
+            CardsLearned,
+        )
 
         page = CardsLearned(self.mnemosyne.component_manager)
         for i in range(1, 6):
@@ -143,7 +180,9 @@ class TestStatistics(MnemosyneTest):
 
     def test_added_cards_page_2(self):
         with raises(AttributeError):
-            from mnemosyne.libmnemosyne.statistics_pages.cards_added import CardsAdded
+            from mnemosyne.libmnemosyne.statistics_pages.cards_added import (
+                CardsAdded,
+            )
 
             page = CardsAdded(self.mnemosyne.component_manager)
             page.prepare_statistics(0)

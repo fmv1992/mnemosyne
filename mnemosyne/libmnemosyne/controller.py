@@ -54,7 +54,9 @@ class Controller(Component):
     ):
         raise NotImplementedError
 
-    def change_card_type(self, facts, old_card_type, new_card_type, correspondence):
+    def change_card_type(
+        self, facts, old_card_type, new_card_type, correspondence
+    ):
         """Note: all facts should have the same card type."""
 
         raise NotImplementedError

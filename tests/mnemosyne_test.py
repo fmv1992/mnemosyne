@@ -57,7 +57,12 @@ class MnemosyneTest:
                 os.path.join("mnemosyne", "tests", "files", "empty.db"),
                 os.path.join(data_dir, "default.db"),
             )
-            for directory in ["default.db_media", "plugins", "backups", "history"]:
+            for directory in [
+                "default.db_media",
+                "plugins",
+                "backups",
+                "history",
+            ]:
                 full_path = str(os.path.join(data_dir, directory))
                 if os.path.exists(full_path):
                     shutil.rmtree(full_path)
@@ -84,7 +89,9 @@ class MnemosyneTest:
                 self.mnemosyne.finalise()
             except:
                 pass
-        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
+        path = os.path.join(
+            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
+        )
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -108,7 +115,9 @@ class MnemosyneTest:
         self.mnemosyne.gui_for_component["CramAll"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.mnemosyne.start_review()
 
     def teardown_method(self):

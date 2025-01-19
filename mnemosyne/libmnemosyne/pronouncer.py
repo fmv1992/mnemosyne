@@ -34,7 +34,9 @@ class Pronouncer(Component):
             )
         else:
             filename = datetime.datetime.today().strftime("%Y%m%d.mp3")
-        local_dir = self.config()["tts_dir_for_card_type_id"].get(card_type.id, "")
+        local_dir = self.config()["tts_dir_for_card_type_id"].get(
+            card_type.id, ""
+        )
         filename = os.path.join(local_dir, filename)
         full_path = expand_path(filename, self.database().media_dir())
         full_path = make_filename_unique(full_path)

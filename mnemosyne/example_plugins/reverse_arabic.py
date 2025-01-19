@@ -32,7 +32,9 @@ class ReverseArabicPlugin(Plugin):
             self.render_chain("web_server").register_filter(
                 ReverseArabic, in_front=False
             )
-            self.render_chain("web_server").unregister_filter(NonLatinFontSizeIncrease)
+            self.render_chain("web_server").unregister_filter(
+                NonLatinFontSizeIncrease
+            )
         except KeyError:  # The web server chain is not active.
             pass
 

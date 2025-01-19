@@ -48,7 +48,9 @@ class SM2Mnemosyne(Scheduler):
         interval = card.next_rep - card.last_rep
         if card.grade < 2:
             if abs(interval) > 1e-10:
-                self.main_widget().show_error("Internal error: interval not zero.")
+                self.main_widget().show_error(
+                    "Internal error: interval not zero."
+                )
             return interval
         interval += self.config()["day_starts_at"] * HOUR
         if time.localtime(time.time()).tm_isdst and time.daylight:
@@ -366,7 +368,10 @@ class SM2Mnemosyne(Scheduler):
         # The grading of a card which previously had grade 0 will remove the
         # second copy from the queue in 'grade_answer', so we can't prefetch
         # if that second copy happens to be the one coming up.
-        if self._card_ids_in_queue and card_to_grade._id == self._card_ids_in_queue[0]:
+        if (
+            self._card_ids_in_queue
+            and card_to_grade._id == self._card_ids_in_queue[0]
+        ):
             return False
         # Make sure there are enough cards left to find one which is not a
         # duplicate.
@@ -392,7 +397,9 @@ class SM2Mnemosyne(Scheduler):
             card = copy.copy(card)
         # Determine whether we learned on time or not (only relevant for
         # grades 2 or higher).
-        if self.adjusted_now() - DAY >= card.next_rep:  # Already due yesterday.
+        if (
+            self.adjusted_now() - DAY >= card.next_rep
+        ):  # Already due yesterday.
             timing = "LATE"
         else:
             if self.adjusted_now() < card.next_rep:  # Not due today.
@@ -493,8 +500,13 @@ class SM2Mnemosyne(Scheduler):
         new_interval = int(new_interval)
         # Optional: limit interval:
         if self.config()["max_scheduled_interval_days"]:
-            if new_interval > self.config()["max_scheduled_interval_days"] * DAY:
-                new_interval = self.config()["max_scheduled_interval_days"] * DAY
+            if (
+                new_interval
+                > self.config()["max_scheduled_interval_days"] * DAY
+            ):
+                new_interval = (
+                    self.config()["max_scheduled_interval_days"] * DAY
+                )
         # When doing a dry run, stop here and return the scheduled interval.
         if dry_run:
             return new_interval
@@ -568,7 +580,9 @@ class SM2Mnemosyne(Scheduler):
         ]
         new_fact_ids = [
             _fact_id
-            for _fact_id in db.fact_ids_newly_learned_today(start_of_day, end_of_day)
+            for _fact_id in db.fact_ids_newly_learned_today(
+                start_of_day, end_of_day
+            )
         ]
 
         return new_fact_ids + forgotten_fact_ids
@@ -583,7 +597,9 @@ class SM2Mnemosyne(Scheduler):
             self.main_widget().show_information(
                 ("You've memorised 15 new or failed cards.")
                 + " "
-                + ("If you do this for many days, you could get a big workload later.")
+                + (
+                    "If you do this for many days, you could get a big workload later."
+                )
             )
             self._warned_about_too_many_cards = True
             # log the event, so we won't show an alert more than once a day
@@ -611,4 +627,6 @@ class SM2Mnemosyne(Scheduler):
 
         start_of_day, end_of_day = self._today_start_and_end_timestamp()
 
-        return self.database().has_already_warned_today(start_of_day, end_of_day)
+        return self.database().has_already_warned_today(
+            start_of_day, end_of_day
+        )

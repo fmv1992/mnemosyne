@@ -121,7 +121,9 @@ class GoogleTranslator(Translator):
 
     popup_menu_text = "Insert Google translation..."
 
-    def translate(self, card_type, foreign_text, target_language_id, retries=0):
+    def translate(
+        self, card_type, foreign_text, target_language_id, retries=0
+    ):
         # Lazy import to speed things up.
 
         from google_trans_new import google_translator
@@ -132,10 +134,14 @@ class GoogleTranslator(Translator):
         global translator
         if not translator:
             translator = google_translator()
-        source_language_id = self.config().card_type_property("language_id", card_type)
+        source_language_id = self.config().card_type_property(
+            "language_id", card_type
+        )
         try:
             result = translator.translate(
-                foreign_text, lang_tgt=target_language_id, lang_src=source_language_id
+                foreign_text,
+                lang_tgt=target_language_id,
+                lang_src=source_language_id,
             ).strip()
             # result = translator.translate(foreign_text,
             #    dest=target_language_id, src=source_language_id).text.strip()
@@ -146,7 +152,10 @@ class GoogleTranslator(Translator):
                 time.sleep(2)
                 translator = google_translator()
                 return self.translate(
-                    card_type, foreign_text, target_language_id, retries=retries + 1
+                    card_type,
+                    foreign_text,
+                    target_language_id,
+                    retries=retries + 1,
                 )
             else:
                 return None

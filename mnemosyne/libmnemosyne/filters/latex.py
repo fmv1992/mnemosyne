@@ -83,7 +83,9 @@ class Latex(Filter):
                 f.close()
                 in_file = "tmp.tex"
                 self._call_cmd(
-                    self.config()["latex"] + [in_file], "latex_out.txt", in_file
+                    self.config()["latex"] + [in_file],
+                    "latex_out.txt",
+                    in_file,
                 )
                 self._call_cmd(self.config()["dvipng"], "dvipng_out.txt")
                 if not os.path.exists("tmp1.png"):
@@ -106,7 +108,10 @@ class Latex(Filter):
         except sp.TimeoutExpired:
             print("Command timed out: `%s`" % " ".join(cmd))
         except sp.CalledProcessError as err:
-            print("Command `%s` failed with rc=%i" % (" ".join(cmd), err.returncode))
+            print(
+                "Command `%s` failed with rc=%i"
+                % (" ".join(cmd), err.returncode)
+            )
             with open(out_file, "r") as f:
                 print("Command output:")
                 print(f.read())
@@ -147,7 +152,9 @@ class Latex(Filter):
             img_tag = self.process_latex_img_tag(
                 "\\begin{displaymath}" + match.group(1) + "\\end{displaymath}"
             )
-            text = text.replace(match.group(), "<center>" + img_tag + "</center>")
+            text = text.replace(
+                match.group(), "<center>" + img_tag + "</center>"
+            )
         return text
 
 
@@ -165,7 +172,9 @@ class CheckForUpdatedLatexFiles(Hook):
     def is_working(self):
         try:
             p = sp.check_output(
-                self.config()["latex"] + ["-version"], stderr=sp.STDOUT, timeout=5
+                self.config()["latex"] + ["-version"],
+                stderr=sp.STDOUT,
+                timeout=5,
             )
             return True
         except (
@@ -199,12 +208,16 @@ class LatexFilenamesFromData(Hook):
             filenames.add(self.latex.create_latex_img_file(match.group(1)))
         # Process <$>...</$> (equation) tags.
         for match in re2.finditer(data):
-            filenames.add(self.latex.create_latex_img_file("$" + match.group(1) + "$"))
+            filenames.add(
+                self.latex.create_latex_img_file("$" + match.group(1) + "$")
+            )
         # Process <$$>...</$$> (displaymath) tags.
         for match in re3.finditer(data):
             filenames.add(
                 self.latex.create_latex_img_file(
-                    "\\begin{displaymath}" + match.group(1) + "\\end{displaymath}"
+                    "\\begin{displaymath}"
+                    + match.group(1)
+                    + "\\end{displaymath}"
                 )
             )
         # Check if there were Latex problems.

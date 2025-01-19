@@ -102,7 +102,8 @@ class SQLiteMedia(object):
                 new_hashes[filename] = new_hash
         for filename, new_hash in new_hashes.items():
             self.con.execute(
-                "update media set _hash=? where filename=?", (new_hash, filename)
+                "update media set _hash=? where filename=?",
+                (new_hash, filename),
             )
             self.log().edited_media_file(filename)
 
@@ -126,7 +127,9 @@ class SQLiteMedia(object):
     def active_dynamic_media_files(self):
         # Other media files, e.g. latex.
         filenames = set()
-        for hook in self.component_manager.all("hook", "active_dynamic_media_files"):
+        for hook in self.component_manager.all(
+            "hook", "active_dynamic_media_files"
+        ):
             # Prefilter data we need to screen.
             sql_command = """select value from data_for_fact where _fact_id in
                 (select _fact_id from cards where active=1) and ("""
@@ -251,13 +254,17 @@ class SQLiteMedia(object):
             os.remove(expand_path(filename, self.media_dir()))
             self.log().deleted_media_file(filename)
         # Purge empty dirs.
-        for root, dirnames, filenames in os.walk(self.media_dir(), topdown=False):
+        for root, dirnames, filenames in os.walk(
+            self.media_dir(), topdown=False
+        ):
             contracted_root = contract_path(root, self.media_dir())
             if not contracted_root or contracted_root.startswith("_"):
                 continue
             if len(filenames) == 0 and len(dirnames) == 0:
                 os.rmdir(root)
         # Other media files, e.g. latex.
-        for f in self.component_manager.all("hook", "delete_unused_media_files"):
+        for f in self.component_manager.all(
+            "hook", "delete_unused_media_files"
+        ):
             f.run()
         remove_empty_dirs_in(self.media_dir())

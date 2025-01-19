@@ -62,6 +62,8 @@ class Schedule(PlotStatisticsPage):
         self.main_widget().set_progress_update_interval(3)
         self.y = []
         for day in self.x:
-            self.y.append(self.scheduler().card_count_scheduled_n_days_from_now(n=day))
+            self.y.append(
+                self.scheduler().card_count_scheduled_n_days_from_now(n=day)
+            )
             self.main_widget().increase_progress(1)
         self.main_widget().close_progress()

@@ -43,7 +43,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
 
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
+        path = os.path.join(
+            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
+        )
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -59,11 +61,15 @@ class TestMnemosyne2Cards(MnemosyneTest):
             ),
         )
         self.mnemosyne.components.append(("test_mnemosyne2cards", "Widget"))
-        self.mnemosyne.components.append(("test_mnemosyne2cards", "MyMainWidget"))
+        self.mnemosyne.components.append(
+            ("test_mnemosyne2cards", "MyMainWidget")
+        )
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
         from mnemosyne.libmnemosyne.card_types.cloze import ClozePlugin
@@ -97,7 +103,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
             card = self.database().card(_card_id, is_id_internal=True)
             assert card.active == True
             assert card.id
-        self.cards_format().do_import(os.path.abspath("test.cards"), "tag1, tag2")
+        self.cards_format().do_import(
+            os.path.abspath("test.cards"), "tag1, tag2"
+        )
         self.database().save()
         assert len([tag.name for tag in self.database().tags()]) == 4
         assert len([c for c in self.database().cards()]) == 2
@@ -110,7 +118,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
         fact_data = {"f": "question", "b": "answer"}
         card_type = self.card_type_with_id("1")
         card_type = self.controller().clone_card_type(card_type, ("1 clone"))
-        card_type = self.controller().clone_card_type(card_type, ("1 clone cloned"))
+        card_type = self.controller().clone_card_type(
+            card_type, ("1 clone cloned")
+        )
         card_type.extra_data = {1: 1}
         card_type.fact_views[0].extra_data = {2: 2}
         card_1 = self.controller().create_new_cards(
@@ -179,7 +189,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
         assert len(self.card_types()) == 5
         card_type = self.controller().clone_card_type(card_type, ("1 clone"))
         assert len(self.card_types()) == 6
-        card_type = self.controller().clone_card_type(card_type, ("1 clone cloned"))
+        card_type = self.controller().clone_card_type(
+            card_type, ("1 clone cloned")
+        )
         assert len(self.card_types()) == 7
         card_type.extra_data = {1: 1}
         card_type.fact_views[0].extra_data = {2: 2}
@@ -193,7 +205,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
         self.database().new("import.db")
         assert len(self.card_types()) == 5
         card_type = self.card_type_with_id("1")
-        card_type = self.controller().clone_card_type(card_type, ("1 clone cloned"))
+        card_type = self.controller().clone_card_type(
+            card_type, ("1 clone cloned")
+        )
 
         assert len(self.card_types()) == 6
         self.cards_format().do_import(os.path.abspath("test.cards"))
@@ -207,7 +221,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
         assert len(self.card_types()) == 5
         card_type = self.controller().clone_card_type(card_type, ("1 clone"))
         assert len(self.card_types()) == 6
-        card_type = self.controller().clone_card_type(card_type, ("1 clone cloned"))
+        card_type = self.controller().clone_card_type(
+            card_type, ("1 clone cloned")
+        )
         assert len(self.card_types()) == 7
         card_type.extra_data = {1: 1}
         card_type.fact_views[0].extra_data = {2: 2}
@@ -232,10 +248,14 @@ class TestMnemosyne2Cards(MnemosyneTest):
         assert "renamed" in [card_type.name for card_type in self.card_types()]
         self.cards_format().do_import(os.path.abspath("test.cards"))
         assert len(self.card_types()) == 7
-        assert "renamed" not in [card_type.name for card_type in self.card_types()]
+        assert "renamed" not in [
+            card_type.name for card_type in self.card_types()
+        ]
         self.cards_format().do_import(os.path.abspath("test.cards"))
         assert len(self.card_types()) == 7
-        assert "renamed" not in [card_type.name for card_type in self.card_types()]
+        assert "renamed" not in [
+            card_type.name for card_type in self.card_types()
+        ]
 
     def test_update_fact(self):
         fact_data = {"f": "question", "b": "answer"}
@@ -281,7 +301,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
         self.cards_format().do_export(os.path.abspath("test.cards"))
-        card.tags = set([self.database().get_or_create_tag_with_name("new_tag")])
+        card.tags = set(
+            [self.database().get_or_create_tag_with_name("new_tag")]
+        )
         self.database().update_card(card)
         self.cards_format().do_export(os.path.abspath("test2.cards"))
         self.database().new("import.db")
@@ -309,7 +331,9 @@ class TestMnemosyne2Cards(MnemosyneTest):
             fact_data, card_type, grade=-1, tag_names=["default"]
         )[0]
         self.cards_format().do_export(os.path.abspath("test.cards"))
-        card.tags = set([self.database().get_or_create_tag_with_name("new_tag")])
+        card.tags = set(
+            [self.database().get_or_create_tag_with_name("new_tag")]
+        )
         self.database().new("import.db")
         self.cards_format().do_import(os.path.abspath("test.cards"))
         _card_id, _fact_id = next(self.database().cards())
@@ -317,14 +341,21 @@ class TestMnemosyne2Cards(MnemosyneTest):
 
     def test_media(self):
         filename_a = os.path.join(
-            os.path.abspath("dot_test"), "default.db_media", chr(0x628) + "a.ogg"
+            os.path.abspath("dot_test"),
+            "default.db_media",
+            chr(0x628) + "a.ogg",
         )
         f = open(filename_a, "w")
         print("a", file=f)
         f.close()
-        os.mkdir(os.path.join(os.path.abspath("dot_test"), "default.db_media", "b"))
+        os.mkdir(
+            os.path.join(os.path.abspath("dot_test"), "default.db_media", "b")
+        )
         filename_b = os.path.join(
-            os.path.abspath("dot_test"), "default.db_media", "b", chr(0x628) + "b.ogg"
+            os.path.abspath("dot_test"),
+            "default.db_media",
+            "b",
+            chr(0x628) + "b.ogg",
         )
         f = open(filename_b, "w")
         print("b", file=f)
@@ -346,19 +377,28 @@ class TestMnemosyne2Cards(MnemosyneTest):
             os.path.join("dot_test", "import.db_media", chr(0x628) + "a.ogg")
         )
         assert os.path.exists(
-            os.path.join("dot_test", "import.db_media", "b", chr(0x628) + "b.ogg")
+            os.path.join(
+                "dot_test", "import.db_media", "b", chr(0x628) + "b.ogg"
+            )
         )
 
     def test_missing_media(self):
         filename_a = os.path.join(
-            os.path.abspath("dot_test"), "default.db_media", chr(0x628) + "a.ogg"
+            os.path.abspath("dot_test"),
+            "default.db_media",
+            chr(0x628) + "a.ogg",
         )
         f = open(filename_a, "w")
         print("a", file=f)
         f.close()
-        os.mkdir(os.path.join(os.path.abspath("dot_test"), "default.db_media", "b"))
+        os.mkdir(
+            os.path.join(os.path.abspath("dot_test"), "default.db_media", "b")
+        )
         filename_b = os.path.join(
-            os.path.abspath("dot_test"), "default.db_media", "b", chr(0x628) + "b.ogg"
+            os.path.abspath("dot_test"),
+            "default.db_media",
+            "b",
+            chr(0x628) + "b.ogg",
         )
         f = open(filename_b, "w")
         print("b", file=f)

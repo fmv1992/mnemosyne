@@ -46,7 +46,9 @@ class TagDelegate(QtWidgets.QStyledItemDelegate):
         #  http://www.qtforum.org/article/33631/qlineedit-the-signal-editingfinished-is-emitted-twice.html
         #  https://bugreports.qt-project.org/browse/QTBUG-40
 
-        editor = QtWidgets.QStyledItemDelegate.createEditor(self, parent, option, index)
+        editor = QtWidgets.QStyledItemDelegate.createEditor(
+            self, parent, option, index
+        )
         editor.returnPressed.connect(self.commit_and_close_editor)
         return editor
 
@@ -139,7 +141,10 @@ class TagsTreeWdgt(Component, QtWidgets.QWidget):
     def keyPressEvent(self, event):
         if event.key() in [QtCore.Qt.Key.Key_Enter, QtCore.Qt.Key.Key_Return]:
             self.menu_rename()
-        elif event.key() in [QtCore.Qt.Key.Key_Delete, QtCore.Qt.Key.Key_Backspace]:
+        elif event.key() in [
+            QtCore.Qt.Key.Key_Delete,
+            QtCore.Qt.Key.Key_Backspace,
+        ]:
             self.menu_delete()
         else:
             QtWidgets.QWidget.keyPressEvent(self, event)
@@ -160,7 +165,9 @@ class TagsTreeWdgt(Component, QtWidgets.QWidget):
             def __init__(self, old_tag_name):
                 super().__init__()
                 self.setupUi(self)
-                self.tag_name.setText(old_tag_name.replace("::" + _("Untagged"), ""))
+                self.tag_name.setText(
+                    old_tag_name.replace("::" + _("Untagged"), "")
+                )
 
         old_tag_name = nodes[0]
         dlg = RenameDlg(old_tag_name)
@@ -176,8 +183,12 @@ class TagsTreeWdgt(Component, QtWidgets.QWidget):
                 "Delete these tags? Cards with these tags will not be deleted."
             )
         else:
-            question = _("Delete this tag? Cards with this tag will not be deleted.")
-        answer = self.main_widget().show_question(question, _("&OK"), _("&Cancel"), "")
+            question = _(
+                "Delete this tag? Cards with this tag will not be deleted."
+            )
+        answer = self.main_widget().show_question(
+            question, _("&OK"), _("&Cancel"), ""
+        )
         if answer == 1:  # Cancel.
             return
         self.delete_nodes(nodes)
@@ -188,7 +199,9 @@ class TagsTreeWdgt(Component, QtWidgets.QWidget):
                 self.tag_tree.display_name_for_node[node],
                 self.tag_tree.card_count_for_node[node],
             )
-            node_item = QtWidgets.QTreeWidgetItem(qt_parent, [node_name, node], 0)
+            node_item = QtWidgets.QTreeWidgetItem(
+                qt_parent, [node_name, node], 0
+            )
             node_item.setFlags(
                 node_item.flags()
                 | QtCore.Qt.ItemFlag.ItemIsUserCheckable
@@ -231,7 +244,9 @@ class TagsTreeWdgt(Component, QtWidgets.QWidget):
             self.tag_tree.card_count_for_node[node],
         )
         root = self.tag_tree[node]
-        root_item = QtWidgets.QTreeWidgetItem(self.tree_wdgt, [node_name, node], 0)
+        root_item = QtWidgets.QTreeWidgetItem(
+            self.tree_wdgt, [node_name, node], 0
+        )
         root_item.setFlags(
             root_item.flags()
             | QtCore.Qt.ItemFlag.ItemIsUserCheckable
@@ -275,7 +290,10 @@ class TagsTreeWdgt(Component, QtWidgets.QWidget):
     def checked_to_active_tags_in_criterion(self, criterion):
         for i in range(len(self.node_items)):
             tag = self.tag_for_node_item[i]
-            if self.node_items[i].checkState(0) == QtCore.Qt.CheckState.Checked:
+            if (
+                self.node_items[i].checkState(0)
+                == QtCore.Qt.CheckState.Checked
+            ):
                 criterion._tag_ids_active.add(tag._id)
         criterion._tag_ids_forbidden = set()
         return criterion
@@ -283,15 +301,23 @@ class TagsTreeWdgt(Component, QtWidgets.QWidget):
     def checked_to_forbidden_tags_in_criterion(self, criterion):
         for i in range(len(self.node_items)):
             tag = self.tag_for_node_item[i]
-            if self.node_items[i].checkState(0) == QtCore.Qt.CheckState.Checked:
+            if (
+                self.node_items[i].checkState(0)
+                == QtCore.Qt.CheckState.Checked
+            ):
                 criterion._tag_ids_forbidden.add(tag._id)
-        criterion._tag_ids_active = set([tag._id for tag in self.tag_for_node_item])
+        criterion._tag_ids_active = set(
+            [tag._id for tag in self.tag_for_node_item]
+        )
         return criterion
 
     def unchecked_to_forbidden_tags_in_criterion(self, criterion):
         for i in range(len(self.node_items)):
             tag = self.tag_for_node_item[i]
-            if self.node_items[i].checkState(0) == QtCore.Qt.CheckState.Unchecked:
+            if (
+                self.node_items[i].checkState(0)
+                == QtCore.Qt.CheckState.Unchecked
+            ):
                 criterion._tag_ids_forbidden.add(tag._id)
         return criterion
 

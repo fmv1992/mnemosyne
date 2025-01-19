@@ -91,12 +91,16 @@ class Card(CompareOnId):
         self.ret_reps_since_lapse = 0
 
     def question(self, render_chain="default", **render_args):
-        return self.card_type.render_question(self, render_chain, **render_args)
+        return self.card_type.render_question(
+            self, render_chain, **render_args
+        )
 
     def answer(self, render_chain="default", **render_args):
         return self.card_type.render_answer(self, render_chain, **render_args)
 
     def tag_string(self):
-        tag_names = [tag.name for tag in self.tags if tag.name != "__UNTAGGED__"]
+        tag_names = [
+            tag.name for tag in self.tags if tag.name != "__UNTAGGED__"
+        ]
         sorted_tag_names = sorted(tag_names, key=numeric_string_cmp_key)
         return ", ".join(sorted_tag_names)

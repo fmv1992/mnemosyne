@@ -94,7 +94,9 @@ def langDir():
 
 
 def setLang(lang, local=True):
-    trans = gettext.translation("anki", langDir(), languages=[lang], fallback=True)
+    trans = gettext.translation(
+        "anki", langDir(), languages=[lang], fallback=True
+    )
     if local:
         threadLocal.currentLang = lang
         threadLocal.currentTranslation = trans

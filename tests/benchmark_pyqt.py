@@ -27,7 +27,11 @@ def startup():
     parser = OptionParser()
     parser.usage = "%prog [<database_file>]"
     parser.add_option(
-        "-d", "--datadir", dest="data_dir", help=_("data directory"), default=None
+        "-d",
+        "--datadir",
+        dest="data_dir",
+        help=_("data directory"),
+        default=None,
     )
     (options, args) = parser.parse_args()
 
@@ -73,15 +77,21 @@ def startup():
         0, ("mnemosyne.libmnemosyne.gui_translator", "GetTextGuiTranslator")
     )
     mnemosyne.components.append(("mnemosyne.pyqt_ui.main_wdgt", "MainWdgt"))
-    mnemosyne.components.append(("mnemosyne.pyqt_ui.review_wdgt", "ReviewWdgt"))
+    mnemosyne.components.append(
+        ("mnemosyne.pyqt_ui.review_wdgt", "ReviewWdgt")
+    )
     mnemosyne.components.append(
         ("mnemosyne.pyqt_ui.configuration", "PyQtConfiguration")
     )
     mnemosyne.components.append(
         ("mnemosyne.pyqt_ui.pyqt_render_chain", "PyQtRenderChain")
     )
-    mnemosyne.components.append(("mnemosyne.pyqt_ui.add_cards_dlg", "AddCardsDlg"))
-    mnemosyne.components.append(("mnemosyne.pyqt_ui.edit_card_dlg", "EditCardDlg"))
+    mnemosyne.components.append(
+        ("mnemosyne.pyqt_ui.add_cards_dlg", "AddCardsDlg")
+    )
+    mnemosyne.components.append(
+        ("mnemosyne.pyqt_ui.edit_card_dlg", "EditCardDlg")
+    )
     mnemosyne.components.append(
         ("mnemosyne.pyqt_ui.browse_cards_dlg", "BrowseCardsDlg")
     )
@@ -89,7 +99,10 @@ def startup():
         ("mnemosyne.pyqt_ui.activate_cards_dlg", "ActivateCardsDlg")
     )
     mnemosyne.components.append(
-        ("mnemosyne.pyqt_ui.cloned_card_types_list_dlg", "ClonedCardTypesListDlg")
+        (
+            "mnemosyne.pyqt_ui.cloned_card_types_list_dlg",
+            "ClonedCardTypesListDlg",
+        )
     )
     mnemosyne.components.append(
         ("mnemosyne.pyqt_ui.card_appearance_dlg", "CardAppearanceDlg")
@@ -97,7 +110,9 @@ def startup():
     mnemosyne.components.append(
         ("mnemosyne.pyqt_ui.activate_plugins_dlg", "ActivatePluginsDlg")
     )
-    mnemosyne.components.append(("mnemosyne.pyqt_ui.statistics_dlg", "StatisticsDlg"))
+    mnemosyne.components.append(
+        ("mnemosyne.pyqt_ui.statistics_dlg", "StatisticsDlg")
+    )
     mnemosyne.components.append(
         ("mnemosyne.pyqt_ui.card_type_wdgt_generic", "GenericCardTypeWdgt")
     )
@@ -126,7 +141,9 @@ def startup():
         ("mnemosyne.pyqt_ui.configuration_dlg", "ConfigurationDlg")
     )
     mnemosyne.components.append(("mnemosyne.pyqt_ui.sync_dlg", "SyncDlg"))
-    mnemosyne.components.append(("mnemosyne.pyqt_ui.qt_sync_server", "QtSyncServer"))
+    mnemosyne.components.append(
+        ("mnemosyne.pyqt_ui.qt_sync_server", "QtSyncServer")
+    )
     mnemosyne.components.append(
         ("mnemosyne.pyqt_ui.configuration_wdgt_main", "ConfigurationWdgtMain")
     )

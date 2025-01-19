@@ -45,8 +45,12 @@ class TestSM7Import(MnemosyneTest):
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.components.append(("test_supermemo_7_text_import", "Widget"))
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.components.append(
+            ("test_supermemo_7_text_import", "Widget")
+        )
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def sm7_importer(self):
@@ -62,7 +66,9 @@ class TestSM7Import(MnemosyneTest):
         assert len([c for c in self.database().cards()]) == 4
 
     def teardown_method(self):
-        filename = os.path.join(os.getcwd(), "dot_test", "default.db_media", "a.png")
+        filename = os.path.join(
+            os.getcwd(), "dot_test", "default.db_media", "a.png"
+        )
         if os.path.exists(filename):
             os.remove(filename)
         filename = os.path.join(os.getcwd(), "dot_test", "test.txt")

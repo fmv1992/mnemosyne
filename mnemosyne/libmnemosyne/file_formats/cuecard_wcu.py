@@ -6,7 +6,9 @@ from xml.etree import cElementTree
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
+    MediaPreprocessor,
+)
 
 
 class CuecardWcu(FileFormat, MediaPreprocessor):
@@ -36,7 +38,10 @@ class CuecardWcu(FileFormat, MediaPreprocessor):
             if tag_name.strip()
         ]
         for element in tree.getroot().findall("Card"):
-            fact_data = {"f": element.attrib["Question"], "b": element.attrib["Answer"]}
+            fact_data = {
+                "f": element.attrib["Question"],
+                "b": element.attrib["Answer"],
+            }
             self.preprocess_media(fact_data, tag_names)
             card = self.controller().create_new_cards(
                 fact_data,

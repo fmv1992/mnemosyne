@@ -19,7 +19,8 @@ class AboutDlg(QtWidgets.QDialog, AboutDialog, Ui_AboutDlg):
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         # Note: the svg file does not seem to work under windows.
         # watermark = QtGui.QPixmap("pixmaps/mnemosyne.svg").\

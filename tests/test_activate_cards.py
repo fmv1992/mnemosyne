@@ -93,7 +93,10 @@ class TestActivateCards(MnemosyneTest):
 
         fact_data = {"f": "question3", "b": "answer3"}
         self.controller().create_new_cards(
-            fact_data, card_type_2, grade=-1, tag_names=["default3", "default4"]
+            fact_data,
+            card_type_2,
+            grade=-1,
+            tag_names=["default3", "default4"],
         )
         c.deactivated_card_type_fact_view_ids = set()
         c._tag_ids_active = set(
@@ -324,7 +327,8 @@ class TestActivateCards(MnemosyneTest):
         assert self.database().active_count() == 1
 
         self.database().add_tag_to_cards_with_internal_ids(
-            self.database().get_or_create_tag_with_name("forbidden"), [card._id]
+            self.database().get_or_create_tag_with_name("forbidden"),
+            [card._id],
         )
 
         assert self.database().active_count() == 0
@@ -354,7 +358,8 @@ class TestActivateCards(MnemosyneTest):
         assert self.database().active_count() == 0
 
         self.database().remove_tag_from_cards_with_internal_ids(
-            self.database().get_or_create_tag_with_name("forbidden"), [card._id]
+            self.database().get_or_create_tag_with_name("forbidden"),
+            [card._id],
         )
 
         assert self.database().active_count() == 1
@@ -467,7 +472,9 @@ class TestActivateCards(MnemosyneTest):
         c = DefaultCriterion(self.mnemosyne.component_manager)
         for card_type in self.card_types():
             for fact_view in card_type.fact_views:
-                c.deactivated_card_type_fact_view_ids.add((card_type.id, fact_view.id))
+                c.deactivated_card_type_fact_view_ids.add(
+                    (card_type.id, fact_view.id)
+                )
         c._tag_ids_active = set([])
         c._tag_ids_forbidden = set()
         assert c.is_empty() == True

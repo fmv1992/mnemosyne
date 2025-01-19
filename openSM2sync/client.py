@@ -133,7 +133,9 @@ class Client(Partner):
             # Do a full sync after either the client or the server has restored
             # from a backup.
             if (
-                self.database.is_sync_reset_needed(self.server_info["machine_id"])
+                self.database.is_sync_reset_needed(
+                    self.server_info["machine_id"]
+                )
                 or self.server_info["sync_reset_needed"] == True
             ):
                 self.resolve_conflicts(restored_from_backup=True)
@@ -200,7 +202,9 @@ class Client(Partner):
             if serious and self.do_backup:
                 # Only serious errors should result in the need for a full
                 # sync next time.
-                self.ui.show_error("Sync failed, the next sync will be a full sync.")
+                self.ui.show_error(
+                    "Sync failed, the next sync will be a full sync."
+                )
                 if backup_file:
                     self.database.restore(backup_file)
         finally:
@@ -313,7 +317,8 @@ class Client(Partner):
             self.con.request(
                 "PUT",
                 self.url("/login"),
-                self.text_format.repr_partner_info(client_info).encode("utf-8") + b"\n",
+                self.text_format.repr_partner_info(client_info).encode("utf-8")
+                + b"\n",
             )
             response = self.con.getresponse()
         except socket.gaierror:
@@ -324,11 +329,15 @@ class Client(Partner):
             raise SyncError("Socket error: " + str(e))
         except Exception as e:
             print(e)
-            raise SyncError("Could not connect to server!\n\n" + traceback_string())
+            raise SyncError(
+                "Could not connect to server!\n\n" + traceback_string()
+            )
         # Check for errors, but don't force a restore from backup if we can't
         # login.
         try:
-            self._check_response_for_errors(response, can_consume_response=False)
+            self._check_response_for_errors(
+                response, can_consume_response=False
+            )
         except SeriousSyncError:
             raise SyncError("Logging in: server error.")
         response = str(response.read(), "utf-8")
@@ -360,16 +369,23 @@ class Client(Partner):
                 + "The first sync should happen on an empty database.\n"
                 + "Backup then delete the local database and try again."
             )
-        if self.server_info["database_version"] != client_info["database_version"]:
+        if (
+            self.server_info["database_version"]
+            != client_info["database_version"]
+        ):
             raise SyncError(
                 "Error: database version mismatch.\n"
                 + "Make sure you are running the latest Mnemosyne version on both devices involved in the sync."
             )
-        self.database.create_if_needed_partnership_with(self.server_info["machine_id"])
+        self.database.create_if_needed_partnership_with(
+            self.server_info["machine_id"]
+        )
         self.database.merge_partners(self.server_info["partners"])
 
     def get_server_check_media_files(self):
-        self.ui.set_progress_text("Asking server to check for updated media files...")
+        self.ui.set_progress_text(
+            "Asking server to check for updated media files..."
+        )
         self.request_connection()
         self.con.request(
             "GET",
@@ -426,7 +442,9 @@ class Client(Partner):
                 )
                 buffer = ""
                 response = self.con.getresponse()
-                self._check_response_for_errors(response, can_consume_response=False)
+                self._check_response_for_errors(
+                    response, can_consume_response=False
+                )
                 response = response.read()
                 message, traceback = self.text_format.parse_message(response)
                 message = message.lower()
@@ -520,7 +538,9 @@ class Client(Partner):
         self.database.skip_science_log()
         # Since we start from a new database, we need to create the
         # partnership again.
-        self.database.create_if_needed_partnership_with(self.server_info["machine_id"])
+        self.database.create_if_needed_partnership_with(
+            self.server_info["machine_id"]
+        )
 
     def get_server_entire_database_binary(self):
         self.ui.set_progress_text("Getting entire binary database...")
@@ -539,7 +559,9 @@ class Client(Partner):
         file_size = int(response.getheader("mnemosyne-content-length"))
         self.download_binary_file(response, filename, file_size)
         self.database.load(filename)
-        self.database.create_if_needed_partnership_with(self.server_info["machine_id"])
+        self.database.create_if_needed_partnership_with(
+            self.server_info["machine_id"]
+        )
         self.database.remove_partnership_with(self.machine_id)
 
     def get_server_generate_log_entries_for_settings(self):
@@ -623,7 +645,9 @@ class Client(Partner):
             file_size = os.path.getsize(full_path)
             self.con.putheader("content-length", file_size)
             self.con.endheaders()
-            for buffer in self.stream_binary_file(full_path, progress_bar=False):
+            for buffer in self.stream_binary_file(
+                full_path, progress_bar=False
+            ):
                 self.con.send(buffer)
                 self.ui.increase_progress(len(buffer))
             self._check_response_for_errors(self.con.getresponse())
@@ -656,7 +680,9 @@ class Client(Partner):
         self.ui.close_progress()
 
     def get_server_archive_files(self):
-        self.ui.set_progress_text("Getting list of archive files to download...")
+        self.ui.set_progress_text(
+            "Getting list of archive files to download..."
+        )
         # Get list of names of all archive files to download.
         # Filenames are relative to the data_dir.
         archive_url = "/server_archive_filenames?session_token=%s" % (
@@ -695,14 +721,18 @@ class Client(Partner):
                 ),
             )
             response = self.con.getresponse()
-            self._check_response_for_errors(response, can_consume_response=False)
+            self._check_response_for_errors(
+                response, can_consume_response=False
+            )
             file_size = int(response.getheader("mnemosyne-content-length"))
             # Make sure a malicious server cannot overwrite anything outside
             # of the media directory.
             filename = filename.replace("../", "").replace("..\\", "")
             filename = filename.replace("/..", "").replace("\\..", "")
             filename = os.path.join(self.database.data_dir(), filename)
-            self.download_binary_file(response, filename, file_size, progress_bar=False)
+            self.download_binary_file(
+                response, filename, file_size, progress_bar=False
+            )
             self.ui.increase_progress(file_size)
         self.ui.set_progress_value(total_size)
 
@@ -723,10 +753,13 @@ class Client(Partner):
         self.con.request(
             "GET",
             self.url(
-                "/sync_finish?session_token=%s" % (self.server_info["session_token"],)
+                "/sync_finish?session_token=%s"
+                % (self.server_info["session_token"],)
             ),
             headers={"connection": "close"},
         )
         self._check_response_for_errors(self.con.getresponse())
         # Only update after we are sure there have been no errors.
-        self.database.update_last_log_index_synced_for(self.server_info["machine_id"])
+        self.database.update_last_log_index_synced_for(
+            self.server_info["machine_id"]
+        )

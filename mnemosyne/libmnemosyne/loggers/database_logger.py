@@ -19,7 +19,10 @@ class DatabaseLogger(Logger):
             ts = time.time()
             td = datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)
             utc_offset = int(
-                (td.microseconds + (td.seconds + td.days * 24.0 * 3600) * 10**6)
+                (
+                    td.microseconds
+                    + (td.seconds + td.days * 24.0 * 3600) * 10**6
+                )
                 / 10**6
                 / 60
                 / 60
@@ -94,7 +97,9 @@ class DatabaseLogger(Logger):
     def deleted_card(self, card):
         self.database().log_deleted_card(self.timestamp, card.id)
 
-    def repetition(self, card, scheduled_interval, actual_interval, thinking_time):
+    def repetition(
+        self, card, scheduled_interval, actual_interval, thinking_time
+    ):
         self.database().log_repetition(
             self.timestamp,
             card.id,

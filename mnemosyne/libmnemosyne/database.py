@@ -299,7 +299,9 @@ class Database(Component):
     # Extra queries for language analysis.
     #
 
-    def known_recognition_questions_count_from_card_types_ids(self, card_type_ids):
+    def known_recognition_questions_count_from_card_types_ids(
+        self, card_type_ids
+    ):
         raise NotImplementedError
 
     def known_recognition_questions_from_card_types_ids(self, card_type_ids):

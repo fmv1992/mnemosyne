@@ -44,7 +44,9 @@ class TestController(MnemosyneTest):
 
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
+        path = os.path.join(
+            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
+        )
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -72,25 +74,43 @@ class TestController(MnemosyneTest):
             ("mnemosyne.libmnemosyne.ui_components.dialogs", "EditCardDialog")
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "BrowseCardsDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "BrowseCardsDialog",
+            )
         )
         self.mnemosyne.components.append(
             ("mnemosyne.libmnemosyne.ui_components.dialogs", "SyncDialog")
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ManagePluginsDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ManagePluginsDialog",
+            )
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ManageCardTypesDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ManageCardTypesDialog",
+            )
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "StatisticsDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "StatisticsDialog",
+            )
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ConfigurationDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ConfigurationDialog",
+            )
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "ActivateCardsDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "ActivateCardsDialog",
+            )
         )
         self.mnemosyne.components.append(
             ("mnemosyne.libmnemosyne.ui_components.dialogs", "ImportDialog")
@@ -99,16 +119,24 @@ class TestController(MnemosyneTest):
             ("mnemosyne.libmnemosyne.ui_components.dialogs", "TipDialog")
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "GettingStartedDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "GettingStartedDialog",
+            )
         )
         self.mnemosyne.components.append(
             ("mnemosyne.libmnemosyne.ui_components.dialogs", "AboutDialog")
         )
         self.mnemosyne.components.append(
-            ("mnemosyne.libmnemosyne.ui_components.dialogs", "CompactDatabaseDialog")
+            (
+                "mnemosyne.libmnemosyne.ui_components.dialogs",
+                "CompactDatabaseDialog",
+            )
         )
 
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def test_coverage(self):
@@ -197,9 +225,13 @@ class TestController(MnemosyneTest):
     def test_delete_current(self):
         card_type = self.card_type_with_id("1")
         fact_data = {"f": "1", "b": "1"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         fact_data = {"f": "2", "b": "2"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         self.review_controller().show_new_question()
         self.review_controller().grade_answer(0)
         self.review_controller().grade_answer(0)
@@ -211,9 +243,13 @@ class TestController(MnemosyneTest):
     def test_delete_current_2(self):
         card_type = self.card_type_with_id("1")
         fact_data = {"f": "1", "b": "1"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         fact_data = {"f": "2", "b": "2"}
-        self.controller().create_new_cards(fact_data, card_type, grade=-1, tag_names=[])
+        self.controller().create_new_cards(
+            fact_data, card_type, grade=-1, tag_names=[]
+        )
         self.review_controller().show_new_question()
         self.review_controller().grade_answer(0)
         self.review_controller().grade_answer(0)
@@ -226,9 +262,13 @@ class TestController(MnemosyneTest):
     def test_retain_only_child_tags(self):
         c = self.controller()
         assert c._retain_only_child_tags(["a"]) == ["a"]
-        assert sorted(c._retain_only_child_tags(["a", "b"])) == sorted(["a", "b"])
+        assert sorted(c._retain_only_child_tags(["a", "b"])) == sorted(
+            ["a", "b"]
+        )
         assert c._retain_only_child_tags(["a", "a::b"]) == ["a::b"]
-        assert c._retain_only_child_tags(["a", "a::b", "a::b::c"]) == ["a::b::c"]
+        assert c._retain_only_child_tags(["a", "a::b", "a::b::c"]) == [
+            "a::b::c"
+        ]
         assert c._retain_only_child_tags(["a", "a::b::c"]) == ["a::b::c"]
         assert c._retain_only_child_tags(["a::b", "a::b::c"]) == ["a::b::c"]
         assert c._retain_only_child_tags(["a::b::c"]) == ["a::b::c"]

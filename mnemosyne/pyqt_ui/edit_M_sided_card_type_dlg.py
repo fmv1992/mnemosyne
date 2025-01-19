@@ -5,9 +5,15 @@
 from PyQt6 import QtCore, QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
-from mnemosyne.pyqt_ui.ui_edit_M_sided_card_type_dlg import Ui_EditMSidedCardTypeDlg
-from mnemosyne.pyqt_ui.edit_M_sided_card_template_wdgt import EditMSidedCardTemplateWdgt
-from mnemosyne.libmnemosyne.ui_components.dialogs import EditMSidedCardTypeDialog
+from mnemosyne.pyqt_ui.ui_edit_M_sided_card_type_dlg import (
+    Ui_EditMSidedCardTypeDlg,
+)
+from mnemosyne.pyqt_ui.edit_M_sided_card_template_wdgt import (
+    EditMSidedCardTemplateWdgt,
+)
+from mnemosyne.libmnemosyne.ui_components.dialogs import (
+    EditMSidedCardTypeDialog,
+)
 
 
 class EditMSidedCardTypeDlg(
@@ -21,7 +27,8 @@ class EditMSidedCardTypeDlg(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.card_type = card_type
         for fact_view in self.card_type.fact_views:

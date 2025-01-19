@@ -3,7 +3,9 @@
 #
 
 from mnemosyne.libmnemosyne.render_chain import RenderChain
-from mnemosyne.libmnemosyne.renderers.html_css_card_browser import HtmlCssCardBrowser
+from mnemosyne.libmnemosyne.renderers.html_css_card_browser import (
+    HtmlCssCardBrowser,
+)
 from mnemosyne.libmnemosyne.filters.escape_to_html_for_card_browser import (
     EscapeToHtmlForCardBrowser,
 )

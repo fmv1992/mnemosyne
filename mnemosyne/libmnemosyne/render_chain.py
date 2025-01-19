@@ -179,4 +179,6 @@ class RenderChain(Component):
                     decorators[fact_key]
                 ).safe_substitute(fact_data)
         renderer = self.renderer_for_card_type(card.card_type)
-        return renderer.render(fact_data, fact_keys, card.card_type, **render_args)
+        return renderer.render(
+            fact_data, fact_keys, card.card_type, **render_args
+        )

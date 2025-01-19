@@ -53,7 +53,9 @@ class Plugin(Component):
         ):
             self.main_widget().show_error(
                 self.name
-                + _(": This plugin needs to be upgraded. Please contact its author.")
+                + _(
+                    ": This plugin needs to be upgraded. Please contact its author."
+                )
             )
             return
         # Don't activate a plugin twice.
@@ -86,7 +88,9 @@ class Plugin(Component):
                 gui_class = getattr(
                     importlib.import_module(gui_module_name), gui_class_name
                 )
-                self.component_manager.add_gui_to_component(component_name, gui_class)
+                self.component_manager.add_gui_to_component(
+                    component_name, gui_class
+                )
         # Make necessary side effects happen.
         for component in self.components:
             if component.used_for == "configuration_defaults":
@@ -118,7 +122,9 @@ class Plugin(Component):
                     if self.database().has_clones(component):
                         can_deactivate = False
                     for card_type in self.database().card_types_in_use():
-                        if issubclass(card_type.__class__, component.__class__):
+                        if issubclass(
+                            card_type.__class__, component.__class__
+                        ):
                             can_deactivate = False
                             break
                     if can_deactivate == False:

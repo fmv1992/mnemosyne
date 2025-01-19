@@ -36,7 +36,10 @@ class XMLFormat(object):
         for key, value in list(info.items()):
             if key.lower() == "partners":
                 if value:
-                    repr_info += "%s=%s " % (key, saxutils.quoteattr(",".join(value)))
+                    repr_info += "%s=%s " % (
+                        key,
+                        saxutils.quoteattr(",".join(value)),
+                    )
             else:
                 if type(value) != str and type(value) != str:
                     value = repr(value)

@@ -55,7 +55,9 @@ class TagTree(Component, dict):
                     other_tag_name.startswith(tag.name + "::")
                     and other_tag_name != tag.name
                 ):
-                    preprocessed_tag_name_for[tag] = tag.name + "::" + _("Untagged")
+                    preprocessed_tag_name_for[tag] = (
+                        tag.name + "::" + _("Untagged")
+                    )
                     break
         # Build the actual tag tree.
         for tag in tags:
@@ -82,7 +84,9 @@ class TagTree(Component, dict):
             if node == "__ALL__":
                 self.card_count_for_node[node] = self.database().card_count()
             else:
-                self.card_count_for_node[node] = self.database().card_count_for_tags(
+                self.card_count_for_node[
+                    node
+                ] = self.database().card_count_for_tags(
                     self.tags_in_subtree(node), active_only=False
                 )
 

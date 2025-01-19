@@ -36,9 +36,13 @@ class QAOptimalSplit(object):
         # determine the optimal split between the question and the answer
         # pane.
         self.question_preview = QtWebEngineWidgets.QWebEngineView()
-        self.question_preview.loadFinished.connect(self.question_preview_load_finished)
+        self.question_preview.loadFinished.connect(
+            self.question_preview_load_finished
+        )
         self.answer_preview = QtWebEngineWidgets.QWebEngineView()
-        self.answer_preview.loadFinished.connect(self.answer_preview_load_finished)
+        self.answer_preview.loadFinished.connect(
+            self.answer_preview_load_finished
+        )
         # Calculate an offset to use in the stretching factor of the boxes,
         # e.g. question_box = question_label + question.
         self.stretch_offset = self.question_label.size().height()
@@ -260,7 +264,9 @@ class QAOptimalSplit(object):
         self.answer.repaint()
 
 
-class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt):
+class ReviewWdgt(
+    QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt
+):
 
     auto_focus_grades = True
     number_keys_show_answer = True
@@ -365,13 +371,18 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
             event.key() == QtCore.Qt.Key.Key_R
             and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
         ):
-            self.review_controller().update_dialog(redraw_all=True)  # Replay media.
+            self.review_controller().update_dialog(
+                redraw_all=True
+            )  # Replay media.
         # QtWebengine issue.
         # elif event.key() == QtCore.Qt.Key.Key_C and \
         #    event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier:
         #    self.copy()
         # Work around Qt issue.
-        elif event.key() in [QtCore.Qt.Key.Key_Backspace, QtCore.Qt.Key.Key_Delete]:
+        elif event.key() in [
+            QtCore.Qt.Key.Key_Backspace,
+            QtCore.Qt.Key.Key_Delete,
+        ]:
             self.controller().delete_current_card()
         else:
             QtWidgets.QWidget.keyPressEvent(self, event)
@@ -541,7 +552,10 @@ class ReviewWdgt(QtWidgets.QWidget, QAOptimalSplit, ReviewWidget, Ui_ReviewWdgt)
         if stop is None:
             stop = 999999
         self.media_queue.append((filename, start, stop))
-        if not self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+        if (
+            not self.player.playbackState()
+            == QMediaPlayer.PlaybackState.PlayingState
+        ):
             self.play_next_file()
 
     def play_next_file(self):

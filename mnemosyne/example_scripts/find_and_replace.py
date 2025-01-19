@@ -25,6 +25,10 @@ for _card_id, _fact_id in mnemosyne.database().cards():
             changed = True
     if changed:
         mnemosyne.controller().edit_card_and_sisters(
-            card, new_fact_data, card.card_type, [tag.name for tag in card.tags], {}
+            card,
+            new_fact_data,
+            card.card_type,
+            [tag.name for tag in card.tags],
+            {},
         )
 mnemosyne.finalise()

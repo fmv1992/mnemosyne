@@ -46,7 +46,9 @@ class HtmlCss(Renderer):
         else:
             css += "margin-left: auto; margin-right: auto; "
         # Background colours.
-        colour = self.config().card_type_property("background_colour", card_type)
+        colour = self.config().card_type_property(
+            "background_colour", card_type
+        )
         if colour:
             colour_string = ("%X" % colour)[2:]  # Strip alpha.
             css += "background-color: #%s; " % colour_string
@@ -76,19 +78,54 @@ class HtmlCss(Renderer):
             if font_string:
                 style = ""
                 if font_string.count(",") == 9:
-                    family, size, x, x, w, i, u, s, x, x = font_string.split(",")
+                    family, size, x, x, w, i, u, s, x, x = font_string.split(
+                        ","
+                    )
                 elif font_string.count(",") == 10:
-                    family, size, x, x, w, i, u, s, x, x, x = font_string.split(",")
-                elif font_string.count(",") == 15:
-                    family, size, x, x, w, i, u, s, x, x, x, x, x, x, x, style = (
+                    family, size, x, x, w, i, u, s, x, x, x = (
                         font_string.split(",")
                     )
+                elif font_string.count(",") == 15:
+                    (
+                        family,
+                        size,
+                        x,
+                        x,
+                        w,
+                        i,
+                        u,
+                        s,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        style,
+                    ) = font_string.split(",")
                 else:
                     # Segoe UI,11,-1,5,400,0,0,0,0,0,0,0,0,0,0,1,Regular
                     # Segoe UI,26,-1,5,700,1,1,1,0,0,0,0,0,0,0,1,Bold Italic
-                    family, size, x, x, w, i, u, s, x, x, x, x, x, x, x, x, style = (
-                        font_string.split(",")
-                    )
+                    (
+                        family,
+                        size,
+                        x,
+                        x,
+                        w,
+                        i,
+                        u,
+                        s,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        x,
+                        style,
+                    ) = font_string.split(",")
                 css += 'font-family: "%s"; ' % family
                 css += "font-size: %spt; " % size
                 if w == "25":
@@ -109,9 +146,10 @@ class HtmlCss(Renderer):
     def update(self, card_type, **render_args):
         if card_type.id not in self._css:
             self._css[card_type.id] = {}
-        self._css[card_type.id][repr(sorted(render_args.items()))] = self.body_css(
-            **render_args
-        ) + self.card_type_css(card_type, **render_args)
+        self._css[card_type.id][repr(sorted(render_args.items()))] = (
+            self.body_css(**render_args)
+            + self.card_type_css(card_type, **render_args)
+        )
 
     def css(self, card_type, **render_args):
         render_args_hash = repr(sorted(render_args.items()))
@@ -136,10 +174,12 @@ class HtmlCss(Renderer):
                 )
                 # Honour paragraph style also in user-created tables.
                 line = line.replace(
-                    "<td>", '<td><div id="%s" class="%s">' % (fact_key, fact_key)
+                    "<td>",
+                    '<td><div id="%s" class="%s">' % (fact_key, fact_key),
                 )
                 line = line.replace(
-                    "<TD>", '<TD><div id="%s" class="%s">' % (fact_key, fact_key)
+                    "<TD>",
+                    '<TD><div id="%s" class="%s">' % (fact_key, fact_key),
                 )
                 line = line.replace("</td>", "</div></td>")
                 line = line.replace("</TD>", "</div></TD>")

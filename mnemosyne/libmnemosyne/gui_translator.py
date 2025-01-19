@@ -257,4 +257,6 @@ language_name_for_iso6931_code = {
 
 
 def iso6931_code_for_language_name(language):
-    return dict((v, k) for k, v in language_name_for_iso6931_code.items())[language]
+    return dict((v, k) for k, v in language_name_for_iso6931_code.items())[
+        language
+    ]

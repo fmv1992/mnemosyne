@@ -268,7 +268,9 @@ def _visit_pyfiles(list, dirname, names):
     if "_py_ext" not in globals():
         global _py_ext
         _py_ext = [
-            triple[0] for triple in imp.get_suffixes() if triple[2] == imp.PY_SOURCE
+            triple[0]
+            for triple in imp.get_suffixes()
+            if triple[2] == imp.PY_SOURCE
         ][0]
 
     # don't recurse into CVS directories
@@ -313,7 +315,9 @@ def _get_modpkg_path(dotted_name, pathlist=None):
     else:
         # plain name
         try:
-            file, pathname, description = imp.find_module(dotted_name, pathlist)
+            file, pathname, description = imp.find_module(
+                dotted_name, pathlist
+            )
             if file:
                 file.close()
             if description[2] not in [imp.PY_SOURCE, imp.PKG_DIRECTORY]:
@@ -400,7 +404,11 @@ class TokenEater:
         if ttype == tokenize.STRING:
             self.__addentry(safe_eval(tstring), lineno, isdocstring=1)
             self.__state = self.__waiting
-        elif ttype not in (tokenize.NEWLINE, tokenize.INDENT, tokenize.COMMENT):
+        elif ttype not in (
+            tokenize.NEWLINE,
+            tokenize.INDENT,
+            tokenize.COMMENT,
+        ):
             # there was no class docstring
             self.__state = self.__waiting
 
@@ -433,7 +441,11 @@ class TokenEater:
             # warn if we see anything else than STRING or whitespace
             print(
                 _('*** %(file)s:%(lineno)s: Seen unexpected token "%(token)s"')
-                % {"token": tstring, "file": self.__curfile, "lineno": self.__lineno},
+                % {
+                    "token": tstring,
+                    "file": self.__curfile,
+                    "lineno": self.__lineno,
+                },
                 file=sys.stderr,
             )
             self.__state = self.__waiting
@@ -488,7 +500,10 @@ class TokenEater:
                 elif options.locationstyle == options.SOLARIS:
                     for filename, lineno in v:
                         d = {"filename": filename, "lineno": lineno}
-                        print(_("# File: %(filename)s, line: %(lineno)d") % d, file=fp)
+                        print(
+                            _("# File: %(filename)s, line: %(lineno)d") % d,
+                            file=fp,
+                        )
                 elif options.locationstyle == options.GNU:
                     # fit as many locations on one line, as long as the
                     # resulting line length doesn't exceeds 'options.width'

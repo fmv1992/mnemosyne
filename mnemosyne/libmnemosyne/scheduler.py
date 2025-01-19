@@ -192,7 +192,9 @@ class Scheduler(Component):
         elif interval_days >= 31:
             return _("in 1 month")
         elif interval_days >= 1:
-            return _("in") + " " + str(int(interval_days) + 1) + " " + _("days")
+            return (
+                _("in") + " " + str(int(interval_days) + 1) + " " + _("days")
+            )
         elif interval_days >= 0:
             return _("tomorrow")
         elif interval_days >= -1:
@@ -218,7 +220,9 @@ class Scheduler(Component):
         # To perform the calculation, we need to 'snap' the two timestamps
         # to midnight UTC before calculating the interval.
         now = self.midnight_UTC(now - self.config()["day_starts_at"] * HOUR)
-        last_rep = self.midnight_UTC(last_rep - self.config()["day_starts_at"] * HOUR)
+        last_rep = self.midnight_UTC(
+            last_rep - self.config()["day_starts_at"] * HOUR
+        )
         interval_days = (last_rep - now) / DAY
         if interval_days > -1:
             return _("today")

@@ -43,6 +43,7 @@ class ExpandPaths(Filter):
         # in javascript.
         if "db_media:///" in text:
             text = text.replace(
-                "db_media:///", self.database().media_dir().replace("\\", "/") + "/"
+                "db_media:///",
+                self.database().media_dir().replace("\\", "/") + "/",
             )
         return text

@@ -21,7 +21,8 @@ class DeleteUnusedMediaFilesDlg(
             self.windowFlags() | QtCore.Qt.WindowType.WindowMinMaxButtonsHint
         )
         self.setWindowFlags(
-            self.windowFlags() & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
+            self.windowFlags()
+            & ~QtCore.Qt.WindowType.WindowContextHelpButtonHint
         )
         self.unused_media_files = unused_media_files
         self.file_list.setText("\n".join(self.unused_media_files))

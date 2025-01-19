@@ -12,7 +12,9 @@ from mnemosyne.libmnemosyne import Mnemosyne
 class TestAnkiImport(MnemosyneTest):
 
     def setup_method(self):
-        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
+        path = os.path.join(
+            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
+        )
         if path not in sys.path:
             sys.path.append(path)
         self.initialise_data_dir()
@@ -33,7 +35,9 @@ class TestAnkiImport(MnemosyneTest):
         ]
         self.mnemosyne.components.append(("test_mem_import", "Widget"))
         self.mnemosyne.components.append(("test_mem_import", "MyImportDialog"))
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def anki_importer(self):
@@ -58,8 +62,9 @@ class TestAnkiImport(MnemosyneTest):
         assert 'audio src="1.mp3"' in card.question(render_chain="plain_text")
 
         card = self.database().card("1502277686022", is_id_internal=False)
-        assert "<$$>x</$$>&nbsp;<latex>x^2</latex>&nbsp;<$>x^3</$>" in card.question(
-            render_chain="plain_text"
+        assert (
+            "<$$>x</$$>&nbsp;<latex>x^2</latex>&nbsp;<$>x^3</$>"
+            in card.question(render_chain="plain_text")
         )
 
         card = self.database().card("1502797276041", is_id_internal=False)

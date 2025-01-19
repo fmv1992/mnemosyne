@@ -88,8 +88,12 @@ $js
 """
         )
 
-    def set_client_on_same_machine_as_server(self, client_on_same_machine_as_server):
-        self.client_on_same_machine_as_server = client_on_same_machine_as_server
+    def set_client_on_same_machine_as_server(
+        self, client_on_same_machine_as_server
+    ):
+        self.client_on_same_machine_as_server = (
+            client_on_same_machine_as_server
+        )
 
     def redraw_now(self):
         pass
@@ -222,7 +226,9 @@ $js
                 str1 = self.question[match.start() : match.end()]
                 idstr = re.findall(r"player_(\d+)", str1)
                 i = idstr.pop()
-                player_and_index += "var audio_player_{id} = null;\n".format(id=i)
+                player_and_index += "var audio_player_{id} = null;\n".format(
+                    id=i
+                )
                 player_and_index += "let index_{id} = {val};\n".format(
                     id=i, val="{val : 0}"
                 )
@@ -237,7 +243,9 @@ $js
                 str1 = self.answer[match.start() : match.end()]
                 idstr = re.findall(r"player_(\d+)", str1)
                 i = idstr.pop()
-                player_and_index += "var audio_player_{id} = null;\n".format(id=i)
+                player_and_index += "var audio_player_{id} = null;\n".format(
+                    id=i
+                )
                 player_and_index += "let index_{id} = {val};\n".format(
                     id=i, val="{val : 0}"
                 )

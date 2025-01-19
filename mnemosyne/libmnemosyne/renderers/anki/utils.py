@@ -38,12 +38,22 @@ timeTable = {
 }
 
 afterTimeTable = {
-    "years": lambda n: ngettext("%s year<!--after-->", "%s years<!--after-->", n),
-    "months": lambda n: ngettext("%s month<!--after-->", "%s months<!--after-->", n),
+    "years": lambda n: ngettext(
+        "%s year<!--after-->", "%s years<!--after-->", n
+    ),
+    "months": lambda n: ngettext(
+        "%s month<!--after-->", "%s months<!--after-->", n
+    ),
     "days": lambda n: ngettext("%s day<!--after-->", "%s days<!--after-->", n),
-    "hours": lambda n: ngettext("%s hour<!--after-->", "%s hours<!--after-->", n),
-    "minutes": lambda n: ngettext("%s minute<!--after-->", "%s minutes<!--after-->", n),
-    "seconds": lambda n: ngettext("%s second<!--after-->", "%s seconds<!--after-->", n),
+    "hours": lambda n: ngettext(
+        "%s hour<!--after-->", "%s hours<!--after-->", n
+    ),
+    "minutes": lambda n: ngettext(
+        "%s minute<!--after-->", "%s minutes<!--after-->", n
+    ),
+    "seconds": lambda n: ngettext(
+        "%s second<!--after-->", "%s seconds<!--after-->", n
+    ),
 }
 
 
@@ -158,9 +168,13 @@ def stripHTMLMedia(s):
 def minimizeHTML(s):
     "Correct Qt's verbose bold/underline/etc."
     s = re.sub('<span style="font-weight:600;">(.*?)</span>', "<b>\\1</b>", s)
-    s = re.sub('<span style="font-style:italic;">(.*?)</span>', "<i>\\1</i>", s)
     s = re.sub(
-        '<span style="text-decoration: underline;">(.*?)</span>', "<u>\\1</u>", s
+        '<span style="font-style:italic;">(.*?)</span>', "<i>\\1</i>", s
+    )
+    s = re.sub(
+        '<span style="text-decoration: underline;">(.*?)</span>',
+        "<u>\\1</u>",
+        s,
     )
     return s
 

@@ -45,7 +45,9 @@ class GradesCriterionApplier(CriterionApplier):
 
 # The UI widget to set the threshold.
 
-from mnemosyne.libmnemosyne.ui_components.criterion_widget import CriterionWidget
+from mnemosyne.libmnemosyne.ui_components.criterion_widget import (
+    CriterionWidget,
+)
 
 from PyQt6 import QtWidgets
 

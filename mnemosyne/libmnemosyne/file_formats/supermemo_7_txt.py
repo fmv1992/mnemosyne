@@ -8,7 +8,9 @@ from xml.sax import saxutils
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
+    MediaPreprocessor,
+)
 
 re0 = re.compile(r"&#(.+?);", re.DOTALL | re.IGNORECASE)
 
@@ -136,7 +138,9 @@ class SuperMemo7Txt(FileFormat, MediaPreprocessor):
                             else:
                                 last = int(
                                     time.mktime(
-                                        time.strptime(attributes[5][5:], "%d.%m.%y")
+                                        time.strptime(
+                                            attributes[5][5:], "%d.%m.%y"
+                                        )
                                     )
                                 )
                         else:

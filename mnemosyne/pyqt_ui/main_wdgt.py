@@ -101,15 +101,21 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         return self
 
     def show_information(self, text):
-        QtWidgets.QMessageBox.information(self.top_window(), _("Mnemosyne"), text)
+        QtWidgets.QMessageBox.information(
+            self.top_window(), _("Mnemosyne"), text
+        )
 
     def show_question(self, text, option0, option1, option2):
         dialog = QtWidgets.QMessageBox(self.top_window())
         dialog.setIcon(QtWidgets.QMessageBox.Icon.Question)
         dialog.setWindowTitle(_("Mnemosyne"))
         dialog.setText(text)
-        button0 = dialog.addButton(option0, QtWidgets.QMessageBox.ButtonRole.ActionRole)
-        button1 = dialog.addButton(option1, QtWidgets.QMessageBox.ButtonRole.ActionRole)
+        button0 = dialog.addButton(
+            option0, QtWidgets.QMessageBox.ButtonRole.ActionRole
+        )
+        button1 = dialog.addButton(
+            option1, QtWidgets.QMessageBox.ButtonRole.ActionRole
+        )
         if option2:
             button2 = dialog.addButton(
                 option2, QtWidgets.QMessageBox.ButtonRole.ActionRole
@@ -134,11 +140,15 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
         return QtWidgets.QApplication.font().pointSize()
 
     def get_filename_to_open(self, path, filter, caption=""):
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(self, caption, path, filter)
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, caption, path, filter
+        )
         return filename
 
     def get_filename_to_save(self, path, filter, caption=""):
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, caption, path, filter)
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self, caption, path, filter
+        )
         return filename
 
     def set_status_bar_message(self, text):
@@ -161,7 +171,9 @@ class MainWdgt(QtWidgets.QMainWindow, MainWidget, Ui_MainWdgt):
                 & ~QtCore.Qt.WindowType.WindowMinMaxButtonsHint
             )
             self.progress_bar.setWindowTitle(_("Mnemosyne"))
-            self.progress_bar.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
+            self.progress_bar.setWindowModality(
+                QtCore.Qt.WindowModality.WindowModal
+            )
             self.progress_bar.setCancelButton(None)
             self.progress_bar.setMinimumDuration(0)
         self.progress_bar.setLabelText(text)

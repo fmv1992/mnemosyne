@@ -20,7 +20,9 @@ class ShortcutsPlugin(Plugin):
 
     name = "Custom shortcuts"
     description = "Customise review widget shortcuts."
-    gui_for_component = {"ScheduledForgottenNew": [("shortcuts", "MyReviewWdgt")]}
+    gui_for_component = {
+        "ScheduledForgottenNew": [("shortcuts", "MyReviewWdgt")]
+    }
     gui_for_component = {"NewOnly": [("shortcuts", "MyReviewWdgt")]}
     gui_for_component = {"CramAll": [("shortcuts", "MyReviewWdgt")]}
     gui_for_component = {"CramRecent": [("shortcuts", "MyReviewWdgt")]}

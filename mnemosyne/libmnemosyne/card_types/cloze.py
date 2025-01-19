@@ -83,10 +83,14 @@ class Cloze(CardType):
             else:
                 cloze_without_hint, hint = cloze, "..."
             if current_index == index:
-                question = question.replace("[" + cloze + "]", "[" + hint + "]", 1)
+                question = question.replace(
+                    "[" + cloze + "]", "[" + hint + "]", 1
+                )
                 answer = cloze_without_hint
             else:
-                question = question.replace("[" + cloze + "]", cloze_without_hint, 1)
+                question = question.replace(
+                    "[" + cloze + "]", cloze_without_hint, 1
+                )
             cursor += 1
             current_index += 1
         for f in self.component_manager.all("hook", "postprocess_q_a_cloze"):
@@ -111,7 +115,9 @@ class Cloze(CardType):
             cards.append(card)
         return cards
 
-    def _edit_clozes(self, fact, new_fact_data, cloze_fact_key, cloze_fact_view):
+    def _edit_clozes(
+        self, fact, new_fact_data, cloze_fact_key, cloze_fact_view
+    ):
         """Auxiliary function used by other card types to when editing clozes.
         Should take into account that not all fact views are cloze-based.
 
@@ -153,7 +159,9 @@ class Cloze(CardType):
         return new_cards, edited_cards, deleted_cards
 
     def edit_fact(self, fact, new_fact_data):
-        return self._edit_clozes(fact, new_fact_data, "text", self.fact_views[0])
+        return self._edit_clozes(
+            fact, new_fact_data, "text", self.fact_views[0]
+        )
 
 
 class ClozePlugin(Plugin):

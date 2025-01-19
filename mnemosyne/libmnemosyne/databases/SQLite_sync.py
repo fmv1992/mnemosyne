@@ -88,7 +88,9 @@ class SQLiteSync(object):
             )
 
     def remove_partnership_with(self, partner):
-        self.con.execute("delete from partnerships where partner=?", (partner,))
+        self.con.execute(
+            "delete from partnerships where partner=?", (partner,)
+        )
 
     def merge_partners(self, remote_partners):
         """Remember the indirect sync partners. Since we don't need their
@@ -117,7 +119,8 @@ class SQLiteSync(object):
         """
 
         self.con.execute(
-            "update partnerships set _last_log_id=? where partner!=?", (-666, "log.txt")
+            "update partnerships set _last_log_id=? where partner!=?",
+            (-666, "log.txt"),
         )
 
     def is_sync_reset_needed(self, partner):
@@ -151,7 +154,9 @@ class SQLiteSync(object):
             (self.current_log_index(), partner),
         )
 
-    def number_of_log_entries_to_sync_for(self, partner, interested_in_old_reps=True):
+    def number_of_log_entries_to_sync_for(
+        self, partner, interested_in_old_reps=True
+    ):
         _id = self.last_log_index_synced_for(partner)
         if interested_in_old_reps:
             return self.con.execute(
@@ -184,7 +189,9 @@ class SQLiteSync(object):
         if interested_in_old_reps:
             return (
                 self._log_entry(cursor)
-                for cursor in self.con.execute("select * from log where _id>?", (_id,))
+                for cursor in self.con.execute(
+                    "select * from log where _id>?", (_id,)
+                )
             )
         else:
             return (
@@ -205,7 +212,8 @@ class SQLiteSync(object):
             return (
                 self._log_entry(cursor)
                 for cursor in self.con.execute(
-                    "select * from log where event_type!=?", (EventTypes.REPETITION,)
+                    "select * from log where event_type!=?",
+                    (EventTypes.REPETITION,),
                 )
             )
 
@@ -222,10 +230,16 @@ class SQLiteSync(object):
             for cursor in self.con.execute(
                 """select object_id from log where _id>? and (event_type=? or
             event_type=?)""",
-                (_id, EventTypes.ADDED_MEDIA_FILE, EventTypes.EDITED_MEDIA_FILE),
+                (
+                    _id,
+                    EventTypes.ADDED_MEDIA_FILE,
+                    EventTypes.EDITED_MEDIA_FILE,
+                ),
             )
         ]:
-            if os.path.exists(normalise_path(expand_path(filename, self.media_dir()))):
+            if os.path.exists(
+                normalise_path(expand_path(filename, self.media_dir()))
+            ):
                 filenames.add(filename)
         return filenames
 
@@ -285,7 +299,10 @@ class SQLiteSync(object):
         )
         # User defined card types.
         defined_in_database_ids = set(
-            [cursor[0] for cursor in self.con.execute("select id from card_types")]
+            [
+                cursor[0]
+                for cursor in self.con.execute("select id from card_types")
+            ]
         )
         # Card types of the active cards (no need to include inactive sister
         # cards here, as they share the same card type).
@@ -303,7 +320,10 @@ class SQLiteSync(object):
         for id in active_card_type_ids:
             while "::" in id:  # Move up one level of the hierarchy.
                 id, child_name = id.rsplit("::", 1)
-                if id in defined_in_database_ids and id not in active_card_type_ids:
+                if (
+                    id in defined_in_database_ids
+                    and id not in active_card_type_ids
+                ):
                     parent_card_type_ids.add(id)
         # Sort to make sure we add the parents first.
         active_objects["card_type_ids"] = sorted(
@@ -314,7 +334,8 @@ class SQLiteSync(object):
         for card_type_id in active_objects["card_type_ids"]:
             active_objects["fact_view_ids"] += eval(
                 self.con.execute(
-                    "select fact_view_ids from card_types where id=?", (card_type_id,)
+                    "select fact_view_ids from card_types where id=?",
+                    (card_type_id,),
                 ).fetchone()[0]
             )
         # Media files for active cards.
@@ -340,7 +361,10 @@ class SQLiteSync(object):
         if o_id:
             log_entry["o_id"] = o_id
         event_type = log_entry["type"]
-        if event_type in (EventTypes.LOADED_DATABASE, EventTypes.SAVED_DATABASE):
+        if event_type in (
+            EventTypes.LOADED_DATABASE,
+            EventTypes.SAVED_DATABASE,
+        ):
             log_entry["sch"] = sql_res[6]
             log_entry["n_mem"] = sql_res[7]
             log_entry["act"] = sql_res[8]
@@ -418,9 +442,14 @@ class SQLiteSync(object):
                     log_entry[fact_key] = value
             else:  # The object has been deleted at a later stage.
                 pass
-        elif event_type in (EventTypes.ADDED_FACT_VIEW, EventTypes.EDITED_FACT_VIEW):
+        elif event_type in (
+            EventTypes.ADDED_FACT_VIEW,
+            EventTypes.EDITED_FACT_VIEW,
+        ):
             if self.has_fact_view_with_id(log_entry["o_id"]):
-                fact_view = self.fact_view(log_entry["o_id"], is_id_internal=False)
+                fact_view = self.fact_view(
+                    log_entry["o_id"], is_id_internal=False
+                )
                 log_entry["name"] = fact_view.name
                 log_entry["q_fact_keys"] = repr(fact_view.q_fact_keys)
                 log_entry["a_fact_keys"] = repr(fact_view.a_fact_keys)
@@ -434,22 +463,40 @@ class SQLiteSync(object):
                 log_entry["type_answer"] = repr(fact_view.type_answer)
                 if fact_view.extra_data:
                     log_entry["extra"] = repr(fact_view.extra_data)
-        elif event_type in (EventTypes.ADDED_CARD_TYPE, EventTypes.EDITED_CARD_TYPE):
+        elif event_type in (
+            EventTypes.ADDED_CARD_TYPE,
+            EventTypes.EDITED_CARD_TYPE,
+        ):
             if self.has_card_type_with_id(log_entry["o_id"]):
-                card_type = self.card_type(log_entry["o_id"], is_id_internal=False)
+                card_type = self.card_type(
+                    log_entry["o_id"], is_id_internal=False
+                )
                 log_entry["name"] = card_type.name
-                log_entry["fact_keys_and_names"] = repr(card_type.fact_keys_and_names)
+                log_entry["fact_keys_and_names"] = repr(
+                    card_type.fact_keys_and_names
+                )
                 log_entry["fact_views"] = repr(
                     [fact_view.id for fact_view in card_type.fact_views]
                 )
-                log_entry["unique_fact_keys"] = repr(card_type.unique_fact_keys)
-                log_entry["required_fact_keys"] = repr(card_type.required_fact_keys)
-                log_entry["keyboard_shortcuts"] = repr(card_type.keyboard_shortcuts)
+                log_entry["unique_fact_keys"] = repr(
+                    card_type.unique_fact_keys
+                )
+                log_entry["required_fact_keys"] = repr(
+                    card_type.required_fact_keys
+                )
+                log_entry["keyboard_shortcuts"] = repr(
+                    card_type.keyboard_shortcuts
+                )
                 if card_type.extra_data:
                     log_entry["extra"] = repr(card_type.extra_data)
-        elif event_type in (EventTypes.ADDED_CRITERION, EventTypes.EDITED_CRITERION):
+        elif event_type in (
+            EventTypes.ADDED_CRITERION,
+            EventTypes.EDITED_CRITERION,
+        ):
             if self.has_criterion_with_id(log_entry["o_id"]):
-                criterion = self.criterion(log_entry["o_id"], is_id_internal=False)
+                criterion = self.criterion(
+                    log_entry["o_id"], is_id_internal=False
+                )
                 log_entry["name"] = criterion.name
                 log_entry["criterion_type"] = criterion.criterion_type
                 log_entry["data"] = criterion.data_to_sync_string()
@@ -499,7 +546,9 @@ class SQLiteSync(object):
             else:
                 # Leftover from old bug, should not reoccur.
                 self.main_widget().show_information(
-                    _("Deleting same tag twice during sync. Inform the developpers.")
+                    _(
+                        "Deleting same tag twice during sync. Inform the developpers."
+                    )
                 )
                 log_entry["name"] = "irrelevant"
                 return Tag(log_entry["name"], log_entry["o_id"])
@@ -531,11 +580,15 @@ class SQLiteSync(object):
     def fact_from_log_entry(self, log_entry):
         # Work around legacy logs which contain duplicate deletion events.
         # Leftover from old bug, should not reoccur.
-        if log_entry["type"] != EventTypes.ADDED_FACT and not self.has_fact_with_id(
+        if log_entry[
+            "type"
+        ] != EventTypes.ADDED_FACT and not self.has_fact_with_id(
             log_entry["o_id"]
         ):
             self.main_widget().show_information(
-                _("Deleting same fact twice during sync. Inform the developpers.")
+                _(
+                    "Deleting same fact twice during sync. Inform the developpers."
+                )
             )
             fact = Fact({}, log_entry["o_id"])
             fact._id = -1
@@ -607,7 +660,9 @@ class SQLiteSync(object):
                 # so we just return an empty shell.
                 card_type = self.card_type_with_id("1")
                 fact = Fact({"f": "f", "b": "b"}, id="")
-                card = Card(card_type, fact, card_type.fact_views[0], creation_time=0)
+                card = Card(
+                    card_type, fact, card_type.fact_views[0], creation_time=0
+                )
                 card._id = None  # Signals special case to 'delete_card'.
                 card.id = log_entry["o_id"]
                 return card
@@ -616,7 +671,9 @@ class SQLiteSync(object):
         if "tags" not in log_entry:
             card_type = self.card_type_with_id("1")
             fact = Fact({"f": "f", "b": "b"}, id="")
-            card = Card(card_type, fact, card_type.fact_views[0], creation_time=0)
+            card = Card(
+                card_type, fact, card_type.fact_views[0], creation_time=0
+            )
             card.id = log_entry["o_id"]
             return card
         # Create card object.
@@ -624,7 +681,10 @@ class SQLiteSync(object):
             # Client only supports simple cards.
             card_type = self.card_type_with_id("1")
         else:
-            if log_entry["card_t"] not in self.component_manager.card_type_with_id:
+            if (
+                log_entry["card_t"]
+                not in self.component_manager.card_type_with_id
+            ):
                 # If the card type is not in the database, it's possible that
                 # the data for this card type will follow later during the
                 # sync. In that case, create a dummy card type here, which
@@ -632,10 +692,14 @@ class SQLiteSync(object):
                 # need to instantiate this card type later, so that we can
                 # catch errors, e.g. due to bad plugins.
                 try:
-                    self.activate_plugins_for_card_type_with_id(log_entry["card_t"])
+                    self.activate_plugins_for_card_type_with_id(
+                        log_entry["card_t"]
+                    )
                     card_type = self.card_type_with_id(log_entry["card_t"])
                 except:
-                    self.card_types_to_instantiate_later.add(log_entry["card_t"])
+                    self.card_types_to_instantiate_later.add(
+                        log_entry["card_t"]
+                    )
                     card_type = self.card_type_with_id("1")
                     log_entry["fact_v"] = card_type.fact_views[0].id
             else:
@@ -648,7 +712,10 @@ class SQLiteSync(object):
         for fact_view in card_type.fact_views:
             if fact_view.id == log_entry["fact_v"]:
                 card = Card(
-                    card_type, fact, fact_view, creation_time=log_entry["c_time"]
+                    card_type,
+                    fact,
+                    fact_view,
+                    creation_time=log_entry["c_time"],
                 )
                 break
         for tag_id in log_entry["tags"].split(","):
@@ -661,7 +728,9 @@ class SQLiteSync(object):
                 pass
         if self.importing:
             if len(self.extra_tags_on_import) != 0:
-                card.tags.discard(self.tag("__UNTAGGED__", is_id_internal=False))
+                card.tags.discard(
+                    self.tag("__UNTAGGED__", is_id_internal=False)
+                )
             for tag in self.extra_tags_on_import:
                 card.tags.add(tag)
         # Construct rest of card. The 'active' property does not need to be
@@ -777,7 +846,8 @@ class SQLiteSync(object):
         if self.importing:
             already_imported = (
                 self.con.execute(
-                    "select 1 from fact_views where id=? limit 1", (log_entry["o_id"],)
+                    "select 1 from fact_views where id=? limit 1",
+                    (log_entry["o_id"],),
                 ).fetchone()
                 is not None
             )
@@ -785,13 +855,17 @@ class SQLiteSync(object):
             # card types.
             if already_imported:
                 log_entry["type"] = EventTypes.EDITED_FACT_VIEW
-                return self.update_fact_view(self.fact_view_from_log_entry(log_entry))
+                return self.update_fact_view(
+                    self.fact_view_from_log_entry(log_entry)
+                )
         try:
             self.add_fact_view(self.fact_view_from_log_entry(log_entry))
         except sqlite3.IntegrityError:
             # Leftover from old bug, should not reoccur.
             self.main_widget().show_information(
-                _("Creating same fact view twice during sync. Inform the developpers.")
+                _(
+                    "Creating same fact view twice during sync. Inform the developpers."
+                )
             )
 
     def fact_view_from_log_entry(self, log_entry):
@@ -806,8 +880,12 @@ class SQLiteSync(object):
         fact_view = FactView(log_entry["name"], log_entry["o_id"])
         fact_view.q_fact_keys = eval(log_entry["q_fact_keys"])
         fact_view.a_fact_keys = eval(log_entry["a_fact_keys"])
-        fact_view.q_fact_key_decorators = eval(log_entry["q_fact_key_decorators"])
-        fact_view.a_fact_key_decorators = eval(log_entry["a_fact_key_decorators"])
+        fact_view.q_fact_key_decorators = eval(
+            log_entry["q_fact_key_decorators"]
+        )
+        fact_view.a_fact_key_decorators = eval(
+            log_entry["a_fact_key_decorators"]
+        )
         fact_view.a_on_top_of_q = bool(eval(log_entry["a_on_top_of_q"]))
         fact_view.type_answer = bool(eval(log_entry["type_answer"]))
         if "extra" in log_entry:
@@ -817,7 +895,8 @@ class SQLiteSync(object):
     def add_card_type_from_log_entry(self, log_entry):
         already_imported = (
             self.con.execute(
-                "select 1 from card_types where id=? limit 1", (log_entry["o_id"],)
+                "select 1 from card_types where id=? limit 1",
+                (log_entry["o_id"],),
             ).fetchone()
             is not None
         )
@@ -844,7 +923,9 @@ class SQLiteSync(object):
             log_entry["name"] += " (1)"
         if already_imported and self.importing:
             log_entry["type"] = EventTypes.EDITED_CARD_TYPE
-            return self.update_card_type(self.card_type_from_log_entry(log_entry))
+            return self.update_card_type(
+                self.card_type_from_log_entry(log_entry)
+            )
         try:
             card_type = self.card_type_from_log_entry(log_entry)
             self.activate_plugins_for_card_type_with_id(card_type.id)
@@ -852,7 +933,9 @@ class SQLiteSync(object):
         except sqlite3.IntegrityError:
             # Leftover from old bug, should not reoccur.
             self.main_widget().show_information(
-                _("Creating same card type twice during sync. Inform the developpers.")
+                _(
+                    "Creating same card type twice during sync. Inform the developpers."
+                )
             )
 
     def card_type_from_log_entry(self, log_entry):
@@ -899,7 +982,9 @@ class SQLiteSync(object):
         # Create criterion object.
         for criterion_class in self.component_manager.all("criterion"):
             if criterion_class.criterion_type == log_entry["criterion_type"]:
-                criterion = criterion_class(self.component_manager, log_entry["o_id"])
+                criterion = criterion_class(
+                    self.component_manager, log_entry["o_id"]
+                )
                 criterion.name = log_entry["name"]
                 # Try to apply the data to the criterion. If this fails, it
                 # means that the data to do this is not yet available at this
@@ -1003,10 +1088,12 @@ class SQLiteSync(object):
                 if key in self.config().keys_to_sync:
                     self.config()[key] = value
                     for card_type in self.card_types():
-                        for render_chain in self.component_manager.all("render_chain"):
-                            render_chain.renderer_for_card_type(card_type).update(
+                        for render_chain in self.component_manager.all(
+                            "render_chain"
+                        ):
+                            render_chain.renderer_for_card_type(
                                 card_type
-                            )
+                            ).update(card_type)
                 else:
                     self.log_edited_setting(log_entry["time"], key)
         finally:

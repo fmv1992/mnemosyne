@@ -13,7 +13,9 @@ from mnemosyne.libmnemosyne.utils import localhost_IP
 from mnemosyne.libmnemosyne.ui_components.configuration_widget import (
     ConfigurationWidget,
 )
-from mnemosyne.pyqt_ui.ui_configuration_wdgt_servers import Ui_ConfigurationWdgtServers
+from mnemosyne.pyqt_ui.ui_configuration_wdgt_servers import (
+    Ui_ConfigurationWdgtServers,
+)
 
 
 class ConfigurationWdgtServers(
@@ -35,7 +37,9 @@ class ConfigurationWdgtServers(
         if self.config()["remote_access_password_algo"] == "":
             self.password.setText(self.config()["remote_access_password"])
         else:
-            self.password_stacked_widget.setCurrentWidget(self.reset_password_page)
+            self.password_stacked_widget.setCurrentWidget(
+                self.reset_password_page
+            )
         self.check_for_edited_local_media_files.setChecked(
             self.config()["check_for_edited_local_media_files"]
         )
@@ -93,7 +97,10 @@ class ConfigurationWdgtServers(
         self.config()["run_sync_server"] = self.run_sync_server.isChecked()
         self.config()["sync_server_port"] = self.sync_port.value()
         self.config()["remote_access_username"] = self.username.text()
-        if self.password_stacked_widget.currentWidget() == self.edit_password_page:
+        if (
+            self.password_stacked_widget.currentWidget()
+            == self.edit_password_page
+        ):
             if self.password.text() == "":
                 self.config()["remote_access_password"] = ""
                 self.config()["remote_access_password_algo"] = ""
@@ -120,22 +127,27 @@ class ConfigurationWdgtServers(
         self.component_manager.current("sync_server").deactivate()
         if self.config()["run_sync_server"]:
             self.component_manager.current("sync_server").activate()
-            if not self.sync_server_initially_running and self.is_server_running(
-                self.config()["sync_server_port"]
+            if (
+                not self.sync_server_initially_running
+                and self.is_server_running(self.config()["sync_server_port"])
             ):
                 self.main_widget().show_information(
                     _("Sync server now running on ") + localhost_IP() + "."
                 )
         else:
             self.component_manager.current("sync_server").deactivate()
-            if self.sync_server_initially_running and not self.is_server_running(
-                self.config()["sync_server_port"]
+            if (
+                self.sync_server_initially_running
+                and not self.is_server_running(
+                    self.config()["sync_server_port"]
+                )
             ):
                 self.main_widget().show_information(_("Sync server stopped."))
         if self.config()["run_web_server"]:
             self.component_manager.current("web_server").activate()
-            if not self.web_server_initially_running and self.is_server_running(
-                self.config()["web_server_port"]
+            if (
+                not self.web_server_initially_running
+                and self.is_server_running(self.config()["web_server_port"])
             ):
                 self.main_widget().show_information(
                     _("Web server now running on")
@@ -147,7 +159,10 @@ class ConfigurationWdgtServers(
                 )
         else:
             self.component_manager.current("web_server").deactivate()
-            if self.web_server_initially_running and not self.is_server_running(
-                self.config()["web_server_port"]
+            if (
+                self.web_server_initially_running
+                and not self.is_server_running(
+                    self.config()["web_server_port"]
+                )
             ):
                 self.main_widget().show_information(_("Web server stopped."))

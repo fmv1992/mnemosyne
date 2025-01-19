@@ -49,8 +49,14 @@ class MyClient(Client):
             ("mnemosyne.libmnemosyne.gui_translator", "NoGuiTranslation"),
             ("mnemosyne.libmnemosyne.databases.SQLite", "SQLite"),
             ("mnemosyne.libmnemosyne.configuration", "Configuration"),
-            ("mnemosyne.libmnemosyne.loggers.database_logger", "DatabaseLogger"),
-            ("mnemosyne.libmnemosyne.schedulers.SM2_mnemosyne", "SM2Mnemosyne"),
+            (
+                "mnemosyne.libmnemosyne.loggers.database_logger",
+                "DatabaseLogger",
+            ),
+            (
+                "mnemosyne.libmnemosyne.schedulers.SM2_mnemosyne",
+                "SM2Mnemosyne",
+            ),
             ("mnemosyne.libmnemosyne.stopwatch", "Stopwatch"),
             ("mnemosyne.libmnemosyne.card_types.front_to_back", "FrontToBack"),
             ("mnemosyne.libmnemosyne.card_types.both_ways", "BothWays"),
@@ -63,7 +69,10 @@ class MyClient(Client):
                 "mnemosyne.libmnemosyne.render_chains.default_render_chain",
                 "DefaultRenderChain",
             ),
-            ("mnemosyne.libmnemosyne.render_chains.plain_text_chain", "PlainTextChain"),
+            (
+                "mnemosyne.libmnemosyne.render_chains.plain_text_chain",
+                "PlainTextChain",
+            ),
             (
                 "mnemosyne.libmnemosyne.controllers.default_controller",
                 "DefaultController",
@@ -74,15 +83,23 @@ class MyClient(Client):
             ),
             ("mnemosyne.libmnemosyne.card_types.map", "MapPlugin"),
             ("mnemosyne.libmnemosyne.card_types.cloze", "ClozePlugin"),
-            ("mnemosyne.libmnemosyne.criteria.default_criterion", "DefaultCriterion"),
+            (
+                "mnemosyne.libmnemosyne.criteria.default_criterion",
+                "DefaultCriterion",
+            ),
             (
                 "mnemosyne.libmnemosyne.databases.SQLite_criterion_applier",
                 "DefaultCriterionApplier",
             ),
-            ("mnemosyne.libmnemosyne.plugins.cramming_plugin", "CrammingPlugin"),
+            (
+                "mnemosyne.libmnemosyne.plugins.cramming_plugin",
+                "CrammingPlugin",
+            ),
         ]
         self.mnemosyne.components.append(("benchmark_sync_client", "Widget"))
-        self.mnemosyne.components.append(("benchmark_sync_client", "MyReviewWidget"))
+        self.mnemosyne.components.append(
+            ("benchmark_sync_client", "MyReviewWidget")
+        )
         self.mnemosyne.initialise(
             os.path.abspath(os.path.join(os.getcwd(), "dot_sync_client")),
             automatic_upgrades=False,

@@ -8,7 +8,9 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.pyqt_ui.qtextedit2 import QTextEdit2
-from mnemosyne.libmnemosyne.ui_components.card_type_widget import GenericCardTypeWidget
+from mnemosyne.libmnemosyne.ui_components.card_type_widget import (
+    GenericCardTypeWidget,
+)
 
 
 class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
@@ -72,7 +74,9 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
         )
         if parent.component_type == "add_cards_dialog":
             parent.setTabOrder(t, parent.yet_to_learn_button)
-            parent.setTabOrder(parent.yet_to_learn_button, parent.grade_2_button)
+            parent.setTabOrder(
+                parent.yet_to_learn_button, parent.grade_2_button
+            )
             parent.setTabOrder(parent.grade_2_button, parent.grade_3_button)
             parent.setTabOrder(parent.grade_3_button, parent.grade_4_button)
             parent.setTabOrder(parent.grade_4_button, parent.grade_5_button)
@@ -102,7 +106,9 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
         if colour:
             edit_box.setTextColor(QtGui.QColor(colour))
         # Background colour.
-        colour = self.config().card_type_property("background_colour", self.card_type)
+        colour = self.config().card_type_property(
+            "background_colour", self.card_type
+        )
         if colour:
             p = QtGui.QPalette()
             p.setColor(
@@ -112,7 +118,9 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
             )
             edit_box.setPalette(p)
         # Font.
-        font_string = self.config().card_type_property("font", self.card_type, fact_key)
+        font_string = self.config().card_type_property(
+            "font", self.card_type, fact_key
+        )
         if font_string:
             font = QtGui.QFont()
             font.fromString(font_string)
@@ -170,4 +178,6 @@ class GenericCardTypeWdgt(QtWidgets.QWidget, GenericCardTypeWidget):
         self.top_edit_box.setFocus()
 
     def text_changed(self):
-        self.parent().set_valid(self.card_type.is_fact_data_valid(self.fact_data()))
+        self.parent().set_valid(
+            self.card_type.is_fact_data_valid(self.fact_data())
+        )

@@ -10,8 +10,12 @@ from mnemosyne.libmnemosyne.statistics_pages.schedule import Schedule
 from mnemosyne.libmnemosyne.statistics_pages.easiness import Easiness
 from mnemosyne.libmnemosyne.statistics_pages.cards_added import CardsAdded
 from mnemosyne.libmnemosyne.statistics_pages.cards_learned import CardsLearned
-from mnemosyne.libmnemosyne.statistics_pages.retention_score import RetentionScore
-from mnemosyne.libmnemosyne.ui_components.statistics_widget import StatisticsWidget
+from mnemosyne.libmnemosyne.statistics_pages.retention_score import (
+    RetentionScore,
+)
+from mnemosyne.libmnemosyne.ui_components.statistics_widget import (
+    StatisticsWidget,
+)
 
 
 class PlotStatisticsWdgt(QtWidgets.QWidget, StatisticsWidget):
@@ -124,7 +128,9 @@ class PlotStatisticsWdgt(QtWidgets.QWidget, StatisticsWidget):
         if parent.style().objectName() == "macintosh (Aqua)":
             return "0.91"
         else:
-            r, g, b, a = parent.palette().color(parent.backgroundRole()).getRgb()
+            r, g, b, a = (
+                parent.palette().color(parent.backgroundRole()).getRgb()
+            )
             return [x / 255.0 for x in (r, g, b)]
 
 
@@ -145,47 +151,71 @@ class BarChartDaysWdgt(PlotStatisticsWdgt):
             xticklabels = ticklabels_pos(1, 8, 1)
             show_text_value = True
             linewidth = 1
-        elif hasattr(self.page, "NEXT_MONTH") and variant == self.page.NEXT_MONTH:
+        elif (
+            hasattr(self.page, "NEXT_MONTH")
+            and variant == self.page.NEXT_MONTH
+        ):
             xticks = [1] + list(range(5, 32, 5))
             xticklabels = ["+1"] + ticklabels_pos(5, 32, 5)
             show_text_value = False
             linewidth = 1
-        elif hasattr(self.page, "NEXT_3_MONTHS") and variant == self.page.NEXT_3_MONTHS:
+        elif (
+            hasattr(self.page, "NEXT_3_MONTHS")
+            and variant == self.page.NEXT_3_MONTHS
+        ):
             xticks = [1] + list(range(10, 92, 10))
             xticklabels = ["+1"] + ticklabels_pos(10, 92, 10)
             show_text_value = False
             linewidth = 1
-        elif hasattr(self.page, "NEXT_6_MONTHS") and variant == self.page.NEXT_6_MONTHS:
+        elif (
+            hasattr(self.page, "NEXT_6_MONTHS")
+            and variant == self.page.NEXT_6_MONTHS
+        ):
             xticks = [1] + list(range(30, 183, 30))
             xticklabels = ["+1"] + ticklabels_pos(30, 183, 30)
             show_text_value = False
             linewidth = 0
-        elif hasattr(self.page, "NEXT_YEAR") and variant == self.page.NEXT_YEAR:
+        elif (
+            hasattr(self.page, "NEXT_YEAR") and variant == self.page.NEXT_YEAR
+        ):
             xticks = [1] + list(range(60, 365, 60))
             xticklabels = ["+1"] + ticklabels_pos(60, 365, 60)
             show_text_value = False
             linewidth = 0
-        elif hasattr(self.page, "LAST_WEEK") and variant == self.page.LAST_WEEK:
+        elif (
+            hasattr(self.page, "LAST_WEEK") and variant == self.page.LAST_WEEK
+        ):
             xticks = list(range(-7, 1, 1))
             xticklabels = ticklabels_neg(-7, 1, 1)
             show_text_value = True
             linewidth = 1
-        elif hasattr(self.page, "LAST_MONTH") and variant == self.page.LAST_MONTH:
+        elif (
+            hasattr(self.page, "LAST_MONTH")
+            and variant == self.page.LAST_MONTH
+        ):
             xticks = list(range(-30, -4, 5)) + [0]
             xticklabels = ticklabels_neg(-30, -4, 5) + ["0"]
             show_text_value = False
             linewidth = 1
-        elif hasattr(self.page, "LAST_3_MONTHS") and variant == self.page.LAST_3_MONTHS:
+        elif (
+            hasattr(self.page, "LAST_3_MONTHS")
+            and variant == self.page.LAST_3_MONTHS
+        ):
             xticks = list(range(-90, -9, 10)) + [0]
             xticklabels = ticklabels_neg(-90, -9, 10) + ["0"]
             show_text_value = False
             linewidth = 1
-        elif hasattr(self.page, "LAST_6_MONTHS") and variant == self.page.LAST_6_MONTHS:
+        elif (
+            hasattr(self.page, "LAST_6_MONTHS")
+            and variant == self.page.LAST_6_MONTHS
+        ):
             xticks = list(range(-180, -19, 20)) + [0]
             xticklabels = ticklabels_neg(-180, -19, 20) + ["0"]
             show_text_value = False
             linewidth = 0
-        elif hasattr(self.page, "LAST_YEAR") and variant == self.page.LAST_YEAR:
+        elif (
+            hasattr(self.page, "LAST_YEAR") and variant == self.page.LAST_YEAR
+        ):
             xticks = list(range(-360, -59, 60)) + [0]
             xticklabels = ticklabels_neg(-360, -59, 60) + ["0"]
             show_text_value = False

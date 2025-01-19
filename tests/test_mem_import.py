@@ -11,7 +11,9 @@ from mnemosyne.libmnemosyne import Mnemosyne
 from openSM2sync.log_entry import EventTypes
 from mnemosyne.libmnemosyne.ui_components.dialogs import ImportDialog
 from mnemosyne.libmnemosyne.ui_components.main_widget import MainWidget
-from mnemosyne.libmnemosyne.file_formats.science_log_parser import ScienceLogParser
+from mnemosyne.libmnemosyne.file_formats.science_log_parser import (
+    ScienceLogParser,
+)
 
 last_error = ""
 
@@ -80,7 +82,9 @@ class TestMemImport(MnemosyneTest):
         ]
         self.mnemosyne.components.append(("test_mem_import", "Widget"))
         self.mnemosyne.components.append(("test_mem_import", "MyImportDialog"))
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def mem_importer(self):
@@ -120,7 +124,9 @@ class TestMemImport(MnemosyneTest):
         assert card.id == "9cff728f"
 
     def test_card_type_1_unseen(self):
-        filename = os.path.join(os.getcwd(), "tests", "files", "1sided_unseen.mem")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "1sided_unseen.mem"
+        )
         self.mem_importer().do_import(filename)
         self.review_controller().reset()
         assert self.database().card_count() == 1
@@ -137,7 +143,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -153,7 +160,9 @@ class TestMemImport(MnemosyneTest):
         assert "question" in card.question()
         filename = os.path.join(os.getcwd(), "tests", "files", "1sided.mem")
         self.mem_importer().do_import(filename)
-        assert last_error.startswith("These cards seem to have been imported before")
+        assert last_error.startswith(
+            "These cards seem to have been imported before"
+        )
 
     def test_card_type_2(self):
         filename = os.path.join(os.getcwd(), "tests", "files", "2sided.mem")
@@ -173,7 +182,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 2
@@ -189,14 +199,17 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 2
         )
 
     def test_card_type_3_corrupt(self):
-        filename = os.path.join(os.getcwd(), "tests", "files", "3sided_corrupt.mem")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "3sided_corrupt.mem"
+        )
         self.mem_importer().do_import(filename)
         self.review_controller().reset()
         assert self.database().card_count() == 2
@@ -205,14 +218,17 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 2
         )
 
     def test_card_type_3_missing(self):
-        filename = os.path.join(os.getcwd(), "tests", "files", "3sided_missing.mem")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "3sided_missing.mem"
+        )
         self.mem_importer().do_import(filename)
         self.review_controller().reset()
         assert self.database().card_count() == 1
@@ -221,7 +237,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -233,23 +250,33 @@ class TestMemImport(MnemosyneTest):
         figures = [
             os.path.join(os.getcwd(), "tests", "files", "a.png"),
             os.path.join(os.getcwd(), "tests", "files", "figs", "a.png"),
-            os.path.join(os.getcwd(), "tests", "files", "figs", "figs", "a.png"),
+            os.path.join(
+                os.getcwd(), "tests", "files", "figs", "figs", "a.png"
+            ),
         ]
         for filename in figures:
             open(filename, "w")
         filename = os.path.join(os.getcwd(), "tests", "files", "media.mem")
         self.mem_importer().do_import(filename)
         assert os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
-        )
-        assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
             )
         )
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
+            )
+        )
+        assert os.path.exists(
+            os.path.join(
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -274,11 +301,16 @@ class TestMemImport(MnemosyneTest):
         filename = os.path.join(os.getcwd(), "tests", "files", "media.mem")
         self.mem_importer().do_import(filename)
         assert os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
+            os.path.join(
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
+            )
         )
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -295,11 +327,16 @@ class TestMemImport(MnemosyneTest):
         filename = os.path.join(os.getcwd(), "tests", "files", "media.mem")
         self.mem_importer().do_import(filename)
         assert not os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
+            os.path.join(
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
+            )
         )
         assert not os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -318,23 +355,35 @@ class TestMemImport(MnemosyneTest):
         figures = [
             os.path.join(os.getcwd(), "tests", "files", "a.png"),
             os.path.join(os.getcwd(), "tests", "files", "figs", "a.png"),
-            os.path.join(os.getcwd(), "tests", "files", "figs", "figs", "a.png"),
+            os.path.join(
+                os.getcwd(), "tests", "files", "figs", "figs", "a.png"
+            ),
         ]
         for filename in figures:
             open(filename, "w")
-        filename = os.path.join(os.getcwd(), "tests", "files", "media_slashes.mem")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "media_slashes.mem"
+        )
         self.mem_importer().do_import(filename)
         assert os.path.exists(
-            os.path.join(os.path.abspath("dot_test"), "default.db_media", "a.png")
-        )
-        assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"), "default.db_media", "a.png"
             )
         )
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "figs", "a.png"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
+            )
+        )
+        assert os.path.exists(
+            os.path.join(
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "figs",
+                "a.png",
             )
         )
         assert (
@@ -372,7 +421,10 @@ class TestMemImport(MnemosyneTest):
         self.mem_importer().do_import(filename)
         assert os.path.exists(
             os.path.join(
-                os.path.abspath("dot_test"), "default.db_media", "soundfiles", "a.ogg"
+                os.path.abspath("dot_test"),
+                "default.db_media",
+                "soundfiles",
+                "a.ogg",
             )
         )
         assert (
@@ -425,7 +477,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -433,7 +486,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 10
@@ -496,7 +550,10 @@ class TestMemImport(MnemosyneTest):
         )
         assert next_rep - timestamp == (14 - 3) * 60 * 60 * 24
         assert (
-            self.database().con.execute("select count() from log").fetchone()[0] == 25
+            self.database()
+            .con.execute("select count() from log")
+            .fetchone()[0]
+            == 25
         )
         assert (
             self.database()
@@ -561,7 +618,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -569,7 +627,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 1
@@ -601,7 +660,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -609,7 +669,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 4
@@ -661,7 +722,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -669,7 +731,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 2
@@ -740,7 +803,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -748,7 +812,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 2
@@ -828,7 +893,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -836,7 +902,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 2
@@ -884,12 +951,15 @@ class TestMemImport(MnemosyneTest):
     def test_logs_imported_1(self):
         self.database().update_card_after_log_import = lambda x, y, z: 0
         self.database().before_1x_log_import()
-        filename = os.path.join(os.getcwd(), "tests", "files", "imported_1.txt")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "imported_1.txt"
+        )
         ScienceLogParser(self.database()).parse(filename)
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -897,7 +967,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 3
@@ -963,12 +1034,15 @@ class TestMemImport(MnemosyneTest):
     def test_logs_imported_2(self):
         self.database().update_card_after_log_import = lambda x, y, z: 0
         self.database().before_1x_log_import()
-        filename = os.path.join(os.getcwd(), "tests", "files", "imported_2.txt")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "imported_2.txt"
+        )
         ScienceLogParser(self.database()).parse(filename)
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -976,7 +1050,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 1
@@ -1012,12 +1087,15 @@ class TestMemImport(MnemosyneTest):
     def test_logs_imported_3(self):
         self.database().update_card_after_log_import = lambda x, y, z: 0
         self.database().before_1x_log_import()
-        filename = os.path.join(os.getcwd(), "tests", "files", "imported_3.txt")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "imported_3.txt"
+        )
         ScienceLogParser(self.database()).parse(filename)
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -1026,12 +1104,15 @@ class TestMemImport(MnemosyneTest):
     def test_restored_1(self):
         self.database().update_card_after_log_import = lambda x, y, z: 0
         self.database().before_1x_log_import()
-        filename = os.path.join(os.getcwd(), "tests", "files", "restored_1.txt")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "restored_1.txt"
+        )
         ScienceLogParser(self.database()).parse(filename)
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -1039,7 +1120,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 1
@@ -1047,7 +1129,8 @@ class TestMemImport(MnemosyneTest):
         sql_res = (
             self.database()
             .con.execute(
-                "select * from log where event_type=?", (EventTypes.REPETITION,)
+                "select * from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()
         )
@@ -1066,12 +1149,15 @@ class TestMemImport(MnemosyneTest):
     def test_restored_2(self):
         self.database().update_card_after_log_import = lambda x, y, z: 0
         self.database().before_1x_log_import()
-        filename = os.path.join(os.getcwd(), "tests", "files", "restored_2.txt")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "restored_2.txt"
+        )
         ScienceLogParser(self.database()).parse(filename)
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -1080,7 +1166,9 @@ class TestMemImport(MnemosyneTest):
     def test_logs_act_interval(self):
         self.database().update_card_after_log_import = lambda x, y, z: 0
         self.database().before_1x_log_import()
-        filename = os.path.join(os.getcwd(), "tests", "files", "actinterval_1.txt")
+        filename = os.path.join(
+            os.getcwd(), "tests", "files", "actinterval_1.txt"
+        )
         ScienceLogParser(self.database()).parse(filename)
         assert (
             self.database()
@@ -1101,7 +1189,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -1109,7 +1198,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.DELETED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.DELETED_CARD,),
             )
             .fetchone()[0]
             == 1
@@ -1123,14 +1213,17 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
         )
         assert (
             self.database()
-            .con.execute("select count() from log where object_id=?", ("4b59b830",))
+            .con.execute(
+                "select count() from log where object_id=?", ("4b59b830",)
+            )
             .fetchone()[0]
             == 3
         )
@@ -1143,14 +1236,17 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 0
         )
         assert (
             self.database()
-            .con.execute("select count() from log where object_id=?", ("4b59b830",))
+            .con.execute(
+                "select count() from log where object_id=?", ("4b59b830",)
+            )
             .fetchone()[0]
             == 0
         )
@@ -1163,7 +1259,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 1
@@ -1175,7 +1272,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 3
@@ -1183,7 +1281,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 2
@@ -1194,14 +1293,19 @@ class TestMemImport(MnemosyneTest):
         assert self.database().card_count_for_grade(0, active_only=True) == 2
         tag = self.database().get_or_create_tag_with_name("666")
         assert (
-            self.database().card_count_for_grade_and_tag(0, tag, active_only=True) == 0
+            self.database().card_count_for_grade_and_tag(
+                0, tag, active_only=True
+            )
+            == 0
         )
         from mnemosyne.libmnemosyne.statistics_pages.grades import Grades
 
         page = Grades(component_manager=self.mnemosyne.component_manager)
         from mnemosyne.libmnemosyne.tag_tree import TagTree
 
-        self.tag_tree = TagTree(self.mnemosyne.component_manager, count_cards=False)
+        self.tag_tree = TagTree(
+            self.mnemosyne.component_manager, count_cards=False
+        )
         self.nodes = self.tag_tree.nodes()
         for index, node in enumerate(self.nodes):
             if node == "666":
@@ -1218,7 +1322,8 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.REPETITION,)
+                "select count() from log where event_type=?",
+                (EventTypes.REPETITION,),
             )
             .fetchone()[0]
             == 0
@@ -1226,14 +1331,17 @@ class TestMemImport(MnemosyneTest):
         assert (
             self.database()
             .con.execute(
-                "select count() from log where event_type=?", (EventTypes.ADDED_CARD,)
+                "select count() from log where event_type=?",
+                (EventTypes.ADDED_CARD,),
             )
             .fetchone()[0]
             == 1
         )
         assert (
             self.database()
-            .con.execute("select count() from log where object_id=?", ("82f2ed0d",))
+            .con.execute(
+                "select count() from log where object_id=?", ("82f2ed0d",)
+            )
             .fetchone()[0]
             == 0
         )
@@ -1243,24 +1351,31 @@ class TestMemImport(MnemosyneTest):
         assert self.database().card_count_scheduled_n_days_ago(0) == 1
 
     def test_upgrade(self):
-        old_data_dir = os.path.join(os.getcwd(), "tests", "files", "basedir_bz2")
+        old_data_dir = os.path.join(
+            os.getcwd(), "tests", "files", "basedir_bz2"
+        )
         from mnemosyne.libmnemosyne.upgrades.upgrade1 import Upgrade1
 
         Upgrade1(self.mnemosyne.component_manager).upgrade_from_old_data_dir(
             old_data_dir
         )
         assert (
-            self.config()["dvipng"].rstrip() == "dvipng -D 300 -T tight tmp.dvi\necho"
+            self.config()["dvipng"].rstrip()
+            == "dvipng -D 300 -T tight tmp.dvi\necho"
         )
         assert "14pt" in self.config()["latex_preamble"]
         assert self.config()["user_id"] == "f3fb13c7"
         assert self.log().log_index_of_last_upload() == 2
 
         assert os.path.exists(
-            os.path.join(old_data_dir, "DIRECTORY_NO_LONGER_USED_BY_MNEMOSYNE2")
+            os.path.join(
+                old_data_dir, "DIRECTORY_NO_LONGER_USED_BY_MNEMOSYNE2"
+            )
         )
         assert os.path.exists(
-            os.path.join(self.mnemosyne.config().data_dir, "history", "a_2.bz2")
+            os.path.join(
+                self.mnemosyne.config().data_dir, "history", "a_2.bz2"
+            )
         )
         log = open(os.path.join(self.mnemosyne.config().data_dir, "log.txt"))
         assert (

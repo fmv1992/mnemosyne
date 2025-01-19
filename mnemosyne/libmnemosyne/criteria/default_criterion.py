@@ -83,7 +83,9 @@ class DefaultCriterion(Criterion):
 
     def deactivated_card_type_added(self, card_type):
         for fact_view in card_type.fact_views:
-            self.deactivated_card_type_fact_view_ids.add((card_type.id, fact_view.id))
+            self.deactivated_card_type_fact_view_ids.add(
+                (card_type.id, fact_view.id)
+            )
 
     def card_type_deleted(self, card_type):
         for fact_view in card_type.fact_views:

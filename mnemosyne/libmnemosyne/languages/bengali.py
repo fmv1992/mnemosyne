@@ -10,5 +10,8 @@ class Bengali(Language):
 
     name = _("Bengali")
     used_for = "bn"
-    sublanguages = {"bn-BD": _("Bengali (Bangladesh"), "bn-ID": _("Bengali (India)")}
+    sublanguages = {
+        "bn-BD": _("Bengali (Bangladesh"),
+        "bn-ID": _("Bengali (India)"),
+    }
     feature_description = _("Google translation and text-to-speech.")

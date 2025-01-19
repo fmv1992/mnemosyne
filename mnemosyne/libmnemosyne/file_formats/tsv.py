@@ -7,7 +7,9 @@ import re
 
 from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.file_format import FileFormat
-from mnemosyne.libmnemosyne.file_formats.media_preprocessor import MediaPreprocessor
+from mnemosyne.libmnemosyne.file_formats.media_preprocessor import (
+    MediaPreprocessor,
+)
 
 re0 = re.compile(r"&#(.+?);", re.DOTALL | re.IGNORECASE)
 

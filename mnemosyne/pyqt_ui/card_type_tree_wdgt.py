@@ -63,7 +63,9 @@ class CardTypesTreeWdgt(TagsTreeWdgt):
         if len(nodes) == 0:
             return
 
-        from mnemosyne.pyqt_ui.ui_rename_card_type_dlg import Ui_RenameCardTypeDlg
+        from mnemosyne.pyqt_ui.ui_rename_card_type_dlg import (
+            Ui_RenameCardTypeDlg,
+        )
 
         class RenameDlg(QtWidgets.QDialog, Ui_RenameCardTypeDlg):
             def __init__(self, old_card_type_name):
@@ -84,7 +86,9 @@ class CardTypesTreeWdgt(TagsTreeWdgt):
             question = _("Delete these card types?")
         else:
             question = _("Delete this card type?")
-        answer = self.main_widget().show_question(question, _("&OK"), _("&Cancel"), "")
+        answer = self.main_widget().show_question(
+            question, _("&OK"), _("&Cancel"), ""
+        )
         if answer == 1:  # Cancel.
             return
         self.delete_nodes(nodes)
@@ -127,7 +131,10 @@ class CardTypesTreeWdgt(TagsTreeWdgt):
                 continue
             card_type_item = QtWidgets.QTreeWidgetItem(
                 root_item,
-                ["%s (%d)" % (_(card_type.name), count_for_card_type[card_type])],
+                [
+                    "%s (%d)"
+                    % (_(card_type.name), count_for_card_type[card_type])
+                ],
                 0,
             )
             card_type_item.setFlags(
@@ -137,7 +144,9 @@ class CardTypesTreeWdgt(TagsTreeWdgt):
             )
             card_type_item.setCheckState(0, QtCore.Qt.CheckState.Checked)
             card_type_item.setData(
-                NODE, QtCore.Qt.ItemDataRole.DisplayRole, QtCore.QVariant(card_type.id)
+                NODE,
+                QtCore.Qt.ItemDataRole.DisplayRole,
+                QtCore.QVariant(card_type.id),
             )
             if count_for_card_type[
                 card_type
@@ -151,11 +160,15 @@ class CardTypesTreeWdgt(TagsTreeWdgt):
             for fact_view in card_type.fact_views:
                 fact_view_item = QtWidgets.QTreeWidgetItem(
                     card_type_item,
-                    ["%s (%d)" % (_(fact_view.name), count_for_fact_view[fact_view])],
+                    [
+                        "%s (%d)"
+                        % (_(fact_view.name), count_for_fact_view[fact_view])
+                    ],
                     0,
                 )
                 fact_view_item.setFlags(
-                    fact_view_item.flags() | QtCore.Qt.ItemFlag.ItemIsUserCheckable
+                    fact_view_item.flags()
+                    | QtCore.Qt.ItemFlag.ItemIsUserCheckable
                 )
                 if (
                     card_type.id,
@@ -176,7 +189,9 @@ class CardTypesTreeWdgt(TagsTreeWdgt):
         criterion.deactivated_card_type_fact_view_ids = set()
         for i in range(len(self.node_items)):
             item = self.node_items[i]
-            card_type_fact_view_ids = self.card_type_fact_view_ids_for_node_item[i]
+            card_type_fact_view_ids = (
+                self.card_type_fact_view_ids_for_node_item[i]
+            )
             if item.checkState(0) == QtCore.Qt.CheckState.Unchecked:
                 criterion.deactivated_card_type_fact_view_ids.add(
                     card_type_fact_view_ids

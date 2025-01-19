@@ -8,7 +8,9 @@ from mnemosyne.libmnemosyne.gui_translator import _
 from mnemosyne.libmnemosyne.ui_components.configuration_widget import (
     ConfigurationWidget,
 )
-from mnemosyne.pyqt_ui.ui_configuration_wdgt_study import Ui_ConfigurationWdgtStudy
+from mnemosyne.pyqt_ui.ui_configuration_wdgt_study import (
+    Ui_ConfigurationWdgtStudy,
+)
 from mnemosyne.libmnemosyne.schedulers.cramming import (
     RANDOM,
     EARLIEST_FIRST,
@@ -30,7 +32,9 @@ class ConfigurationWdgtStudy(
             self.scheduled_cards.setCurrentIndex(1)
         else:
             self.scheduled_cards.setCurrentIndex(0)
-        self.non_memorised_cards.setValue(self.config()["non_memorised_cards_in_hand"])
+        self.non_memorised_cards.setValue(
+            self.config()["non_memorised_cards_in_hand"]
+        )
         if self.config()["randomise_new_cards"] == True:
             self.new_cards.setCurrentIndex(1)
         else:
@@ -73,7 +77,9 @@ class ConfigurationWdgtStudy(
             self.config()["randomise_scheduled_cards"] = True
         else:
             self.config()["randomise_scheduled_cards"] = False
-        self.config()["non_memorised_cards_in_hand"] = self.non_memorised_cards.value()
+        self.config()[
+            "non_memorised_cards_in_hand"
+        ] = self.non_memorised_cards.value()
         if self.new_cards.currentIndex() == 1:
             self.config()["randomise_new_cards"] = True
         else:

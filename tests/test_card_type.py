@@ -54,7 +54,9 @@ class TestCardType(MnemosyneTest):
 
     def setup_method(self):
         self.initialise_data_dir()
-        path = os.path.join(os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers")
+        path = os.path.join(
+            os.getcwd(), "..", "mnemosyne", "libmnemosyne", "renderers"
+        )
         if path not in sys.path:
             sys.path.append(path)
         self.mnemosyne = Mnemosyne(
@@ -69,12 +71,16 @@ class TestCardType(MnemosyneTest):
                 "GetTextGuiTranslator",
             ),
         )
-        self.mnemosyne.components.append(("test_card_type", "DecoratedThreeSided"))
+        self.mnemosyne.components.append(
+            ("test_card_type", "DecoratedThreeSided")
+        )
         self.mnemosyne.components.append(("test_card_type", "Widget"))
         self.mnemosyne.gui_for_component["ScheduledForgottenNew"] = [
             ("mnemosyne_test", "TestReviewWidget")
         ]
-        self.mnemosyne.initialise(os.path.abspath("dot_test"), automatic_upgrades=False)
+        self.mnemosyne.initialise(
+            os.path.abspath("dot_test"), automatic_upgrades=False
+        )
         self.review_controller().reset()
 
     def test_card_types(self):
@@ -93,7 +99,9 @@ class TestCardType(MnemosyneTest):
         card_type.extra_data = {"b": "b"}
         self.database().update_card_type(card_type)
         self.mnemosyne.component_manager.unregister(card_type)
-        card_type_out = self.database().card_type(card_type.id, is_id_internal=False)
+        card_type_out = self.database().card_type(
+            card_type.id, is_id_internal=False
+        )
         assert card_type_out.id == "1::1 clone"
         assert card_type_out.fact_key_with_name("Front") == "f"
         assert card_type_out.required_fact_keys == ["f"]
@@ -101,7 +109,9 @@ class TestCardType(MnemosyneTest):
         assert card_type_out.is_fact_data_valid({"q": "foo"}) == False
         assert card_type_out.fact_key_names() == ["Front", "Back"]
 
-        assert card_type_out.fact_keys_and_names == card_type.fact_keys_and_names
+        assert (
+            card_type_out.fact_keys_and_names == card_type.fact_keys_and_names
+        )
         assert card_type_out.unique_fact_keys == card_type.unique_fact_keys
         assert card_type_out.keyboard_shortcuts == card_type.keyboard_shortcuts
         assert card_type_out.fact_views[0].type_answer == True
@@ -142,7 +152,11 @@ class TestCardType(MnemosyneTest):
         self.controller().rename_card_type(card_type_1, "1 clone new")
 
         assert set(
-            [c.name for c in self.card_types() if self.database().is_user_card_type(c)]
+            [
+                c.name
+                for c in self.card_types()
+                if self.database().is_user_card_type(c)
+            ]
         ) == set(["1 clone new", "2 clone"])
 
     def test_rename_two_clones_b(self):
@@ -154,7 +168,11 @@ class TestCardType(MnemosyneTest):
         self.controller().rename_card_type(card_type_2, "2 clone new")
 
         assert set(
-            [c.name for c in self.card_types() if self.database().is_user_card_type(c)]
+            [
+                c.name
+                for c in self.card_types()
+                if self.database().is_user_card_type(c)
+            ]
         ) == set(["1 clone", "2 clone new"])
 
     def test_delete(self):
@@ -165,10 +183,14 @@ class TestCardType(MnemosyneTest):
 
         self.controller().delete_card_type(card_type_1)
 
-        card_type_out = self.database().card_type(card_type_2.id, is_id_internal=False)
+        card_type_out = self.database().card_type(
+            card_type_2.id, is_id_internal=False
+        )
 
         assert card_type_out.fact_views[0].id == card_type_2.fact_views[0].id
-        assert card_type_out.fact_views[0].name == card_type_2.fact_views[0].name
+        assert (
+            card_type_out.fact_views[0].name == card_type_2.fact_views[0].name
+        )
         assert (
             card_type_out.fact_views[0].q_fact_keys
             == card_type_2.fact_views[0].q_fact_keys
@@ -182,7 +204,9 @@ class TestCardType(MnemosyneTest):
             == card_type_2.fact_views[0].a_on_top_of_q
         )
         assert card_type_out.fact_views[1].id == card_type_2.fact_views[1].id
-        assert card_type_out.fact_views[1].name == card_type_2.fact_views[1].name
+        assert (
+            card_type_out.fact_views[1].name == card_type_2.fact_views[1].name
+        )
         assert (
             card_type_out.fact_views[1].q_fact_keys
             == card_type_2.fact_views[1].q_fact_keys
@@ -202,7 +226,9 @@ class TestCardType(MnemosyneTest):
         card_type = self.card_type_with_id("2")
         card_type_2 = self.controller().clone_card_type(card_type, "2 clone")
 
-        self.config().set_card_type_property("background_colour", "black", card_type_1)
+        self.config().set_card_type_property(
+            "background_colour", "black", card_type_1
+        )
 
         self.controller().delete_card_type(card_type_1)
 
@@ -230,7 +256,9 @@ class TestCardType(MnemosyneTest):
         card_type = self.card_type_with_id("1")
         card_type_1 = self.controller().clone_card_type(card_type, "1 clone")
         self.controller().rename_card_type(card_type_1, "newname")
-        card_type_out = self.database().card_type(card_type_1.id, is_id_internal=False)
+        card_type_out = self.database().card_type(
+            card_type_1.id, is_id_internal=False
+        )
         assert card_type_out.name == "newname"
 
     def test_cannot_rename(self):
@@ -256,7 +284,9 @@ class TestCardType(MnemosyneTest):
         card_type = self.card_type_with_id("1")
         assert self.database().has_clones(card_type) == False
         card_type_1 = self.controller().clone_card_type(card_type, "1 clone")
-        card_type_2 = self.controller().clone_card_type(card_type_1, "1 clone clone")
+        card_type_2 = self.controller().clone_card_type(
+            card_type_1, "1 clone clone"
+        )
         assert self.database().has_clones(card_type) == True
         assert self.database().has_clones(card_type_1) == True
         self.controller().delete_card_type(card_type_1)
@@ -270,18 +300,26 @@ class TestCardType(MnemosyneTest):
         card_type.fact_views[0].extra_data = {"b": "b"}
         card_type = self.controller().clone_card_type(card_type, ("1 clone"))
         assert self.database().is_user_card_type(card_type) == True
-        card_type = self.controller().clone_card_type(card_type, ("1 clone cloned"))
+        card_type = self.controller().clone_card_type(
+            card_type, ("1 clone cloned")
+        )
         assert self.database().is_user_card_type(card_type) == True
         card_type.extra_data = {"b": "b"}
         self.database().update_card_type(card_type)
-        assert self.render_chain().renderer_for_card_type(card_type) is not None
+        assert (
+            self.render_chain().renderer_for_card_type(card_type) is not None
+        )
         self.mnemosyne.component_manager.unregister(card_type)
-        card_type_out = self.database().card_type(card_type.id, is_id_internal=False)
+        card_type_out = self.database().card_type(
+            card_type.id, is_id_internal=False
+        )
         assert card_type_out.fact_key_with_name("Front") == "f"
         assert card_type_out.required_fact_keys == ["f"]
         assert card_type_out.is_fact_data_valid({"f": "foo"}) == True
 
-        assert card_type_out.fact_keys_and_names == card_type.fact_keys_and_names
+        assert (
+            card_type_out.fact_keys_and_names == card_type.fact_keys_and_names
+        )
         assert card_type_out.unique_fact_keys == card_type.unique_fact_keys
         assert card_type_out.keyboard_shortcuts == card_type.keyboard_shortcuts
         assert card_type_out.fact_views[0].type_answer == True
@@ -318,7 +356,11 @@ class TestCardType(MnemosyneTest):
         self.mnemosyne.database().load(path)
 
     def test_decorators(self):
-        fact_data = {"f": "foreign word", "p_1": "pronunciation", "m_1": "translation"}
+        fact_data = {
+            "f": "foreign word",
+            "p_1": "pronunciation",
+            "m_1": "translation",
+        }
         card_type = self.card_type_with_id("3_decorated")
         card = self.controller().create_new_cards(
             fact_data, card_type, grade=-1, tag_names=["default"]
@@ -328,9 +370,14 @@ class TestCardType(MnemosyneTest):
     def test_properties(self):
         card_type = self.card_type_with_id("1")
         self.config().set_card_type_property("font", "myfont", card_type)
-        self.config().set_card_type_property("background_colour", "mycolour", card_type)
+        self.config().set_card_type_property(
+            "background_colour", "mycolour", card_type
+        )
         card_type = self.controller().clone_card_type(card_type, ("1 clone"))
-        assert self.config().card_type_property("font", card_type, "f") == "myfont"
+        assert (
+            self.config().card_type_property("font", card_type, "f")
+            == "myfont"
+        )
         assert (
             self.config().card_type_property("background_colour", card_type)
             == "mycolour"

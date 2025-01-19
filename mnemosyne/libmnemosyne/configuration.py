@@ -113,7 +113,8 @@ class Configuration(Component, dict):
 
         for key, value in list(
             {
-                "last_database": self.database().default_name + self.database().suffix,
+                "last_database": self.database().default_name
+                + self.database().suffix,
                 "first_run": True,
                 "import_img_dir": self.data_dir,
                 "import_sound_dir": self.data_dir,
@@ -238,7 +239,9 @@ class Configuration(Component, dict):
 
             try:
                 ph = PasswordHasher()
-                self["remote_access_password"] = ph.hash(self["remote_access_password"])
+                self["remote_access_password"] = ph.hash(
+                    self["remote_access_password"]
+                )
                 self["remote_access_password_algo"] = "argon2"
             except HashingError:
                 pass
@@ -334,7 +337,9 @@ class Configuration(Component, dict):
         if sys.platform == "win32":
             import ctypes
 
-            n = ctypes.windll.kernel32.GetEnvironmentVariableW("APPDATA", None, 0)
+            n = ctypes.windll.kernel32.GetEnvironmentVariableW(
+                "APPDATA", None, 0
+            )
             buf = ctypes.create_unicode_buffer("\0" * n)
             ctypes.windll.kernel32.GetEnvironmentVariableW("APPDATA", buf, n)
             self.data_dir = join(buf.value, "Mnemosyne")
@@ -437,7 +442,9 @@ class Configuration(Component, dict):
             for _fact_key in fact_keys:
                 self[property_name][card_type.id][_fact_key] = property_value
 
-    def card_type_property(self, property_name, card_type, fact_key=None, default=None):
+    def card_type_property(
+        self, property_name, card_type, fact_key=None, default=None
+    ):
         if property_name in self.card_type_properties_generic:
             try:
                 return self[property_name][card_type.id]
@@ -453,7 +460,9 @@ class Configuration(Component, dict):
         for property_name in self.card_type_properties_generic:
             old_value = self.card_type_property(property_name, old_card_type)
             if old_value:
-                self.set_card_type_property(property_name, old_value, new_card_type)
+                self.set_card_type_property(
+                    property_name, old_value, new_card_type
+                )
         for property_name in self.card_type_properties_for_fact_key:
             for fact_key in new_card_type.fact_keys():
                 old_value = self.card_type_property(
@@ -470,7 +479,11 @@ class Configuration(Component, dict):
                 del self[property_name][card_type.id]
 
     def machine_id(self):
-        return open(os.path.join(self.config_dir, "machine.id")).readline().rstrip()
+        return (
+            open(os.path.join(self.config_dir, "machine.id"))
+            .readline()
+            .rstrip()
+        )
 
     def load_user_config(self):
         if self.config_dir not in sys.path:
@@ -488,7 +501,9 @@ class Configuration(Component, dict):
                     if var in self:
                         self[var] = getattr(config, var)
             except:
-                raise RuntimeError(_("Error in config.py:") + "\n" + traceback_string())
+                raise RuntimeError(
+                    _("Error in config.py:") + "\n" + traceback_string()
+                )
 
     def change_user_id(self, new_user_id):
         """When a client syncs for the first time with a server, we need to
@@ -501,7 +516,9 @@ class Configuration(Component, dict):
             return
         old_user_id = self["user_id"]
         self["user_id"] = new_user_id
-        from mnemosyne.libmnemosyne.component_manager import migrate_component_manager
+        from mnemosyne.libmnemosyne.component_manager import (
+            migrate_component_manager,
+        )
 
         migrate_component_manager(old_user_id, new_user_id)
         self.save()

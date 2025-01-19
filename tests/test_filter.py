@@ -14,7 +14,10 @@ from mnemosyne.libmnemosyne.filters.html5_audio import Html5Audio
 from mnemosyne.libmnemosyne.filters.RTL_handler import RTLHandler
 from mnemosyne.libmnemosyne.filters.expand_paths import ExpandPaths
 from mnemosyne.libmnemosyne.filters.escape_to_html import EscapeToHtml
-from mnemosyne.libmnemosyne.filters.latex import CheckForUpdatedLatexFiles, Latex
+from mnemosyne.libmnemosyne.filters.latex import (
+    CheckForUpdatedLatexFiles,
+    Latex,
+)
 
 side_effects = [
     FileNotFoundError,
@@ -62,7 +65,8 @@ class TestFilter(MnemosyneTest):
         self.config()["media_controls"] = True
 
         assert (
-            f.run("""<video src="b">""", None, None) == """<video src="b" controls=1>"""
+            f.run("""<video src="b">""", None, None)
+            == """<video src="b" controls=1>"""
         )
 
     def test_escape_to_html(self):
@@ -70,7 +74,9 @@ class TestFilter(MnemosyneTest):
         f = EscapeToHtml(self.mnemosyne.component_manager)
 
         assert f.run("a\nb", None, None) == "a<br>b"
-        assert f.run("<latex>a\nb<\latex>", None, None) == "<latex>a\nb<\latex>"
+        assert (
+            f.run("<latex>a\nb<\latex>", None, None) == "<latex>a\nb<\latex>"
+        )
 
     def test_expand_paths(self):
 
@@ -81,7 +87,9 @@ class TestFilter(MnemosyneTest):
         )
         assert "media" in f.run("""data=\"rpart\"""", None, None)
         assert "media" in f.run("""data= \"rpart\"""", None, None)
-        assert "media" not in f.run("""Application data = \"rpart\"""", None, None)
+        assert "media" not in f.run(
+            """Application data = \"rpart\"""", None, None
+        )
 
     def test_RTL_handler(self):
 
@@ -92,9 +100,12 @@ class TestFilter(MnemosyneTest):
         f.run("[a]" + chr(0x0491), None, None)
 
     @mock.patch(
-        "mnemosyne.libmnemosyne.filters.latex.sp.check_output", check_output_mock
+        "mnemosyne.libmnemosyne.filters.latex.sp.check_output",
+        check_output_mock,
     )
-    @mock.patch("mnemosyne.libmnemosyne.filters.latex.sp.check_call", check_call_mock)
+    @mock.patch(
+        "mnemosyne.libmnemosyne.filters.latex.sp.check_call", check_call_mock
+    )
     def test_latex_exceptions(self):
         for _ in side_effects:
             f = CheckForUpdatedLatexFiles(self.mnemosyne.component_manager)
@@ -102,4 +113,6 @@ class TestFilter(MnemosyneTest):
 
             f = Latex(self.mnemosyne.component_manager)
             # Should not raise an exception
-            f._call_cmd(["dummy", "cmd"], "dot_test/default.db_media/latex_out.txt")
+            f._call_cmd(
+                ["dummy", "cmd"], "dot_test/default.db_media/latex_out.txt"
+            )

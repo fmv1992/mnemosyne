@@ -106,7 +106,9 @@ def _abs_path(path):
 
     """
 
-    return ((len(path) > 1) and path[0] == "/") or ((len(path) > 2) and path[1] == ":")
+    return ((len(path) > 1) and path[0] == "/") or (
+        (len(path) > 2) and path[1] == ":"
+    )
 
 
 def contract_path(path, start):
@@ -177,7 +179,9 @@ def copy_file_to_dir(filename, dirname):
     dirname = os.path.abspath(dirname)
     if filename.startswith(dirname):
         return contract_path(filename, dirname)
-    dest_path = os.path.join(dirname, os.path.basename(filename.replace(":", "-")))
+    dest_path = os.path.join(
+        dirname, os.path.basename(filename.replace(":", "-"))
+    )
     dest_path = make_filename_unique(dest_path)
     copy(filename, dest_path)
     return contract_path(dest_path, dirname)
@@ -230,9 +234,9 @@ def traceback_string():
 
     type, value, tb = sys.exc_info()
     body = "\nTraceback (innermost last):\n"
-    list = traceback.format_tb(tb, limit=None) + traceback.format_exception_only(
-        type, value
-    )
+    list = traceback.format_tb(
+        tb, limit=None
+    ) + traceback.format_exception_only(type, value)
     body = body + "%-20s %s" % ("".join(list[:-1]), list[-1])
     del tb  # Prevent circular references.
     return body

@@ -71,7 +71,9 @@ class Client(object):
 if __name__ == "__main__":
     import subprocess
 
-    subprocess.Popen(["./bin/python", "./mnemosyne/UDP_server/server.py", str(PORT)])
+    subprocess.Popen(
+        ["./bin/python", "./mnemosyne/UDP_server/server.py", str(PORT)]
+    )
 
     import os
 
@@ -80,7 +82,8 @@ if __name__ == "__main__":
 
     c = Client()
     c.send_command(
-        'mnemosyne.initialise(data_dir="%s", filename="%s")' % (data_dir, filename)
+        'mnemosyne.initialise(data_dir="%s", filename="%s")'
+        % (data_dir, filename)
     )
     c.send_command("mnemosyne.start_review()")
     c.send_command("mnemosyne.review_controller().show_answer()")

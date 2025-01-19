@@ -143,7 +143,11 @@ class SQLiteStatistics(object):
         query = query[:-1] + """)"""
         count = 0
         for cursor in self.con.execute(query):
-            if cursor[0] == True and cursor[1] >= 2 and start <= cursor[2] < stop:
+            if (
+                cursor[0] == True
+                and cursor[1] >= 2
+                and start <= cursor[2] < stop
+            ):
                 count += 1
         return count
 
@@ -155,7 +159,9 @@ class SQLiteStatistics(object):
         ).fetchone()[0]
 
     def start_of_day_n_days_ago(self, n):
-        timestamp = time.time() - n * DAY - self.config()["day_starts_at"] * HOUR
+        timestamp = (
+            time.time() - n * DAY - self.config()["day_starts_at"] * HOUR
+        )
         # Roll this back to the midnight before.
         date_only = datetime.date.fromtimestamp(timestamp)  # Local date.
         start_of_day = int(time.mktime(date_only.timetuple()))
